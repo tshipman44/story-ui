@@ -24,24 +24,24 @@ async function fetchPlayerRow(playerId) {
 
   if (error && status !== 406) throw error;  // 406 = no rows
 
-  if (!data) {
-    const defaults = {
-      player_id:     playerId,
-      story_phase:   "pre-murder",
-      current_scene: "scene_01",
-      revealed_clues: [],
-      updated_at:    new Date().toISOString(),
-    };
+ if (!data) {
+  const defaults = {
+    player_id:     playerId,
+    story_phase:   "pre-murder",
+    current_scene: "scene_01",
+    revealed_clues: [],
+    updated_at:    new Date().toISOString()
+  };
 
-    const { data: inserted, error: insertErr } = await supabase
-      .from("PlayerState")
-      .insert(defaults)
-      .select()
-      .single();
+  const { data: inserted, error: insertErr } = await supabase
+    .from("PlayerState")
+    .insert(defaults)
+    .select("*")      // <‑‑ add this
+    .single();
 
-    if (insertErr) throw insertErr;
-    return inserted;
-  }
+  if (insertErr) throw insertErr;
+  return inserted;
+}
 
   return data;
 }
