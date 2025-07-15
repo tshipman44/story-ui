@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
  * • TailwindCSS utility classes for quick styling (works automatically on Vercel).
  */
 
-const API_URL = import.meta.env.VITE_STORY_API ?? "https://mystery-api.vercel.app/api/play";
+const API_URL = "/api/play";   // no env var, same origin
 const PLAYER_ID = localStorage.getItem("playerId") ?? "demo"; // simple persistence
 
 export default function StoryBrainUI() {
