@@ -1,45 +1,63 @@
-// api/play.mjs  (ESM works on Vercel's nodejs18.x runtime)
+// api/play.mjs  (ESM – Vercel nodejs18.x runtime)
+import { createClient } from "@supabase/supabase-js";
+import OpenAI from "openai";
 
-import { google } from 'googleapis';
-import OpenAI from 'openai';
-
-// === 0. env vars ===
-
+/* ─── env vars ─────────────────────────── */
 const {
   OPENAI_KEY,
-  SPREADSHEET_ID,
-  GSERVICE_CREDS_JSON   // service-account JSON stored as ONE LINE
+  GSERVICE_CREDS_JSON,   // still used by Google Sheets logging? (remove if not)
+  SUPABASE_URL,
+  SUPABASE_SERVICE_KEY,
 } = process.env;
 
-// 1. init Sheets client once per cold start
-const auth = new google.auth.GoogleAuth({
-  credentials: JSON.parse(GSERVICE_CREDS_JSON),
-  scopes: ['https://www.googleapis.com/auth/spreadsheets']
-});
-const sheets = google.sheets({ version: 'v4', auth });
+/* ─── clients ──────────────────────────── */
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+const openai   = new OpenAI({ apiKey: OPENAI_KEY });
 
-const openai = new OpenAI({ apiKey: OPENAI_KEY });
-
-// 2. helper to read / write a single row
+/* ─── helpers ──────────────────────────── */
 async function fetchPlayerRow(playerId) {
-  const { data } = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: 'PlayerState!A2:E'
-  });
-  const idx = data.values.findIndex(r => r[0] === playerId);
-  if (idx === -1) throw new Error('player not found');
-  return { idx, row: data.values[idx] };
+  const { data, error, status } = await supabase
+    .from("PlayerState")
+    .select("*")
+    .eq("player_id", playerId)
+    .single();
+
+  if (error && status !== 406) throw error;  // 406 = no rows
+
+  if (!data) {
+    const defaults = {
+      player_id:     playerId,
+      story_phase:   "pre-murder",
+      current_scene: "scene_01",
+      revealed_clues: [],
+      updated_at:    new Date().toISOString(),
+    };
+
+    const { data: inserted, error: insertErr } = await supabase
+      .from("PlayerState")
+      .insert(defaults)
+      .select()
+      .single();
+
+    if (insertErr) throw insertErr;
+    return inserted;
+  }
+
+  return data;
 }
 
-async function updatePlayerRow(idx, [phase, scene, revealed]) {
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `PlayerState!B${idx + 2}:E${idx + 2}`,
-    valueInputOption: 'RAW',
-    requestBody: { values: [[
-      phase, scene, JSON.stringify(revealed), new Date().toISOString()
-    ]]}
-  });
+async function updatePlayerRow(playerId, { phase, scene, revealed }) {
+  const { error } = await supabase
+    .from("PlayerState")
+    .update({
+      story_phase:   phase,
+      current_scene: scene,
+      revealed_clues: revealed,
+      updated_at:    new Date().toISOString(),
+    })
+    .eq("player_id", playerId);
+
+  if (error) throw error;
 }
 function buildSystemPrompt({ phase, scene, revealed }) {
 return `
