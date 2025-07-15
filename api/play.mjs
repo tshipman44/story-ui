@@ -870,8 +870,12 @@ export default async function handler(req, res) {
   try {
     // -- pull current state
     const { idx, row } = await fetchPlayerRow(playerId);
-    const [, phase, scene, revealedStr] = row;
-    const revealed = JSON.parse(revealedStr || "[]");
+    const {
+  story_phase: phase,
+  current_scene: scene,
+  revealed_clues: revealed
+} = row;
+    
 
     // -- build prompt & call OpenAI
     const systemPrompt = buildSystemPrompt({ phase, scene, revealed });
