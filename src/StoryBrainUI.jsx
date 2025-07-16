@@ -22,15 +22,20 @@ function getOrCreatePlayerId() {
 
 const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
-const Header = () => (
-  <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
-    <h1 className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8
- py-3 text-lg sm:text-xl font-semibold tracking-wide">
-      The Mysterious Affair at Styles
-    </h1>
-  </header>
-);
 
+const Container = ({ children, className = "" }) => (
+  <div className={`mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 ${className}`}>
+    {children}
+  </div>
+);
+<header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
+<Container>
+<h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
+The Mysterious Affair at Styles
+</h1>
+</Container>
+   </header>
+ );
 const ChoiceButton = ({ label, onClick }) => (
   <button
     onClick={onClick}
@@ -81,22 +86,23 @@ return (
     <Header />
 
     {/* MAIN SCROLL AREA */}
-    <main className="flex-1 overflow-y-auto pb-36 pt-4">
-{/* 📦 NEW wrapper: centres content & adds side gutters */}
- <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+  
       <article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
-
-      <div className="mx-auto mt-8 max-w-sm">
+<main className="flex-1 overflow-y-auto pb-[11rem] pt-4"> {/* enough room for sticky bar + mustache */}
+<Container>
+      <div className="mt-8 max-w-sm">
         {choices.map((c) => (
           <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
         ))}
       </div>
-
+</Container>
+    </main>
       {/* fallback free‑text input for ad‑hoc actions */}
-      <form
-        className="mx-auto mt-6 flex max-w-sm gap-2"
+      <form className="sticky bottom-[5.5rem] mx-auto mt-6 flex max-w-sm
+overflow-hidden rounded-lg bg-slate-700/80 shadow
+ backdrop-blur focus-within:ring-2 focus-within:ring-indigo-400"
         onSubmit={(e) => {
           e.preventDefault();
           const freeText = new FormData(e.target).get("free")?.toString() || "";
@@ -107,24 +113,22 @@ return (
         <input
           name="free"
           aria-label="Custom action"
-          className="flex-1 rounded-lg bg-slate-700/80 px-3 py-2 text-sm
-           placeholder-slate-400 focus:outline-none focus:ring-2
-          focus:ring-indigo-400"
+          className="flex-1 bg-transparent px-3 py-2 text-sm
+placeholder-slate-400 focus:outline-none"
           placeholder="Or type your own action…"
           disabled={loading}
         />
         <button
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold
-text-white shadow-sm transition hover:bg-indigo-500
-focus:outline-none focus:ring-2 focus:ring-indigo-400
-disabled:opacity-50"
+          type="submit"
+className="bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
+transition hover:bg-indigo-500 disabled:opacity-50"
+
           disabled={loading}
         >
           Send
         </button>
       </form>
-</div>{/* end container */}
-    </main>
+
 
     {/* PERSISTENT MUSTACHE “HUD” */}
     <footer className="fixed inset-x-0 bottom-0 flex justify-center bg-slate-900/80 py-2 shadow-inner backdrop-blur">
