@@ -19,8 +19,8 @@ function getOrCreatePlayerId() {
   return id;
 }
 
-const API_URL = "/api/play";   // no env var, same origin
-const PLAYER_ID = localStorage.getItem("playerId") ?? "demo"; // simple persistence
+const API_URL  = "/api/play";        // same-origin
+const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
