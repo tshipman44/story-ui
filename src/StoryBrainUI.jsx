@@ -28,14 +28,15 @@ const Container = ({ children, className = "" }) => (
     {children}
   </div>
 );
+const Header = () => (
 <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
 <Container>
 <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
 The Mysterious Affair at Styles
 </h1>
 </Container>
-   </header>
- );
+</header>
+);    
 const ChoiceButton = ({ label, onClick }) => (
   <button
     onClick={onClick}
