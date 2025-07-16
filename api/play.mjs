@@ -20,31 +20,31 @@ async function fetchPlayerRow(playerId) {
     .from("PlayerState")
     .select("*")
     .eq("player_id", playerId)
-    .single();
+    .maybeSingle();                 // ← avoids throw on no rows
 
   if (error && status !== 406) throw error;  // 406 = no rows
 
- if (!data) {
-  const defaults = {
-    player_id:     playerId,
-    story_phase:   "pre-murder",
-    current_scene: "scene_01",
-    revealed_clues: [],
-    updated_at:    new Date().toISOString()
-  };
+  if (!data) {
+    const defaults = {
+      player_id:     playerId,
+      story_phase:   "pre-murder",
+      current_scene: "scene_01",
+      revealed_clues: [],
+      updated_at:    new Date().toISOString(),
+    };
 
-  const { data: inserted, error: insertErr } = await supabase
-    .from("PlayerState")
-    .insert(defaults)
-    .select("*")      // <‑‑ add this
-    .single();
+    const { data: inserted, error: insertErr } = await supabase
+      .from("PlayerState")
+      .insert(defaults)
+      .select("*");                 // returns an array
 
-  if (insertErr) throw insertErr;
-  return inserted;
+    if (insertErr) throw insertErr;
+    return inserted[0];            // ← grab the first row
+  }
+
+  return data;                      // object when row already exists
 }
 
-  return data;
-}
 
 async function updatePlayerRow(playerId, { phase, scene, revealed }) {
   const { error } = await supabase
