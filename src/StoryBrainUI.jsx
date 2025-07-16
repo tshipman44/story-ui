@@ -8,6 +8,16 @@ import { useEffect, useState } from "react";
  * • Keeps all state client‑side; no Redux or router yet.
  * • TailwindCSS utility classes for quick styling (works automatically on Vercel).
  */
+/* ── helper: create or reuse a playerId ── */
+function getOrCreatePlayerId() {
+  const stored = localStorage.getItem("playerId");
+  if (stored) return stored;
+
+  // browser‑native UUID v4 (works in all modern browsers)
+  const id = crypto.randomUUID();
+  localStorage.setItem("playerId", id);
+  return id;
+}
 
 const API_URL = "/api/play";   // no env var, same origin
 const PLAYER_ID = localStorage.getItem("playerId") ?? "demo"; // simple persistence
