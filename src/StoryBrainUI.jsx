@@ -93,7 +93,7 @@ return (
       
 <main className="flex-1 overflow-y-auto pb-[11rem] pt-4">
 <Container className="">  {/* narrative + buttons */}
-<article className="max-w-prose mx-auto whitespace-pre-wrap leading-relaxed space-y-4">
+<article className="max-w-2xl mx-auto whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
       <div className="mt-8 max-w-sm mx-auto">
