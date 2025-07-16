@@ -24,19 +24,21 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8 ${className}`}>
+  <div className={`mx-auto max-w-3xl px-6 sm:px-8 lg:px-12 ${className}`}>
     {children}
   </div>
 );
+
 const Header = () => (
-<header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
-<Container>
-<h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
-The Mysterious Affair at Styles
-</h1>
-</Container>
-</header>
-);    
+  <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
+    <Container>
+      <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
+        The Mysterious Affair at Styles
+      </h1>
+    </Container>
+  </header>
+);
+   
 const ChoiceButton = ({ label, onClick }) => (
   <button
     onClick={onClick}
@@ -90,7 +92,7 @@ return (
   
       
 <main className="flex-1 overflow-y-auto pb-[11rem] pt-4">
-<Container>
+<Container className="">  {/* narrative + buttons */}
 <article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
@@ -99,12 +101,11 @@ return (
           <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
         ))}
       </div>
-</Container>
-    </main>
-      {/* fallback free‑text input for ad‑hoc actions */}
-      <form className="sticky bottom-[5.5rem] mx-auto mt-6 flex max-w-sm
-overflow-hidden rounded-lg bg-slate-700/80 shadow
- backdrop-blur focus-within:ring-2 focus-within:ring-indigo-400"
+{/* free‑text bar now inside the same container */}
+    <form
+      className="sticky bottom-[5.5rem] mx-auto mt-6 flex max-w-sm
+                 overflow-hidden rounded-lg bg-slate-700/80 shadow
+                backdrop-blur focus-within:ring-2 focus-within:ring-indigo-400"
         onSubmit={(e) => {
           e.preventDefault();
           const freeText = new FormData(e.target).get("free")?.toString() || "";
@@ -131,7 +132,8 @@ transition hover:bg-indigo-500 disabled:opacity-50"
         </button>
       </form>
 
-
+</Container>
+</main>
     {/* PERSISTENT MUSTACHE “HUD” */}
     <footer className="fixed inset-x-0 bottom-0 flex justify-center bg-slate-900/80 py-2 shadow-inner backdrop-blur">
       <Mustache mood={mustacheMood} />
