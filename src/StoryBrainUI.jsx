@@ -24,7 +24,7 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`mx-auto max-w-3xl px-6 sm:px-8 lg:px-12 ${className}`}>
+  <div className={`w-full px-6 sm:px-8 lg:px-12 ${className}`}>
     {children}
   </div>
 );
@@ -93,7 +93,7 @@ return (
       
 <main className="flex-1 overflow-y-auto pb-[11rem] pt-4">
 <Container className="">  {/* narrative + buttons */}
-<article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
+<article className="max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
       <div className="mt-8 max-w-sm">
