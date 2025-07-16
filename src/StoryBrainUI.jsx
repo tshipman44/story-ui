@@ -87,7 +87,7 @@ return (
 
       <div className="mx-auto mt-8 max-w-sm">
         {choices.map((c) => (
-          <ChoiceButton key={c} label={c} onClick={() => sendAction(c)} />
+          <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
         ))}
       </div>
 
@@ -97,7 +97,7 @@ return (
         onSubmit={(e) => {
           e.preventDefault();
           const freeText = new FormData(e.target).get("free")?.toString() || "";
-          if (freeText.trim()) sendAction(freeText.trim());
+          if (freeText.trim()) playTurn(freeText.trim());
           e.target.reset();
         }}
       >
