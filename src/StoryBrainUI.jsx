@@ -61,7 +61,6 @@ data.stateDelta?.global?.mustacheMood ?? "neutral"
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col items-center p-6">
       <div className="max-w-prose w-full bg-white shadow rounded-2xl p-6 space-y-6">
-<Mustache mood={mustacheMood} /> 
        <p className="font-serif whitespace-pre-wrap leading-relaxed">{narrative}</p>
 
 
@@ -99,6 +98,7 @@ data.stateDelta?.global?.mustacheMood ?? "neutral"
             Send
           </button>
         </form>
+<Mustache mood={mustacheMood} /> 
       </div>
     </div>
   );
