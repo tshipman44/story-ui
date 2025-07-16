@@ -80,7 +80,9 @@ return (
     <Header />
 
     {/* MAIN SCROLL AREA */}
-    <main className="flex-1 overflow-y-auto px-4 pb-36 pt-4">
+    <main className="flex-1 overflow-y-auto pb-36 pt-4">
+{/* 📦 NEW wrapper: centres content & adds side gutters */}
+ <div className="mx-auto w-full max-w-3xl px-4 sm:px-6 lg:px-8">
       <article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
@@ -104,17 +106,23 @@ return (
         <input
           name="free"
           aria-label="Custom action"
-          className="flex-1 rounded-lg border border-slate-600 bg-slate-700 p-2 placeholder-slate-400"
+          className="flex-1 rounded-lg bg-slate-700/80 px-3 py-2 text-sm
+           placeholder-slate-400 focus:outline-none focus:ring-2
+          focus:ring-indigo-400"
           placeholder="Or type your own action…"
           disabled={loading}
         />
         <button
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-50"
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold
+text-white shadow-sm transition hover:bg-indigo-500
+focus:outline-none focus:ring-2 focus:ring-indigo-400
+disabled:opacity-50"
           disabled={loading}
         >
           Send
         </button>
       </form>
+</div>{/* end container */}
     </main>
 
     {/* PERSISTENT MUSTACHE “HUD” */}
