@@ -15,6 +15,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const openai   = new OpenAI({ apiKey: OPENAI_KEY });
 
 /* ─── helpers ──────────────────────────── */
+
+const row = await fetchPlayerRow(playerId);
+console.log("🔍 fetchPlayerRow →", row);   // ← add this
+
+const {
+  story_phase: phase,
+  current_scene: scene,
+  revealed_clues: revealed,
+} = row;
+
 async function fetchPlayerRow(playerId) {
   const { data, error, status } = await supabase
     .from("PlayerState")
