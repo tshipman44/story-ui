@@ -97,7 +97,7 @@ return (
         onSubmit={(e) => {
           e.preventDefault();
           const freeText = new FormData(e.target).get("free")?.toString() || "";
-          if (freeText.trim()) playTurn(freeText.trim());
+          if (freeText.trim()) sendAction(freeText.trim());
           e.target.reset();
         }}
       >
