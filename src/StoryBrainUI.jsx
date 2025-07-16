@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Mustache from "./Mustache.jsx";     // ← new line
+import Mustache from "./mustache.jsx";     // ← new line
 
 /**
  * Skeleton StoryBrain front‑end
