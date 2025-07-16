@@ -870,7 +870,8 @@ export default async function handler(req, res) {
 
   try {
     // -- pull current state
-    const { idx, row } = await fetchPlayerRow(playerId);
+    const row = await fetchPlayerRow(playerId);   // row is the object you need
+
     const {
   story_phase: phase,
   current_scene: scene,
@@ -899,11 +900,11 @@ export default async function handler(req, res) {
       ]),
     ];
 
-    await updatePlayerRow(idx, [
-      g.storyPhase,
-      g.current_scene,
-      mergedRevealed,
-    ]);
+   await updatePlayerRow(playerId, {
+         phase: g.storyPhase,
+         scene: g.current_scene,
+         revealed: mergedRevealed
+     });
 
     // -- send narrative + choices back
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
