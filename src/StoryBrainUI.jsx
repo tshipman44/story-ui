@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Mustache from "./Mustache.jsx";     // ← new line
 
 /**
  * Skeleton StoryBrain front‑end
@@ -26,6 +27,8 @@ export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
   const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
+const [mustacheMood, setMustacheMood] = useState("neutral");
+
 
   // initial turn – send a synthetic "begin"
   useEffect(() => {
@@ -43,6 +46,10 @@ export default function StoryBrainUI() {
       const data = await res.json();
       setNarrative(data.narrative);
       setChoices(data.choices);
+// grab the mood if present
+setMustacheMood(
+data.stateDelta?.global?.mustacheMood ?? "neutral"
+);
     } catch (err) {
       setNarrative("🚨 Error contacting the story engine. Check console.");
       console.error(err);
@@ -54,7 +61,9 @@ export default function StoryBrainUI() {
   return (
     <div className="min-h-screen bg-stone-100 flex flex-col items-center p-6">
       <div className="max-w-prose w-full bg-white shadow rounded-2xl p-6 space-y-6">
-        <p className="font-serif whitespace-pre-wrap leading-relaxed">{narrative}</p>
+<Mustache mood={mustacheMood} /> 
+       <p className="font-serif whitespace-pre-wrap leading-relaxed">{narrative}</p>
+
 
         <div className="grid gap-3">
           {choices.map((c) => (
