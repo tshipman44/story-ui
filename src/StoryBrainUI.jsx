@@ -88,11 +88,12 @@ return (
 
     {/* MAIN SCROLL AREA */}
   
-      <article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
+      
+<main className="flex-1 overflow-y-auto pb-[11rem] pt-4">
+<Container>
+<article className="mx-auto max-w-prose whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
       </article>
-<main className="flex-1 overflow-y-auto pb-[11rem] pt-4"> {/* enough room for sticky bar + mustache */}
-<Container>
       <div className="mt-8 max-w-sm">
         {choices.map((c) => (
           <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
