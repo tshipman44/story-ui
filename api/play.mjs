@@ -5,7 +5,6 @@ import OpenAI from "openai";
 /* ─── env vars ─────────────────────────── */
 const {
   OPENAI_KEY,
-  GSERVICE_CREDS_JSON,   // still used by Google Sheets logging? (remove if not)
   SUPABASE_URL,
   SUPABASE_SERVICE_KEY,
 } = process.env;
@@ -16,14 +15,6 @@ const openai   = new OpenAI({ apiKey: OPENAI_KEY });
 
 /* ─── helpers ──────────────────────────── */
 
-const row = await fetchPlayerRow(playerId);
-console.log("🔍 fetchPlayerRow →", row);   // ← add this
-
-const {
-  story_phase: phase,
-  current_scene: scene,
-  revealed_clues: revealed,
-} = row;
 
 async function fetchPlayerRow(playerId) {
   const { data, error, status } = await supabase
