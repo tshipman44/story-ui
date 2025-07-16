@@ -23,8 +23,9 @@ function getOrCreatePlayerId() {
 const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 const Header = () => (
-  <header className="sticky top-0 z-10 flex items-center justify-center bg-slate-900 text-white h-12 shadow-md">
-    <h1 className="text-base font-semibold tracking-wide">
+  <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
+    <h1 className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8
+ py-3 text-lg sm:text-xl font-semibold tracking-wide">
       The Mysterious Affair at Styles
     </h1>
   </header>
