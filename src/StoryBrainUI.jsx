@@ -24,7 +24,7 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`w-full px-6 sm:px-8 lg:px-12 ${className}`}>
+  <div className={`w-full px-6 sm:px-10 lg:px-24 ${className}`}>
     {children}
   </div>
 );
@@ -135,12 +135,14 @@ return (
       
 <main className="flex-1 overflow-y-auto pb-[14rem] pt-4">
 <Container className="">  {/* narrative + buttons */}
-<article className="max-w-2xl mx-auto whitespace-pre-wrap leading-relaxed space-y-4">
+<article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6">
         {narrative}
       </article>
-      <div className="mt-8 max-w-sm mx-auto">
+     <div className="mt-10 flex flex-col items-center gap-3">
         {choices.map((c) => (
-          <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
+          <div className="w-full max-w-sm"> 
+<ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
+      </div>
         ))}
       </div>
 
