@@ -3,13 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-"scripts": {
-  "tw":   "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css",
-  "dev":  "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css --watch & vite dev",
-  "build":"npm run tw && vite build"
-},
+  "scripts": {
+    "tw": "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css",
+    "dev": "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css --watch & vite dev",
+    "build": "npm run tw && vite build"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.51.0",
+    "@tailwindcss/cli": "^4.1.11",
     "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "body-parser": "^2.2.0",
