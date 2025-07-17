@@ -3,9 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-  "tw":    "tailwindcss -i ./src/index.css -o ./src/tw.css",
-  "dev":   "npm run tw -- --watch & vite dev",
+ "scripts": {
+  /* 1 · Compile Tailwind once -------------------------------------------- */
+  "tw": "npx tailwindcss -i ./src/index.css -o ./src/tw.css",
+
+  /* 2 · Dev server: watch Tailwind + run Vite ---------------------------- */
+  "dev": "npx tailwindcss -i ./src/index.css -o ./src/tw.css --watch & vite dev",
+
+  /* 3 · Production build: compile Tailwind first, then Vite ------------- */
   "build": "npm run tw && vite build"
 },
   "dependencies": {
