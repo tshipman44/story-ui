@@ -24,7 +24,7 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`w-full px-6 sm:px-10 lg:px-24 ${className}`}>
+  <div className={`w-full m-2 px-6 sm:px-10 lg:px-24 ${className}`}>
     {children}
   </div>
 );
@@ -62,7 +62,7 @@ const Footer = ({ mood, onSubmit, loading }) => (
       className="
         flex max-w-sm w-full sm:w-auto
         overflow-hidden rounded-lg
-        bg-slate-700/80 shadow
+        bg-slate-700 shadow
         focus-within:ring-2 focus-within:ring-indigo-400
       "
     >
@@ -95,7 +95,7 @@ export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
   const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
-const [mustacheMood, setMustacheMood] = useState("neutral");
+  const [mustacheMood, setMustacheMood] = useState("neutral");
 
 
   // initial turn – send a synthetic "begin"
