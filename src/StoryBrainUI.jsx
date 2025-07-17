@@ -49,6 +49,41 @@ const ChoiceButton = ({ label, onClick }) => (
     {label}
   </button>
 );
+const Footer = ({ mood, onSubmit, loading }) => (
+  <footer
+    className="fixed inset-x-0 bottom-0 z-20 flex flex-col items-center
+               gap-2 bg-slate-900/80 py-3 shadow-inner backdrop-blur"
+  >
+    {/* free‑text input */}
+    <form
+      onSubmit={onSubmit}
+      className="flex w-full max-w-sm overflow-hidden rounded-lg
+                 bg-slate-700/80 shadow focus-within:ring-2
+                 focus-within:ring-indigo-400"
+    >
+      <input
+        name="free"
+        aria-label="Custom action"
+        disabled={loading}
+        placeholder="Or type your own action…"
+        className="flex-1 bg-transparent px-3 py-2 text-sm
+                   placeholder-slate-400 focus:outline-none"
+      />
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
+                   transition hover:bg-indigo-500 disabled:opacity-50"
+      >
+        Send
+      </button>
+    </form>
+
+    {/* mustache HUD */}
+    <Mustache mood={mood} />
+  </footer>
+);
+
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
   const [choices, setChoices] = useState([]);
@@ -91,7 +126,7 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main className="flex-1 overflow-y-auto pb-[11rem] pt-4">
+<main className="flex-1 overflow-y-auto pb-[14rem] pt-4">
 <Container className="">  {/* narrative + buttons */}
 <article className="max-w-2xl mx-auto whitespace-pre-wrap leading-relaxed space-y-4">
         {narrative}
@@ -101,43 +136,20 @@ return (
           <ChoiceButton key={c} label={c} onClick={() => playTurn (c)} />
         ))}
       </div>
-{/* free‑text bar now inside the same container */}
-    <form
-      className="sticky bottom-[5.5rem] mx-auto mt-6 flex max-w-sm
-                 overflow-hidden rounded-lg bg-slate-700/80 shadow
-                backdrop-blur focus-within:ring-2 focus-within:ring-indigo-400"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const freeText = new FormData(e.target).get("free")?.toString() || "";
-          if (freeText.trim()) playTurn(freeText.trim());
-          e.target.reset();
-        }}
-      >
-        <input
-          name="free"
-          aria-label="Custom action"
-          className="flex-1 bg-transparent px-3 py-2 text-sm
-placeholder-slate-400 focus:outline-none"
-          placeholder="Or type your own action…"
-          disabled={loading}
-        />
-        <button
-          type="submit"
-className="bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
-transition hover:bg-indigo-500 disabled:opacity-50"
 
-          disabled={loading}
-        >
-          Send
-        </button>
-      </form>
 
 </Container>
 </main>
-    {/* PERSISTENT MUSTACHE “HUD” */}
-    <footer className="fixed inset-x-0 bottom-0 flex justify-center bg-slate-900/80 py-2 shadow-inner backdrop-blur">
-      <Mustache mood={mustacheMood} />
-    </footer>
+  <Footer
+  mood={mustacheMood}
+  loading={loading}
+  onSubmit={(e) => {
+    e.preventDefault();
+    const free = new FormData(e.target).get("free")?.toString().trim();
+    if (free) playTurn(free);
+    e.target.reset();
+  }}
+/> 
   </div>
 );
 
