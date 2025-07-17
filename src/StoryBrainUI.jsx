@@ -51,16 +51,22 @@ const ChoiceButton = ({ label, onClick }) => (
 );
 const Footer = ({ mood, onSubmit, loading }) => (
   <footer
-    className="fixed inset-x-0 bottom-0 z-20 flex flex-col items-center
-               justify-center gap-3 bg-slate-900/80 py-3 shadow-inner backdrop-blur"
+    className="
+      fixed inset-x-0 bottom-0 z-20
+      flex flex-col items-center justify-center gap-3
+      bg-slate-900/80 py-3 shadow-inner backdrop-blur
+    "
   >
     {/* free‑text input */}
     <form
       onSubmit={onSubmit}
       /* width caps at 24 rem and is centered */
-      className="flex w-full max-w-sm mx-auto overflow-hidden rounded-lg
-                 bg-slate-700/80 shadow focus-within:ring-2
-                 focus-within:ring-indigo-400"
+      className="
+        flex max-w-sm w-full sm:w-auto
+        overflow-hidden rounded-lg
+        bg-slate-700/80 shadow
+        focus-within:ring-2 focus-within:ring-indigo-400
+      "
     >
       <input
         name="free"
