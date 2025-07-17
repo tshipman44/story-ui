@@ -143,17 +143,16 @@ return (
 
 </Container>
 </main>
-  <Footer
-  mood={mustacheMood}
-  loading={loading}
-  onSubmit={(e) => {
-    e.preventDefault();
-    const free = new FormData(e.target).get("free")?.toString().trim();
-    if (free) playTurn(free);
-    e.target.reset();
-  }}
-/> 
+ {/* ✅ keep ONLY the new unified footer */}
+    <Footer
+      mood={mustacheMood}
+      loading={loading}
+      onSubmit={(e) => {
+        e.preventDefault();
+        const txt = new FormData(e.target).get("free")?.toString().trim();
+        if (txt) playTurn(txt);
+        e.target.reset();
+      }}
+    />
   </div>
 );
-
-}
