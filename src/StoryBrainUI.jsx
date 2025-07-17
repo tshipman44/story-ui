@@ -133,7 +133,7 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main className="flex-1 overflow-y-auto pb-[14rem] pt-4">
+<main className="flex-1 overflow-y-auto pb-[16rem] pt-4">
 <Container className="">  {/* narrative + buttons */}
 <article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6">
         {narrative}
