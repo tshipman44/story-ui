@@ -3,10 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
- "scripts": {
-  "tw": "npx tailwindcss -i ./src/index.css -o ./src/tw.css",
-  "dev": "npx tailwindcss -i ./src/index.css -o ./src/tw.css --watch & vite dev",
-  "build": "npm run tw && vite build"
+"scripts": {
+  "tw":   "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css",
+  "dev":  "npx --package=tailwindcss tailwindcss -i ./src/index.css -o ./src/tw.css --watch & vite dev",
+  "build":"npm run tw && vite build"
 },
   "dependencies": {
     "@supabase/supabase-js": "^2.51.0",
