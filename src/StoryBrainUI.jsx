@@ -51,15 +51,16 @@ const ChoiceButton = ({ label, onClick }) => (
 );
 const Footer = ({ mood, onSubmit, loading }) => (
   <footer
-    className="fixed inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2 bg-slate-900/80 py-3 shadow-inner backdrop-blur justify-center"
-
+    className="fixed inset-x-0 bottom-0 z-20 flex flex-col items-center
+               justify-center gap-3 bg-slate-900/80 py-3 shadow-inner backdrop-blur"
   >
     {/* free‑text input */}
     <form
       onSubmit={onSubmit}
-      className="flex max-w-sm w-full sm:w-auto overflow-hidden rounded-lg
-              bg-slate-700/80 shadow focus-within:ring-2
-              focus-within:ring-indigo-400"
+      /* width caps at 24 rem and is centered */
+      className="flex w-full max-w-sm mx-auto overflow-hidden rounded-lg
+                 bg-slate-700/80 shadow focus-within:ring-2
+                 focus-within:ring-indigo-400"
     >
       <input
         name="free"
@@ -79,8 +80,10 @@ const Footer = ({ mood, onSubmit, loading }) => (
       </button>
     </form>
 
-    {/* mustache HUD */}
-    <Mustache mood={mood} className="w-40 sm:w-52" /> {/* optional size tweak */}
+    {/* mustache HUD (scaled for mobile) */}
+    <div className="mt-1">
+      <Mustache mood={mood} className="w-40 sm:w-48" />
+    </div>
   </footer>
 );
 
