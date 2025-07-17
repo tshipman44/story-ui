@@ -24,7 +24,7 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`w-full m-2 px-6 sm:px-10 lg:px-24 ${className}`}>
+  <div className={`w-full m-1 px-6 sm:px-10 lg:px-24 ${className}`}>
     {children}
   </div>
 );
@@ -71,7 +71,7 @@ const Footer = ({ mood, onSubmit, loading }) => (
         aria-label="Custom action"
         disabled={loading}
         placeholder="Or type your own action…"
-        className="flex-1 bg-transparent px-3 py-2 text-sm
+        className="flex-1 bg-slate-900 px-3 py-2 text-sm
                    placeholder-slate-400 focus:outline-none"
       />
       <button
@@ -127,7 +127,7 @@ data.stateDelta?.global?.mustacheMood ?? "neutral"
   }
 
 return (
-  <div className="flex h-screen flex-col bg-slate-800 text-slate-100">
+  <div className="flex px-2 h-screen flex-col bg-slate-800 text-slate-100">
     <Header />
 
     {/* MAIN SCROLL AREA */}
