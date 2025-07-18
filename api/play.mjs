@@ -31,6 +31,7 @@ async function fetchPlayerRow(playerId) {
       story_phase:   "pre-murder",
       current_scene: "scene_01",
       revealed_clues: [],
+      turns_since_last_progress: 0,
       updated_at:    new Date().toISOString(),
     };
 
@@ -54,6 +55,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed }) {
       story_phase:   phase,
       current_scene: scene,
       revealed_clues: revealed,
+      turns_since_last_progress: turns,
       updated_at:    new Date().toISOString(),
     })
     .eq("player_id", playerId);
@@ -113,6 +115,7 @@ If confidencePoirotKnowsKiller ≥ 0.8 and storyPhase is still "investigation", 
 13. On each turn merge stateDelta.revealedClues into revealedCluesGlobal (no duplicates).
 The assistant must reference revealedCluesGlobal, not just the local scene array, when checking what Poirot already knows.
 14. Mustache Mood - the default for mustacheMood is neutral. Set the value to surprised if a brand new clue is revealed at the start of the scene. Set the value to thoughtful if Poirot is analysing evidence or explaining deductions
+15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
 
 
 ────────────────────────────────────────
@@ -543,6 +546,7 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
       "clues_revealed ": "C7",
       "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C5",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
+      "phase_change_to": "investigation",
       "status": "eligible",
       "preferred_next_scene": "scene_08",
       "possible_next_scenes": "scene_08 "
@@ -892,7 +896,18 @@ export default async function handler(req, res) {
     });
 
     const assistant = JSON.parse(chat.choices[0].message.content);
+    let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
 
+    const oldClues = new Set(row.revealed_clues);
+    const newClues = new Set(assistant.stateDelta.revealedClues || []);
+    const phaseChanged = row.story_phase !== assistant.stateDelta.global.storyPhase;
+
+    // Progress is made if new clues are found or the story phase changes.
+    if (newClues.size > oldClues.size || phaseChanged) {
+      nextTurnsSinceProgress = 0;
+    } else {
+      nextTurnsSinceProgress += 1;
+    }
     // -- merge stateDelta
     const g = assistant.stateDelta.global;
     const mergedRevealed = [
@@ -906,6 +921,7 @@ export default async function handler(req, res) {
          phase: g.storyPhase,
          scene: g.current_scene,
          revealed: mergedRevealed
+         turns: nextTurnsSinceProgress
      });
 
     // -- send narrative + choices backres.setHeader("Access-Control-Allow-Origin", CORS.origin);
