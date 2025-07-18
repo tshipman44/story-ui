@@ -767,7 +767,7 @@ async function fetchPlayerRow(playerId) {
 }
 
 
-async function updatePlayerRow(playerId, { phase, scene, revealed, current_sequence, turns }) {
+async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
   const { error } = await supabase
     .from("PlayerState")
     .update({
