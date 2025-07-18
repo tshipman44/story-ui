@@ -2,20 +2,15 @@
 export default {
   content: [
     './index.html',
-    './src/**/*.{js,jsx,ts,tsx}',          // ← keep this
+    './**/*.{js,jsx,ts,tsx}',   // ← scan everything everywhere
   ],
 
   safelist: [
-    // spacing & gutters
-    'px-6', 'sm:px-10', 'lg:px-24',
-
-    // layout helpers used in Footer / buttons
-    'flex', 'flex-col', 'items-center', 'justify-center',
-    'w-full', 'max-w-sm', 'max-w-2xl',
-
-    // pinned footer offsets
-    'bottom-0', 'inset-x-0',
-  ],
+  'px-6', 'sm:px-10', 'lg:px-24',   // gutters
+  'bottom-0', 'inset-x-0',          // pinned footer
+  'flex', 'flex-col', 'items-center', 'justify-center',
+  'w-full', 'max-w-sm', 'max-w-2xl', // layout wrappers
+],
 
   theme: { extend: {} },
   plugins: [],
