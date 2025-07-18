@@ -901,13 +901,15 @@ const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(ph
 
     // -- build prompt & call OpenAI
     const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes });
-    const chat = await openai.chat.completions.create({
+console.log("--- SYSTEM PROMPT ---", systemPrompt);   
+  const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userAction },
       ],
     });
+console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- ADD THIS LINE
 
     const assistant = JSON.parse(chat.choices[0].message.content);
     let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
