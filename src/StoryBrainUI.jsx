@@ -156,8 +156,11 @@ const sceneImages = {
         body: JSON.stringify({ playerId: PLAYER_ID, userAction: action })
       });
       const data = await res.json();
-      setNarrative(data.narrative);
-      setChoices(data.choices);
+// If data.narrative is missing, show the error from the API instead.
+setNarrative(data.narrative || `🚨 Error: ${data.error}`);
+// If data.choices is missing, default to an empty array to prevent a crash.
+setChoices(data.choices || []);
+
 // grab the mood if present
 setMustacheMood(
 data.stateDelta?.global?.mustacheMood ?? "neutral"
