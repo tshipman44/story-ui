@@ -51,42 +51,43 @@ const ChoiceButton = ({ label, onClick }) => (
 );
 const Footer = ({ mood, onSubmit, loading }) => (
   <footer
-    className="fixed flex flex-col items-center justify-center gap-3
+    className="fixed flex flex-col items-center justify-center
              bg-slate-900/80 py-3 shadow-inner backdrop-blur"
-  style={{ left: 0, right: 0, bottom: 0 }}
+    style={{ left: 0, right: 0, bottom: 0 }}
   >
-    {/* free‑text input */}
-    <form
-      onSubmit={onSubmit}
-      /* width caps at 24 rem and is centered */
-      className="
-        flex max-w-sm w-full sm:w-auto
-        overflow-hidden rounded-lg
-        bg-slate-700 shadow
-        focus-within:ring-2 focus-within:ring-indigo-400
-      "
-    >
-      <input
-        name="free"
-        aria-label="Custom action"
-        disabled={loading}
-        placeholder="Or type your own action…"
-        className="flex-1 bg-slate-900 px-3 py-2 text-sm
-                   placeholder-slate-400 focus:outline-none"
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-indigo-600 px-4 py-2 text-sm font-semibold text-white
-                   transition hover:bg-indigo-500 disabled:opacity-50"
+    {/* New container to constrain and center both elements */}
+    <div className="w-full max-w-sm px-4 sm:px-0">
+      {/* free‑text input, now styled to look more like a button */}
+      <form
+        onSubmit={onSubmit}
+        className="
+          flex overflow-hidden rounded-lg
+          bg-slate-900/80 border border-slate-600 shadow
+          focus-within:ring-2 focus-within:ring-indigo-500
+        "
       >
-        Send
-      </button>
-    </form>
+        <input
+          name="free"
+          aria-label="Custom action"
+          disabled={loading}
+          placeholder="Or type your own action…"
+          className="flex-1 bg-transparent px-4 py-3 text-sm
+                     placeholder-slate-400 focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-indigo-600 px-4 py-3 text-sm font-semibold text-white
+                     transition hover:bg-indigo-500 disabled:opacity-50"
+        >
+          Send
+        </button>
+      </form>
 
-    {/* mustache HUD (scaled for mobile) */}
-    <div className="mt-1">
-      <Mustache mood={mood} className="w-40 sm:w-48" />
+      {/* mustache HUD, now full-width within the constrained parent */}
+      <div className="mt-3">
+        <Mustache mood={mood} className="w-full" />
+      </div>
     </div>
   </footer>
 );
@@ -134,7 +135,7 @@ return (
   
       
 <main className="flex-1 overflow-y-auto pb-[16rem] pt-4">
-<Container className="">  {/* narrative + buttons */}
+ <Container className="max-w-5xl mx-auto"> {/* narrative + buttons */}
 <article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6">
         {narrative}
       </article>
