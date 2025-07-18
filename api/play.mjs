@@ -944,7 +944,7 @@ export default async function handler(req, res) {
          phase: g.storyPhase,
          scene: g.current_scene,
          revealed: mergedRevealed,
-         turns: nextTurnsSinceProgress
+         turns: nextTurnsSinceProgress,
 current_sequence: g.currentSequence
      });
 
