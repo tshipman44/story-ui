@@ -64,9 +64,9 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, current_seque
 
   if (error) throw error;
 }
-function buildSystemPrompt({ phase, scene, revealed }) {
+function buildSystemPrompt({ phase, scene, revealed, sequence, turns }) {
 return `
-You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery.  
+You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery based off the novel The Mysterious Affair at Styles.  
 You hold an internal object called **StoryState** (see “Current StoryState” below).
 
 ────────────────────────────────────────
@@ -123,6 +123,11 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
 ────────────────────────────────────────
 ## Current StoryState (trim to essentials)
 {
+ "storyPhase": "${phase}",
+  "currentScene": "${scene}",
+  "currentSequence": ${sequence || 1},
+  "turnsSinceLastProgress": ${turns || 0},
+  "revealedCluesGlobal": ${JSON.stringify(revealed)},
   "characters": [
     {
       "char_id": "ch_1",
@@ -904,12 +909,14 @@ export default async function handler(req, res) {
     const {
   story_phase: phase,
   current_scene: scene,
-  revealed_clues: revealed
+  revealed_clues: revealed,
+  current_sequence,              
+  turns_since_last_progress      
 } = row;
     
 
     // -- build prompt & call OpenAI
-    const systemPrompt = buildSystemPrompt({ phase, scene, revealed });
+    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, sequence: current_sequence, turns: turns_since_last_progress });
     const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
