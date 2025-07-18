@@ -173,13 +173,13 @@ setScene(data.scene ?? scene); // ← New line to update the scene
   }
 
 return (
-  <div className="flex px-2 h-screen flex-col bg-slate-800 text-slate-100">
+   <div className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100">
     <Header />
 
     {/* MAIN SCROLL AREA */}
   
       
-<main className="flex-1 overflow-y-auto pb-[16rem] pt-4
+<main className="w-full flex-1 overflow-y-auto pb-[16rem] pt-4
              bg-cover bg-center transition-all duration-1000"
   style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
 >
