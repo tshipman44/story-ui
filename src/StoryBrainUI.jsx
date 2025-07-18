@@ -1,5 +1,25 @@
 import { useEffect, useState } from "react";
 import Mustache from "./mustache.jsx";     // ← new line
+import scene1Image from './assets/scene_01.png';
+import scene2Image from './assets/scene_02.png';
+import scene3Image from './assets/scene_03.png';
+import scene4Image from './assets/scene_04.png';
+import scene5Image from './assets/scene_05.png';
+import scene6Image from './assets/scene_06.png';
+import scene7Image from './assets/scene_07.png';
+import scene8Image from './assets/scene_08.png';
+import scene9Image from './assets/scene_09.png';
+import scene10Image from './assets/scene_10.png';
+import scene11Image from './assets/scene_11.png';
+import scene12Image from './assets/scene_12.png';
+import scene13Image from './assets/scene_13.png';
+import scene14Image from './assets/scene_14.png';
+import scene15Image from './assets/scene_15.png';
+import scene16Image from './assets/scene_16.png';
+import scene17Image from './assets/scene_17.png';
+import scene18Image from './assets/scene_18.png';
+import scene19Image from './assets/scene_19.png';
+import scene20Image from './assets/scene_20.png';
 
 /**
  * Skeleton StoryBrain front‑end
@@ -24,14 +44,14 @@ const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
 const Container = ({ children, className = "" }) => (
-  <div className={`w-full m-1 px-6 sm:px-10 lg:px-24 ${className}`}>
+  <div className={`m-1 px-6 sm:px-10 lg:px-24 ${className}`}>
     {children}
   </div>
 );
 
 const Header = () => (
   <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
-    <Container>
+    <Container className="w-full max-w-5xl mx-auto">
       <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
         The Mysterious Affair at Styles
       </h1>
@@ -97,8 +117,31 @@ export default function StoryBrainUI() {
   const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
+const [scene, setScene] = useState(1);
 
-
+const sceneImages = {
+    1: scene1Image,
+    2: scene2Image,
+3: scene3Image,
+4: scene4Image,
+5: scene5Image,
+6: scene6Image,
+7: scene7Image,
+8: scene8Image,
+9: scene9Image,
+10: scene10Image,
+11: scene11Image,
+12: scene12Image,
+13: scene13Image,
+14: scene14Image,
+15: scene15Image,
+16: scene16Image,
+17: scene17Image,
+18: scene18Image,
+19: scene19Image,
+20: scene20Image,
+    // ... add more scenes and images as needed
+  };
   // initial turn – send a synthetic "begin"
   useEffect(() => {
     playTurn("begin");
@@ -119,6 +162,8 @@ export default function StoryBrainUI() {
 setMustacheMood(
 data.stateDelta?.global?.mustacheMood ?? "neutral"
 );
+setScene(data.scene ?? scene); // ← New line to update the scene
+
     } catch (err) {
       setNarrative("🚨 Error contacting the story engine. Check console.");
       console.error(err);
@@ -134,9 +179,13 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main className="flex-1 overflow-y-auto pb-[16rem] pt-4">
+<main className="flex-1 overflow-y-auto pb-[16rem] pt-4
+             bg-cover bg-center transition-all duration-1000"
+  style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+>
  <Container className="max-w-5xl mx-auto"> {/* narrative + buttons */}
-<article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6">
+ <article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6
+                        bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
         {narrative}
       </article>
      <div className="mt-10 flex flex-col items-center gap-3">
