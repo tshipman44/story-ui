@@ -781,7 +781,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
 
   if (error) throw error;
 }
-function buildSystemPrompt({ phase, scene, revealed, turns }) {
+function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes }) {
 return `
 You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery based off the novel The Mysterious Affair at Styles.  
 You hold an internal object called **StoryState** (see “Current StoryState” below).
