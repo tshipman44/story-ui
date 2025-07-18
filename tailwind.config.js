@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    './index.html',
-    './**/*.{js,jsx,ts,tsx}',   // ← scan everything everywhere
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
 
   safelist: [
