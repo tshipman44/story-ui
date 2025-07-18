@@ -48,7 +48,7 @@ async function fetchPlayerRow(playerId) {
 }
 
 
-async function updatePlayerRow(playerId, { phase, scene, revealed }) {
+async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
   const { error } = await supabase
     .from("PlayerState")
     .update({
@@ -920,11 +920,12 @@ export default async function handler(req, res) {
    await updatePlayerRow(playerId, {
          phase: g.storyPhase,
          scene: g.current_scene,
-         revealed: mergedRevealed
+         revealed: mergedRevealed,
          turns: nextTurnsSinceProgress
      });
 
-    // -- send narrative + choices backres.setHeader("Access-Control-Allow-Origin", CORS.origin);
+    // -- send narrative + choices back
+res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 res.status(200).json({
   narrative: assistant.narrative,
   choices:   assistant.choices,
