@@ -908,12 +908,14 @@ export default async function handler(req, res) {
          revealed: mergedRevealed
      });
 
-    // -- send narrative + choices back
-    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-    res.status(200).json({
-      narrative: assistant.narrative,
-      choices:   assistant.choices
-    });
+    // -- send narrative + choices backres.setHeader("Access-Control-Allow-Origin", CORS.origin);
+res.status(200).json({
+  narrative: assistant.narrative,
+  choices:   assistant.choices,
+  scene:     assistant.stateDelta.global.current_scene, // <-- Add the scene
+  stateDelta: assistant.stateDelta // <-- Also send the stateDelta for the mustache
+});
+
   } catch (err) {
     console.error(err);
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
