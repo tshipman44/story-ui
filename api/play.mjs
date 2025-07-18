@@ -2,133 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
 
-/* ─── env vars ─────────────────────────── */
-const {
-  OPENAI_KEY,
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY,
-} = process.env;
-
-/* ─── clients ──────────────────────────── */
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-const openai   = new OpenAI({ apiKey: OPENAI_KEY });
-
-/* ─── helpers ──────────────────────────── */
-
-
-async function fetchPlayerRow(playerId) {
-  const { data, error, status } = await supabase
-    .from("PlayerState")
-    .select("*")
-    .eq("player_id", playerId)
-    .maybeSingle();                 // ← avoids throw on no rows
-
-  if (error && status !== 406) throw error;  // 406 = no rows
-
-  if (!data) {
-    const defaults = {
-      player_id:     playerId,
-      story_phase:   "pre-murder",
-      current_scene: "scene_01",
-      revealed_clues: [],
-current_sequence: 1,
-      turns_since_last_progress: 0,
-      updated_at:    new Date().toISOString(),
-    };
-
-    const { data: inserted, error: insertErr } = await supabase
-      .from("PlayerState")
-      .insert(defaults)
-      .select("*");                 // returns an array
-
-    if (insertErr) throw insertErr;
-    return inserted[0];            // ← grab the first row
-  }
-
-  return data;                      // object when row already exists
-}
-
-
-async function updatePlayerRow(playerId, { phase, scene, revealed, current_sequence, turns }) {
-  const { error } = await supabase
-    .from("PlayerState")
-    .update({
-      story_phase:   phase,
-      current_scene: scene,
-      revealed_clues: revealed,
-      current_sequence: current_sequence,
-      turns_since_last_progress: turns,
-      updated_at:    new Date().toISOString(),
-    })
-    .eq("player_id", playerId);
-
-  if (error) throw error;
-}
-function buildSystemPrompt({ phase, scene, revealed, sequence, turns }) {
-return `
-You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery based off the novel The Mysterious Affair at Styles.  
-You hold an internal object called **StoryState** (see “Current StoryState” below).
-
-────────────────────────────────────────
-## ⚠️  OUTPUT FORMAT – STRICT
-Return **one** valid JSON object *and nothing else*.  
-Use **this exact schema** (order doesn’t matter, keys do):
-
-{
-  "narrative": "string — vivid prose in Christie’s voice, written to the player-detective",
-  "choices":   ["string", …]           // 1-4 suggested next actions
-  "stateDelta": {
-    "revealedClues":        ["clue_id", …],                  // may be empty
-    "readerKnowledgeUpdates":[{"object_id":"id","confidence":0-1}, …],
-    "global": {
-"mustacheMood": "neutral",          // ← NEW (neutral | surprised | thoughtful)
-      "current_scene":              "scene_id",
-      "confidencePoirotKnowsKiller": 0-1
-"turnsSinceLastProgress": //number of conversation turns since the player has revealed a clue ,
-"storyPhase": //One of (pre-murder, investigation, reveal)
-    }
-  }
-}
-
-* Always include **all three top-level keys** even if some arrays are empty.  
-* Do **NOT** wrap the JSON in markdown or prose.  
-* Do **NOT** call any functions; this JSON is the only response.
-
-────────────────────────────────────────
-## Story rules
-1. **Maintain canon:** never contradict facts in *StoryState*.  The story is always told from the point of view of Arthur Hastings.
-2. *Fair-play mystery:* a clue used to solve the case must have been (or become) discoverable by the reader.  
-3. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** **and** the player explicitly accuses.  
-4. If three consecutive turns advance neither plot nor clues, add a subtle hint via Poirot.  
-5. Keep tone, diction, and era appropriate for 1920s–30s Christie.
-6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == "eligible".
-7. Always output in stateDelta.global:
-   { "turnsSinceLastProgress": <int>, "storyPhase": "<str>",
-     "revealedCluesGlobal": [ ... ], "currentSequence": <int> }
-8. After each action:
-   • If player uncovers a clue/scene advances plot → set turnsSinceLastProgress = 0.
-   • Else increment it by 1.
-9. If turnsSinceLastProgress ≥ 3 → propose a hint or automatically surface the next eligible scene.
-10. Enforce scene gating: only scenes whose unlocks_when returns true AND sequence_no ≥ currentSequence may be selected.
-11. Phase update – When a scene whose phase_change_to is not blank is played, set stateDelta.global.storyPhase to that value in the same turn.
-Update turnsSinceLastProgress to 0 and advance currentSequence.
-If confidencePoirotKnowsKiller ≥ 0.8 and storyPhase is still "investigation", change it to "reveal".
-12. Poirot always speaks in an arch tone, complete with inserted French when appropriate.
-13. On each turn merge stateDelta.revealedClues into revealedCluesGlobal (no duplicates).
-The assistant must reference revealedCluesGlobal, not just the local scene array, when checking what Poirot already knows.
-14. Mustache Mood - the default for mustacheMood is neutral. Set the value to surprised if a brand new clue is revealed at the start of the scene. Set the value to thoughtful if Poirot is analysing evidence or explaining deductions
-15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
-16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "choices" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
-
-────────────────────────────────────────
-## Current StoryState (trim to essentials)
-{
- "storyPhase": "${phase}",
-  "currentScene": "${scene}",
-  "currentSequence": ${sequence || 1},
-  "turnsSinceLastProgress": ${turns || 0},
-  "revealedCluesGlobal": ${JSON.stringify(revealed)},
-  "characters": [
+const STORY_DATA = {"characters": [
     {
       "char_id": "ch_1",
       "display_name": "Hercule Poirot",
@@ -475,7 +349,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
   "scenes": [
     {
       "scene_id": "scene_01 ",
-"sequence_no": 1,
       "timestamp": "1917-07-16T18:15:00.000Z",
       "location": "loc_01",
       "summary": "Captain Hastings, on medical leave, arrives in Essex and is driven to Styles Court by his old friend John Cavendish. He meets Cynthia Murdoch on the way in and catches his first glimpse of the gracious—but faintly tense—household.\n",
@@ -488,7 +361,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_02 ",
-"sequence_no": 2,
       "timestamp": "1917-07-16T20:30:00.000Z",
       "location": "loc_02",
       "summary": "Hastings is introduced to Emily Inglethorp, Alfred Inglethorp, Lawrence Cavendish, Mary Cavendish, and Evelyn Howard. Lady of the house and second husband seem oddly formal; Evelyn’s hostility toward Alfred crackles.",
@@ -501,7 +373,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_03",
-"sequence_no": 3,
       "timestamp": "1917-07-16T23:00:00.000Z",
       "location": "loc_03",
       "summary": "Evelyn and Emily quarrel loudly about Alfred’s influence and Emily’s new will. Evelyn announces she will leave at once.",
@@ -514,7 +385,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_04",
-"sequence_no": 4,
       "timestamp": "1917-07-17T02:10:00.000Z",
       "location": "loc_04",
       "summary": "Alfred (bearded, nervous) is seen purchasing strychnine in his wife’s name, claiming it is “to put down a dog.”",
@@ -527,7 +397,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_05",
-"sequence_no": 5,
       "timestamp": "1917-07-17T04:05:00.000Z",
       "location": "loc_05",
       "summary": "After dinner, coffee is served. Emily takes her usual cocoa instead, prepared by Dorcas in the pantry. Family disperses; Alfred and Dr Bauerstein stroll to the lodge gate.",
@@ -540,7 +409,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_06",
-"sequence_no": 6,
       "timestamp": "1917-07-17T06:45:00.000Z",
       "location": "loc_06",
       "summary": "Hastings, unable to sleep, sees a dim light under Emily’s door and hears a metallic chink. John strolls in pajamas, claiming he came to shut windows.",
@@ -553,7 +421,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_07",
-"sequence_no": 7,
       "timestamp": "1917-07-17T08:30:00.000Z",
       "location": "loc_07",
       "summary": "Emily wakes in agony, knocks over the table, bolts her door. Lawrence hears her cries; John and Hastings race to help but must break the door.",
@@ -567,7 +434,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_08",
-"sequence_no": 8,
       "timestamp": "1917-07-17T09:05:00.000Z",
       "location": "loc_08",
       "summary": "Dr Bauerstein and Dr Wilkins pronounce Emily dead; symptoms suggest strychnine poisoning.",
@@ -580,7 +446,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_09",
-"sequence_no": 9,
       "timestamp": "1917-07-17T16:50:00.000Z",
       "location": "loc_09",
       "summary": "Hastings fetches Poirot, who agrees to investigate on condition of secrecy.",
@@ -593,7 +458,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_10",
-"sequence_no": 10,
       "timestamp": "1917-07-17T18:30:00.000Z",
       "location": "loc_10",
       "summary": "Poirot questions Dorcas and discovers a key difference between Emily’s coffee‑cup and cocoa‑cup; he collects the latter for analysis.",
@@ -606,7 +470,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_11",
-"sequence_no": 11,
       "timestamp": "1917-07-17T19:45:00.000Z",
       "location": "loc_11",
       "summary": "Poirot examines poison cupboard; finds loose strychnine tablets and a soiled label from “Strychnine Hydrochloride.”",
@@ -619,7 +482,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_12",
-"sequence_no": 12,
       "timestamp": "1917-07-17T23:15:00.000Z",
       "location": "loc_12",
       "summary": "Poirot observes Mary secretly meeting Dr Bauerstein. Their tense conversation ends abruptly when they spot Hastings.",
@@ -632,7 +494,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_13",
-"sequence_no": 13,
       "timestamp": "1917-07-18T17:20:00.000Z",
       "location": "loc_13",
       "summary": "At the inquest, chemist testifies to Alfred’s strychnine purchase; Alfred claims Emily ordered it. Jury returns “Wilful murder by person or persons unknown.”",
@@ -645,7 +506,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_14",
-"sequence_no": 14,
       "timestamp": "1917-07-18T20:00:00.000Z",
       "location": "loc_14",
       "summary": "Poirot reenacts the night of the murder: Cynthia swallows her habitual bromide, bolts door, sleeps. Bromide bottle proves uncontaminated.",
@@ -658,7 +518,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_15",
-"sequence_no": 15,
       "timestamp": "1917-07-19T01:35:00.000Z",
       "location": "loc_15",
       "summary": "Police arrest Alfred on circumstantial evidence. Evelyn Howard returns unexpectedly, providing Alfred an alibi letter (time‑stamped 08:00 a.m.).",
@@ -671,7 +530,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_16",
-"sequence_no": 16,
       "timestamp": "1917-07-19T18:10:00.000Z",
       "location": "loc_16",
       "summary": "Poirot verifies Alfred’s overnight stay: landlord saw him retire at 22:30 and again at breakfast.",
@@ -684,7 +542,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_17",
-"sequence_no": 17,
       "timestamp": "1917-07-19T22:00:00.000Z",
       "location": "loc_17",
       "summary": "Poirot and Hastings find a charred corner of a will leaving everything to Alfred; Poirot pockets it silently.",
@@ -697,7 +554,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_18",
-"sequence_no": 18,
       "timestamp": "1917-07-20T16:00:00.000Z",
       "location": "loc_18",
       "summary": "Poirot melts a false beard gum sample found in Alfred’s dressing‑case; gum identical to that on scrap of fake beard hair in Emily’s lock.",
@@ -710,7 +566,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_19",
-"sequence_no": 19,
       "timestamp": "1917-07-21T05:00:00.000Z",
       "location": "loc_19",
       "summary": "Poirot assembles family, Inspector Japp, and lays out sequence: Evelyn and Alfred conspired to appear guilty by planting strychnine in coffee sugar and staging beard sighting, banking on double‑jeopardy. But Mary unwittingly removed the sugar; strychnine left unused.\n",
@@ -723,7 +578,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_20",
-"sequence_no": 20,
       "timestamp": "1917-07-21T05:25:00.000Z",
       "location": "loc_20",
       "summary": "Poirot exposes Evelyn’s handwriting on chemist label, Alfred’s forged beard hair, and Lawrence’s suppressed witness about tonic spoon. Evelyn collapses and confesses.",
@@ -736,7 +590,6 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
     },
     {
       "scene_id": "scene_21",
-"sequence_no": 21,
       "timestamp": "1917-07-21T17:30:00.000Z",
       "location": "loc_21",
       "summary": "Police take Evelyn and Alfred into custody. Family reconciles; John inherits; Poirot and Hastings share quietly triumphant breakfast.",
@@ -868,6 +721,134 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
   ]
 }
 
+/* ─── env vars ─────────────────────────── */
+const {
+  OPENAI_KEY,
+  SUPABASE_URL,
+  SUPABASE_SERVICE_KEY,
+} = process.env;
+
+/* ─── clients ──────────────────────────── */
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+const openai   = new OpenAI({ apiKey: OPENAI_KEY });
+
+/* ─── helpers ──────────────────────────── */
+
+
+async function fetchPlayerRow(playerId) {
+  const { data, error, status } = await supabase
+    .from("PlayerState")
+    .select("*")
+    .eq("player_id", playerId)
+    .maybeSingle();                 // ← avoids throw on no rows
+
+  if (error && status !== 406) throw error;  // 406 = no rows
+
+  if (!data) {
+    const defaults = {
+      player_id:     playerId,
+      story_phase:   "pre-murder",
+      current_scene: "scene_01",
+      revealed_clues: [],
+      turns_since_last_progress: 0,
+      updated_at:    new Date().toISOString(),
+    };
+
+    const { data: inserted, error: insertErr } = await supabase
+      .from("PlayerState")
+      .insert(defaults)
+      .select("*");                 // returns an array
+
+    if (insertErr) throw insertErr;
+    return inserted[0];            // ← grab the first row
+  }
+
+  return data;                      // object when row already exists
+}
+
+
+async function updatePlayerRow(playerId, { phase, scene, revealed, current_sequence, turns }) {
+  const { error } = await supabase
+    .from("PlayerState")
+    .update({
+      story_phase:   phase,
+      current_scene: scene,
+      revealed_clues: revealed,
+      turns_since_last_progress: turns,
+      updated_at:    new Date().toISOString(),
+    })
+    .eq("player_id", playerId);
+
+  if (error) throw error;
+}
+function buildSystemPrompt({ phase, scene, revealed, sequence, turns }) {
+return `
+You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery based off the novel The Mysterious Affair at Styles.  
+You hold an internal object called **StoryState** (see “Current StoryState” below).
+
+────────────────────────────────────────
+## ⚠️  OUTPUT FORMAT – STRICT
+Return **one** valid JSON object *and nothing else*.  
+Use **this exact schema** (order doesn’t matter, keys do):
+
+{
+  "narrative": "string — vivid prose in Christie’s voice, written to the player-detective",
+  "choices":   ["string", …]           // 1-4 suggested next actions
+  "stateDelta": {
+    "revealedClues":        ["clue_id", …],                  // may be empty
+    "readerKnowledgeUpdates":[{"object_id":"id","confidence":0-1}, …],
+    "global": {
+"mustacheMood": "neutral",          // ← NEW (neutral | surprised | thoughtful)
+      "current_scene":              "scene_id",
+      "confidencePoirotKnowsKiller": 0-1
+"turnsSinceLastProgress": //number of conversation turns since the player has revealed a clue ,
+"storyPhase": //One of (pre-murder, investigation, reveal)
+    }
+  }
+}
+
+* Always include **all three top-level keys** even if some arrays are empty.  
+* Do **NOT** wrap the JSON in markdown or prose.  
+* Do **NOT** call any functions; this JSON is the only response.
+
+────────────────────────────────────────
+## Story rules
+1. **Maintain canon:** never contradict facts in *StoryState*.  The story is always told from the point of view of Arthur Hastings.
+2. *Fair-play mystery:* a clue used to solve the case must have been (or become) discoverable by the reader.  
+3. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** **and** the player explicitly accuses.  
+4. If three consecutive turns advance neither plot nor clues, add a subtle hint via Poirot.  
+5. Keep tone, diction, and era appropriate for 1920s–30s Christie.
+6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == "eligible".
+7. Always output in stateDelta.global:
+   { "turnsSinceLastProgress": <int>, "storyPhase": "<str>",
+     "revealedCluesGlobal": [ ... ] }
+8. After each action:
+   • If player uncovers a clue/scene advances plot → set turnsSinceLastProgress = 0.
+   • Else increment it by 1.
+9. If turnsSinceLastProgress ≥ 3 → propose a hint or automatically surface the next eligible scene.
+10. Phase update – When a scene whose phase_change_to is not blank is played, set stateDelta.global.storyPhase to that value in the same turn. Update turnsSinceLastProgress to 0. 
+11. If confidencePoirotKnowsKiller ≥ 0.8 and storyPhase is still "investigation", change it to "reveal".
+12. Poirot always speaks in an arch tone, complete with inserted French when appropriate.
+13. On each turn merge stateDelta.revealedClues into revealedCluesGlobal (no duplicates).
+The assistant must reference revealedCluesGlobal, not just the local scene array, when checking what Poirot already knows.
+14. Mustache Mood - the default for mustacheMood is neutral. Set the value to surprised if a brand new clue is revealed at the start of the scene. Set the value to thoughtful if Poirot is analysing evidence or explaining deductions
+15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
+16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "choices" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
+
+────────────────────────────────────────
+## Current StoryState (trim to essentials)
+{
+  "storyPhase": "${phase}",
+  "currentScene": "${scene}",
+  "turnsSinceLastProgress": ${turns || 0},
+  "revealedCluesGlobal": ${JSON.stringify(revealed)},
+  "characters": ${JSON.stringify(STORY_DATA.characters)},
+  "clues": ${JSON.stringify(STORY_DATA.clues)},
+  "scenes": ${JSON.stringify(availableScenes)}, // <-- Use the filtered list
+  "locations": ${JSON.stringify(STORY_DATA.locations)}
+}
+  
+
 
 ────────────────────────────────────────
 ## Initialization reminder
@@ -906,17 +887,20 @@ export default async function handler(req, res) {
     // -- pull current state
     const row = await fetchPlayerRow(playerId);   // row is the object you need
 
-    const {
+  const {
   story_phase: phase,
   current_scene: scene,
-  revealed_clues: revealed,
-  current_sequence,              
+  revealed_clues: revealed,            
   turns_since_last_progress      
 } = row;
-    
+
+
+// Filter scenes to only include those available in the current phase
+const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(phase));
+   
 
     // -- build prompt & call OpenAI
-    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, sequence: current_sequence, turns: turns_since_last_progress });
+    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes });
     const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -951,8 +935,7 @@ export default async function handler(req, res) {
          phase: g.storyPhase,
          scene: g.current_scene,
          revealed: mergedRevealed,
-         turns: nextTurnsSinceProgress,
-current_sequence: g.currentSequence
+         turns: nextTurnsSinceProgress
      });
 
     // -- send narrative + choices back
