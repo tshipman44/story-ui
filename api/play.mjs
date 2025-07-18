@@ -911,7 +911,15 @@ console.log("--- SYSTEM PROMPT ---", systemPrompt);
     });
 console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- ADD THIS LINE
 
-    const assistant = JSON.parse(chat.choices[0].message.content);
+       // Get the raw text from the AI
+    const rawResponse = chat.choices[0].message.content;
+
+    // Clean up trailing commas that cause JSON errors
+    const cleanedResponse = rawResponse.replace(/,\s*([}\]])/g, "$1");
+
+    // Now, parse the clean and valid JSON
+    const assistant = JSON.parse(cleanedResponse);
+
     let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
 
     const oldClues = new Set(row.revealed_clues);
