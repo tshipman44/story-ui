@@ -162,7 +162,16 @@ const sceneImages = {
 setMustacheMood(
 data.stateDelta?.global?.mustacheMood ?? "neutral"
 );
-setScene(data.scene ?? scene); // ← New line to update the scene
+const sceneString = data.scene; // This will be "scene_01", "scene_02", etc.
+if (sceneString) {
+  // Split the string by '_' and parse the second part as an integer
+  const sceneNumber = parseInt(sceneString.split('_')[1], 10);
+  // Only update the state if we successfully got a number
+  if (!isNaN(sceneNumber)) {
+    setScene(sceneNumber);
+  }
+}
+
 
     } catch (err) {
       setNarrative("🚨 Error contacting the story engine. Check console.");
