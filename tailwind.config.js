@@ -5,13 +5,6 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
 
-  safelist: [
-  'px-6', 'sm:px-10', 'lg:px-24',   // gutters
-  'bottom-0', 'inset-x-0',          // pinned footer
-  'flex', 'flex-col', 'items-center', 'justify-center',
-  'w-full', 'max-w-sm', 'max-w-2xl', // layout wrappers
-],
-
   theme: { extend: {} },
   plugins: [],
 };
