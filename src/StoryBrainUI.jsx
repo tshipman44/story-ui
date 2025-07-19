@@ -20,6 +20,7 @@ import scene17Image from './assets/scene_17.png';
 import scene18Image from './assets/scene_18.png';
 import scene19Image from './assets/scene_19.png';
 import scene20Image from './assets/scene_20.png';
+import notebookIcon from './assets/notebook.png';
 
 /**
  * Skeleton StoryBrain front‑end
@@ -69,15 +70,16 @@ const ChoiceButton = ({ label, onClick }) => (
     {label}
   </button>
 );
-const Footer = ({ mood, onSubmit, loading }) => (
+const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
   <footer
-    className="fixed flex flex-col items-center justify-center
-             bg-slate-900/80 py-3 shadow-inner backdrop-blur"
-    style={{ left: 0, right: 0, bottom: 0 }}
+    className="fixed bottom-0 left-0 right-0 flex flex-row items-end justify-center gap-4 px-4 py-3
+             bg-slate-900/80 shadow-inner backdrop-blur"
   >
-    {/* New container to constrain and center both elements */}
-    <div className="w-full max-w-sm px-4 sm:px-0">
-      {/* free‑text input, now styled to look more like a button */}
+    {/* Left Spacer - This pushes the center and right content */}
+    <div className="flex-1 hidden lg:block"></div>
+
+    {/* Center Content - The form and the mustache */}
+    <div className="w-full max-w-sm">
       <form
         onSubmit={onSubmit}
         className="
@@ -103,11 +105,16 @@ const Footer = ({ mood, onSubmit, loading }) => (
           Send
         </button>
       </form>
-
-      {/* mustache HUD, now full-width within the constrained parent */}
       <div className="mt-3">
         <Mustache mood={mood} className="w-full" />
       </div>
+    </div>
+
+    {/* Right Content - The notebook button */}
+    <div className="flex-1 hidden lg:flex justify-end">
+      <button onClick={onNotebookClick} className="w-48 transition-transform active:scale-95">
+        <img src={notebookIcon} alt="Open Clue Notebook" className="rounded-lg shadow-md" />
+      </button>
     </div>
   </footer>
 );
@@ -118,6 +125,7 @@ export default function StoryBrainUI() {
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
 const [scene, setScene] = useState(1);
+const [isNotebookOpen, setNotebookOpen] = useState(false);
 
 const sceneImages = {
     1: scene1Image,
@@ -218,6 +226,7 @@ return (
     <Footer
       mood={mustacheMood}
       loading={loading}
+  onNotebookClick={() => setNotebookOpen(true)}
       onSubmit={(e) => {
         e.preventDefault();
         const txt = new FormData(e.target).get("free")?.toString().trim();
