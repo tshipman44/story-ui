@@ -149,6 +149,8 @@ const sceneImages = {
 
   async function playTurn(action) {
     setLoading(true);
+  // Optimistically update the narrative with the player's action
+  setNarrative(current => current + `\n\n> ${action}`);
     try {
       const res = await fetch(API_URL, {
         method: "POST",
