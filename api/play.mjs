@@ -832,11 +832,14 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-      "18. STRUCTURED NARRATIVE – The `narrative` field must be an array in true reading order.",
-  "   • Break the prose into segments.",
-  "   • Wrap 2–4 interactive phrases in objects like {\"type\":\"keyword\",\"content\":\"phrase\",\"action\":\"verb_phrase\"}.",
-  "   • Put every other fragment in objects like {\"type\":\"text\",\"content\":\"…\"}.",
-  "   • Keywords must be woven into the sentence, not tacked on at the end.",
+"18. STRUCTURED NARRATIVE – The `narrative` array must read like finished prose.",
+"   • Keep the original word order.  Split the text where you want a choice.",
+"   • Wrap **2‑4 full phrases** (≥ 2 words — not lone nouns) in " +
+      "{\"type\":\"keyword\",\"content\":\"phrase\",\"action\":\"imperative\"}.",
+"   • Put every other fragment — including surrounding spaces / punctuation — in " +
+      "{\"type\":\"text\",\"content\":\"…\"}.",
+"   • The `action` string must be a clear, stand‑alone command (e.g. \"observe the façade\"), " +
+      "so the LLM never receives a blank or cryptic verb.",
 
     "────────────────────────────────────────",
     "## Current StoryState (trimmed)",

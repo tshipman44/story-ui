@@ -190,7 +190,13 @@ const sceneImages = {
   async function playTurn(action) {
     setLoading(true);
     // Optimistically update the narrative with the player's action
-    setNarrative(current => current + `\n\n> ${action}`);
+    setNarrative(current => {
+  // Make sure we're only adding to an array
+  if (Array.isArray(current)) {
+    return [...current, { type: 'text', content: `\n\n> ${action}` }];
+  }
+  return current; // Fallback for the initial loading string
+});
     
     try {
       const res = await fetch(API_URL, {
@@ -263,14 +269,20 @@ return (
     narrative.map((segment, index) => {
       if (segment.type === 'keyword') {
         return (
+          <span key={index}>
+            {/* add a space *before* if the previous segment wasn't a space/punctuation */}
+            {index > 0 && /[\\w]$/.test(narrative[index - 1].content) && ' '}
           <button
-            key={index}
-            onClick={() => playTurn(segment.action)}
+             onClick={() => playTurn(segment.action)}
             disabled={loading}
             className="text-indigo-300 font-semibold hover:underline focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded transition p-1"
           >
             {segment.content}
           </button>
+          {/* add a trailing space if the next piece starts with a word‑char */}
++            {index < narrative.length - 1 &&
++             /^[\\w]/.test(narrative[index + 1].content) && ' '}
++          </span>
         );
       }
       return <span key={index}>{segment.content}</span>;
