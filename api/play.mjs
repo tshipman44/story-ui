@@ -832,11 +832,11 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-"18. STRUCTURED NARRATIVE – Write in Hastings’s **first‑person** voice and keep the text fluent:",
-"   • Insert **2 – 4 keyword segments per turn**.  Each keyword segment must be a full clause or sentence that begins with “I …” and ends with proper punctuation.",
-"   • Wrap that clause exactly as it appears in the story in:",
-"       {\"type\":\"keyword\",\"content\":\"I was struck by its grandeur.\",\"action\":\"Observe the elegance of Styles Court\"}",
-"   • The `action` string is the same idea rewritten as a clear imperative (drop the “I …”).  All other prose belongs in {\"type\":\"text\",…} segments, preserving spacing and punctuation so the array reads as one seamless paragraph.",
+"18. STRUCTURED NARRATIVE – Write in Hastings’s *first‑person* voice and keep the flow inline:",
+"   • Embed **2–4 keyword clauses** per turn.  Each keyword clause must start with “I …”, end with proper punctuation, *and never be preceded by a hard line‑break*.",
+"   • Wrap that clause exactly as written in {\"type\":\"keyword\", …}.  Its `action` must be a clear, unique imperative (e.g. \"Observe the grandeur of Styles Court\") not used earlier in the story.",
+"   • Do NOT place a newline before or after a keyword segment; spacing must read naturally when all objects are concatenated.",
+"   • Reject or rewrite any keyword whose `action` duplicates an earlier `action` in this or previous turns.",
 
 
 

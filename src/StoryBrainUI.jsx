@@ -275,9 +275,12 @@ return (
           <button
              onClick={() => playTurn(segment.action)}
             disabled={loading}
-            className="text-indigo-300 font-semibold hover:underline focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded transition p-1"
+            className="inline text-indigo-300 font-semibold hover:underline
+                focus:outline-none focus:ring-1 focus:ring-indigo-400
+                rounded transition"
+                style={{ whiteSpace: "normal" }}
           >
-            {segment.content}
+            {segment.content.trim()}
           </button>
           {/* add a trailing space if the next piece starts with a word‑char */}
             {index < narrative.length - 1 &&
