@@ -193,22 +193,19 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden">
-
-  {/* ===== COLUMN 1: NARRATIVE ===== */}
-  {/* The style and bg- classes MUST be on this div */}
-  <div 
-    className="flex-1 overflow-y-auto pr-4 bg-cover bg-center transition-all duration-1000"
-    style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
-  >
+<main 
+  className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden bg-cover bg-center transition-all duration-1000"
+  style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+>
+  {/* Column 1: Narrative (No background styles here) */}
+  <div className="flex-1 overflow-y-auto pr-4">
     <article className="whitespace-pre-wrap leading-relaxed space-y-6
                         bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
       {narrative}
     </article>
   </div>
 
-  {/* ===== COLUMN 2: BUTTONS ===== */}
-  {/* Ensure there are NO background styles on this div */}
+  {/* Column 2: Buttons (this column will not scroll) */}
   <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
     {choices.map((c) => (
       <div className="w-full max-w-sm mx-auto"> 
@@ -216,7 +213,6 @@ return (
       </div>
     ))}
   </div>
-  
 </main>
  {/* ✅ keep ONLY the new unified footer */}
     <Footer
