@@ -943,6 +943,9 @@ console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- 
         ...(assistant.stateDelta.revealedClues || []),
       ]),
     ];
+const newlyRevealedClues = (assistant.stateDelta.revealedClues || [])
+  .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
+  .filter(Boolean);
 
    await updatePlayerRow(playerId, {
          phase: g.storyPhase,
@@ -958,6 +961,7 @@ res.status(200).json({
   choices:   assistant.choices,
   scene:     assistant.stateDelta.global.current_scene, // <-- Add the scene
   stateDelta: assistant.stateDelta // <-- Also send the stateDelta for the mustache
+newlyRevealedClues: newlyRevealedClues
 });
 
   } catch (err) {

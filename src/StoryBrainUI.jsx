@@ -118,6 +118,26 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
     </div>
   </footer>
 );
+const NotebookModal = ({ clues, onClose }) => (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 w-full max-w-md shadow-lg">
+      <h2 className="text-2xl font-serif mb-4 text-white">Detective's Notebook</h2>
+      <ul className="list-disc list-inside space-y-3 text-slate-300 h-64 overflow-y-auto pr-2">
+        {clues.length > 0 ? (
+          clues.map(clue => <li key={clue.clue_id}>{clue.title}</li>)
+        ) : (
+          <li>No clues discovered yet.</li>
+        )}
+      </ul>
+      <button 
+        onClick={onClose} 
+        className="mt-6 w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg transition hover:bg-indigo-500"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+);
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
@@ -126,6 +146,7 @@ export default function StoryBrainUI() {
   const [mustacheMood, setMustacheMood] = useState("neutral");
 const [scene, setScene] = useState(1);
 const [isNotebookOpen, setNotebookOpen] = useState(false);
+const [revealedClues, setRevealedClues] = useState([]); 
 
 const sceneImages = {
     1: scene1Image,
@@ -155,10 +176,12 @@ const sceneImages = {
     playTurn("begin");
   }, []);
 
+//...
   async function playTurn(action) {
     setLoading(true);
-  // Optimistically update the narrative with the player's action
-  setNarrative(current => current + `\n\n> ${action}`);
+    // Optimistically update the narrative with the player's action
+    setNarrative(current => current + `\n\n> ${action}`);
+    
     try {
       const res = await fetch(API_URL, {
         method: "POST",
@@ -166,25 +189,36 @@ const sceneImages = {
         body: JSON.stringify({ playerId: PLAYER_ID, userAction: action })
       });
       const data = await res.json();
-// If data.narrative is missing, show the error from the API instead.
-setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-// If data.choices is missing, default to an empty array to prevent a crash.
-setChoices(data.choices || []);
+      
+      // If data.narrative is missing, show the error from the API instead.
+      setNarrative(data.narrative || `🚨 Error: ${data.error}`);
+      // If data.choices is missing, default to an empty array to prevent a crash.
+      setChoices(data.choices || []);
 
-// grab the mood if present
-setMustacheMood(
-data.stateDelta?.global?.mustacheMood ?? "neutral"
-);
-const sceneString = data.scene; // This will be "scene_01", "scene_02", etc.
-if (sceneString) {
-  // Split the string by '_' and parse the second part as an integer
-  const sceneNumber = parseInt(sceneString.split('_')[1], 10);
-  // Only update the state if we successfully got a number
-  if (!isNaN(sceneNumber)) {
-    setScene(sceneNumber);
-  }
-}
+      // grab the mood if present
+      setMustacheMood(
+        data.stateDelta?.global?.mustacheMood ?? "neutral"
+      );
+      
+      const sceneString = data.scene; // This will be "scene_01", "scene_02", etc.
+      if (sceneString) {
+        // Split the string by '_' and parse the second part as an integer
+        const sceneNumber = parseInt(sceneString.split('_')[1], 10);
+        // Only update the state if we successfully got a number
+        if (!isNaN(sceneNumber)) {
+          setScene(sceneNumber);
+        }
+      }
 
+      // Add newly revealed clues to our list, avoiding duplicates
+      if (data.newlyRevealedClues) {
+        setRevealedClues(prevClues => {
+          const newClues = data.newlyRevealedClues.filter(
+            newClue => !prevClues.some(prevClue => prevClue.clue_id === newClue.clue_id)
+          );
+          return [...prevClues, ...newClues];
+        });
+      }
 
     } catch (err) {
       setNarrative("🚨 Error contacting the story engine. Check console.");
@@ -193,6 +227,7 @@ if (sceneString) {
       setLoading(false);
     }
   }
+
 
 return (
    <div className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100">
@@ -234,6 +269,8 @@ return (
         e.target.reset();
       }}
     />
+{/* Conditionally render the notebook modal */}
+    {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => setNotebookOpen(false)} />}
   </div>
 );
 }
