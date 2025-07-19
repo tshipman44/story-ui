@@ -52,7 +52,7 @@ const Container = ({ children, className = "" }) => (
 const Header = () => (
   <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
     <Container className="w-full max-w-5xl mx-auto">
-      <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide">
+      <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide font-serif">
         The Mysterious Affair at Styles
       </h1>
     </Container>
@@ -61,10 +61,10 @@ const Header = () => (
    
 const ChoiceButton = ({ label, onClick }) => (
   <button
-    onClick={onClick}
-    className="w-full rounded-lg bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-sm
-               transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3
-               first:mt-2 last:mb-0"
+    onClick={onClick}className="w-full rounded-lg bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-sm
+           transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3
+           first:mt-2 last:mb-0 active:scale-[0.98] active:brightness-90"
+
   >
     {label}
   </button>
