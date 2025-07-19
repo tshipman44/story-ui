@@ -61,7 +61,7 @@ const Header = () => (
    
 const ChoiceButton = ({ label, onClick }) => (
   <button
-    onClick={onClick}className="w-full rounded-lg bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-sm
+    onClick={onClick} className="w-full rounded-lg bg-indigo-600 py-3 px-4 text-sm font-semibold text-white shadow-sm
            transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3
            first:mt-2 last:mb-0 active:scale-[0.98] active:brightness-90"
 
@@ -193,25 +193,23 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main className="w-full flex-1 overflow-y-auto pb-[16rem] pt-4
-             bg-cover bg-center transition-all duration-1000"
-  style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
->
- <Container className="max-w-5xl mx-auto lg:flex lg:flex-row lg:gap-12 lg:items-start"> {/* narrative + buttons */}
- <article className="lg:w-3/5 whitespace-pre-wrap leading-relaxed space-y-6
-                      bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
-        {narrative}
-      </article>
-     <div className="mt-10 flex flex-col items-center gap-3">
-        {choices.map((c) => (
-          <div className="w-full max-w-sm mx-auto">  
-<ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
-      </div>
-        ))}
-      </div>
+<main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden">
+  {/* Column 1: Narrative (now has its own scrollbar) */}
+  <div className="flex-1 overflow-y-auto pr-4">
+    <article className="whitespace-pre-wrap leading-relaxed space-y-6
+                        bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+      {narrative}
+    </article>
+  </div>
 
-
-</Container>
+  {/* Column 2: Buttons (this column will not scroll) */}
+  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+    {choices.map((c) => (
+      <div className="w-full max-w-sm mx-auto"> 
+        <ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
+      </div>
+    ))}
+  </div>
 </main>
  {/* ✅ keep ONLY the new unified footer */}
     <Footer
