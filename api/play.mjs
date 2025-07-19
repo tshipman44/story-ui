@@ -785,7 +785,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
   const lines = [
 
     // ── Header ──────────────────────────
-    "You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha‑Christie‑style mystery based on *The Mysterious Affair at Styles.*",
+    "You are **StoryBrain v0.5**, the narrative engine for an adaptive Agatha‑Christie‑style mystery based on *The Mysterious Affair at Styles.*",
     "You hold an internal object called **StoryState** (see “Current StoryState” below).",
 
     "────────────────────────────────────────",
@@ -823,7 +823,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == 'eligible'.",
     "7. Always output in stateDelta.global: current_scene, storyPhase, turnsSinceLastProgress, revealedCluesGlobal.",
     "8. If the player reveals a clue → turnsSinceLastProgress = 0; otherwise increment it.",
-    "9. If turnsSinceLastProgress ≥ 2, provide 1‑2 helpful 'hints'; else hints may be whimsical.",
+    "9. HINTS: You MUST always provide 1-2 helpful, contextual or whimsical suggestions in the 'hints' array to guide the player.",
     "10. When a scene contains phase_change_to, update storyPhase and reset turnsSinceLastProgress.",
     "11. If confidencePoirotKnowsKiller ≥ 0.8 during investigation, change storyPhase to 'reveal'.",
     "12. Poirot always speaks in an arch tone with occasional French phrases.",
@@ -832,7 +832,11 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-    "18. STRUCTURED NARRATIVE: For the 'narrative' field, return an array: normal prose in {\"type\":\"text\"} chunks, and 2‑4 interactive nouns in {\"type\":\"keyword\"} chunks (with an 'action' verb).",
+      "18. STRUCTURED NARRATIVE – The `narrative` field must be an array in true reading order.",
+  "   • Break the prose into segments.",
+  "   • Wrap 2–4 interactive phrases in objects like {\"type\":\"keyword\",\"content\":\"phrase\",\"action\":\"verb_phrase\"}.",
+  "   • Put every other fragment in objects like {\"type\":\"text\",\"content\":\"…\"}.",
+  "   • Keywords must be woven into the sentence, not tacked on at the end.",
 
     "────────────────────────────────────────",
     "## Current StoryState (trimmed)",
