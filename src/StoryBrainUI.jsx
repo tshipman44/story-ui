@@ -181,22 +181,11 @@ const sceneImages = {
 20: scene20Image,
     // ... add more scenes and images as needed
   };
-  // initial turn – send a synthetic "begin"
-  useEffect(() => {
-    playTurn("begin");
-  }, []);
-
-//...
-  async function playTurn(action) {
+  // The playTurn function should be defined here, in the main component body
+     async function playTurn(action) {
     setLoading(true);
     // Optimistically update the narrative with the player's action
-    setNarrative(current => {
-  // Make sure we're only adding to an array
-  if (Array.isArray(current)) {
-    return [...current, { type: 'text', content: `\n\n> ${action}` }];
-  }
-  return current; // Fallback for the initial loading string
-});
+    setNarrative(current => current + `\n\n> ${action}`);
     
     try {
       const res = await fetch(API_URL, {
@@ -244,6 +233,9 @@ const sceneImages = {
     }
   }
 
+  useEffect(() => {
+    playTurn("begin");
+  }, []);
 
 return (
   <div 
@@ -265,34 +257,7 @@ return (
   >
    <article className="whitespace-pre-wrap leading-relaxed space-y-6
                     bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
-  {Array.isArray(narrative) ? (
-    narrative.map((segment, index) => {
-      if (segment.type === 'keyword') {
-        return (
-          <span key={index}>
-            {/* add a space *before* if the previous segment wasn't a space/punctuation */}
-            {index > 0 && /[\\w]$/.test(narrative[index - 1].content) && ' '}
-          <button
-             onClick={() => playTurn(segment.action)}
-            disabled={loading}
-            className="inline text-indigo-300 font-semibold hover:underline
-                focus:outline-none focus:ring-1 focus:ring-indigo-400
-                rounded transition"
-                style={{ whiteSpace: "normal" }}
-          >
-            {segment.content.trim()}
-          </button>
-          {/* add a trailing space if the next piece starts with a word‑char */}
-            {index < narrative.length - 1 &&
-             /^[\\w]/.test(narrative[index + 1].content) && ' '}
-          </span>
-        );
-      }
-      return <span key={index}>{segment.content}</span>;
-    })
-  ) : (
-    narrative // Fallback for the initial "…loading…" string
-  )}
+  {narrative}
 </article>
 
   </div>
