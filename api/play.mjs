@@ -800,7 +800,7 @@ Use **this exact schema** (order doesn’t matter, keys do):
     "global": {
 "mustacheMood": "neutral",          // ← NEW (neutral | surprised | thoughtful)
       "current_scene":              "scene_id",
-      "confidencePoirotKnowsKiller": 0-1
+      "confidencePoirotKnowsKiller": 0-1,
 "turnsSinceLastProgress": //number of conversation turns since the player has revealed a clue ,
 "storyPhase": //One of (pre-murder, investigation, reveal)
     }
