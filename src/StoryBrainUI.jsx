@@ -203,7 +203,7 @@ const sceneImages = {
       // If data.narrative is missing, show the error from the API instead.
       setNarrative(data.narrative || `🚨 Error: ${data.error}`);
       // If data.choices is missing, default to an empty array to prevent a crash.
-      setChoices(data.hints || []);
+      setHints(data.hints || []);
 
       // grab the mood if present
       setMustacheMood(
