@@ -793,7 +793,7 @@ Use **this exact schema** (order doesn’t matter, keys do):
 
 {
   "narrative": [ { "type": "text", "content": "..." }, { "type": "keyword", "content": "...", "action": "..." } ],
-  "hints":     ["string", …]          // 1-2 suggested next actions
+  "hints":     ["string", …],          // 1-2 suggested next actions
   "stateDelta": {
     "revealedClues":        ["clue_id", …],                  // may be empty
     "readerKnowledgeUpdates":[{"object_id":"id","confidence":0-1}, …],
