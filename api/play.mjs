@@ -22,7 +22,7 @@ const STORY_DATA = {"characters": [
       "motivations //secret, never provided directly to the detective": "In contrast to Poirot, he often seems very naïve and incredulous, but he still unwittingly manages to help the skilled detective from time to time by accidentally pointing something out that gives Poirot a new idea. By mentioning that Poirot had to straighten some spill holders and ornaments in Styles, he prompts Poirot to realise that someone had moved them, causing Poirot to discover a crucial piece of evidence. Hastings represents the traditional English gentleman—not too bright but absolutely scrupulous, a throwback to the Victorian-era gentleman who is always concerned about \"fair play\". Hastings himself notes that he is somewhat old-fashioned. While Poirot, who is not above lying, surreptitiously reads other people's letters or eavesdrops, Hastings is horrified of such acts and usually refuses to perform them to help Poirot in one of his cases. Although he lacks Poirot's intellect, Poirot often compliments Hastings' ability to remember facts and details about their cases even if he deplores the manner in which Hastings tells the story at times. Hastings is in love with Cynthia Murdoch and proposes to her at the conclusion of the story, which she rejects. ",
       "isSuspect": false,
       "alibi_summary": "N/A",
-      "relationships": "{ \"ch_1\":\"friend\";  \"ch_6\":\"friend\"; \"ch_10\":\"infatuation\"; \"ch_4\":\"victim\";  \"ch_5\":\"suspect\";  \"ch_6\":\"suspect\";  \"ch_7\":\"suspect\";  \"ch_8\":\"suspect\";  \"ch_9\":\"suspect\";  \"ch_11\":\"suspect\";  \"ch_12\":\"suspect}        ",
+      "relationships": "{ \"ch_1\":\"friend\";  \"ch_6\":\"friend\"; \"ch_10\":\"infatuation\"; \"ch_4\":\"victim\";  \"ch_5\":\"suspect\";  \"ch_6\":\"suspect\";  \"ch_7\":\"suspect\";  \"ch_8\":\"suspect\";  \"ch_9\":\"suspect\";  \"ch_11\":\"suspect\";  \"ch_12\":\"suspect\"}        ",
       "revealed _to_reader?": true
     },
     {
@@ -353,7 +353,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_01",
       "summary": "Captain Hastings, on medical leave, arrives in Essex and is driven to Styles Court by his old friend John Cavendish. He meets Cynthia Murdoch on the way in and catches his first glimpse of the gracious—but faintly tense—household.\n",
       "clues_revealed ": "C1",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "None",
+      "required_clues ": "None",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_02",
@@ -365,7 +365,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_02",
       "summary": "Hastings is introduced to Emily Inglethorp, Alfred Inglethorp, Lawrence Cavendish, Mary Cavendish, and Evelyn Howard. Lady of the house and second husband seem oddly formal; Evelyn’s hostility toward Alfred crackles.",
       "clues_revealed ": "C2",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C1",
+      "required_clues ": "C1",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_03",
@@ -377,7 +377,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_03",
       "summary": "Evelyn and Emily quarrel loudly about Alfred’s influence and Emily’s new will. Evelyn announces she will leave at once.",
       "clues_revealed ": "C3",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C2",
+      "required_clues ": "C2",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_04",
@@ -389,7 +389,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_04",
       "summary": "Alfred (bearded, nervous) is seen purchasing strychnine in his wife’s name, claiming it is “to put down a dog.”",
       "clues_revealed ": "C4",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C2",
+      "required_clues ": "C2",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_05",
@@ -401,7 +401,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_05",
       "summary": "After dinner, coffee is served. Emily takes her usual cocoa instead, prepared by Dorcas in the pantry. Family disperses; Alfred and Dr Bauerstein stroll to the lodge gate.",
       "clues_revealed ": "C5",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C2",
+      "required_clues ": "C2",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_06",
@@ -413,7 +413,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_06",
       "summary": "Hastings, unable to sleep, sees a dim light under Emily’s door and hears a metallic chink. John strolls in pajamas, claiming he came to shut windows.",
       "clues_revealed ": "C6",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C5",
+      "required_clues ": "C5",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
       "preferred_next_scene": "scene_07",
@@ -425,7 +425,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_07",
       "summary": "Emily wakes in agony, knocks over the table, bolts her door. Lawrence hears her cries; John and Hastings race to help but must break the door.",
       "clues_revealed ": "C7",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C5",
+      "required_clues ": "C5",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "phase_change_to": "investigation",
       "status": "eligible",
@@ -438,7 +438,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_08",
       "summary": "Dr Bauerstein and Dr Wilkins pronounce Emily dead; symptoms suggest strychnine poisoning.",
       "clues_revealed ": "C8",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C7",
+      "required_clues ": "C7",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_09",
@@ -450,7 +450,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_09",
       "summary": "Hastings fetches Poirot, who agrees to investigate on condition of secrecy.",
       "clues_revealed ": "C9",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C8, C1",
+      "required_clues ": "C8, C1",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_10",
@@ -462,7 +462,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_10",
       "summary": "Poirot questions Dorcas and discovers a key difference between Emily’s coffee‑cup and cocoa‑cup; he collects the latter for analysis.",
       "clues_revealed ": "C10",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C9, C5",
+      "required_clues ": "C9, C5",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_11",
@@ -474,7 +474,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_11",
       "summary": "Poirot examines poison cupboard; finds loose strychnine tablets and a soiled label from “Strychnine Hydrochloride.”",
       "clues_revealed ": "C11",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C9",
+      "required_clues ": "C9",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_12",
@@ -486,7 +486,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_12",
       "summary": "Poirot observes Mary secretly meeting Dr Bauerstein. Their tense conversation ends abruptly when they spot Hastings.",
       "clues_revealed ": "C12",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C9",
+      "required_clues ": "C9",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_13",
@@ -498,7 +498,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_13",
       "summary": "At the inquest, chemist testifies to Alfred’s strychnine purchase; Alfred claims Emily ordered it. Jury returns “Wilful murder by person or persons unknown.”",
       "clues_revealed ": "C13",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C10 | C11 | C12",
+      "required_clues ": "C10 | C11 | C12",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_14",
@@ -510,7 +510,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_14",
       "summary": "Poirot reenacts the night of the murder: Cynthia swallows her habitual bromide, bolts door, sleeps. Bromide bottle proves uncontaminated.",
       "clues_revealed ": "C14",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C10 | C11",
+      "required_clues ": "C10 | C11",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_15",
@@ -522,7 +522,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_15",
       "summary": "Police arrest Alfred on circumstantial evidence. Evelyn Howard returns unexpectedly, providing Alfred an alibi letter (time‑stamped 08:00 a.m.).",
       "clues_revealed ": "C15",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C13",
+      "required_clues ": "C13",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_16",
@@ -534,7 +534,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_16",
       "summary": "Poirot verifies Alfred’s overnight stay: landlord saw him retire at 22:30 and again at breakfast.",
       "clues_revealed ": "C16",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C15",
+      "required_clues ": "C15",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_17",
@@ -546,7 +546,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_17",
       "summary": "Poirot and Hastings find a charred corner of a will leaving everything to Alfred; Poirot pockets it silently.",
       "clues_revealed ": "C17",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C15, C3 ",
+      "required_clues ": "C15, C3 ",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_18",
@@ -558,7 +558,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_18",
       "summary": "Poirot melts a false beard gum sample found in Alfred’s dressing‑case; gum identical to that on scrap of fake beard hair in Emily’s lock.",
       "clues_revealed ": "C18",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C16 | C17",
+      "required_clues ": "C16 | C17",
       "unlocks_when": "storyPhase == \"investigation\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_19",
@@ -570,7 +570,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_19",
       "summary": "Poirot assembles family, Inspector Japp, and lays out sequence: Evelyn and Alfred conspired to appear guilty by planting strychnine in coffee sugar and staging beard sighting, banking on double‑jeopardy. But Mary unwittingly removed the sugar; strychnine left unused.\n",
       "clues_revealed ": "C19",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C14, C16, C17, C18",
+      "required_clues ": "C14, C16, C17, C18",
       "unlocks_when": "storyPhase == \"reveal\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_20",
@@ -582,7 +582,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_20",
       "summary": "Poirot exposes Evelyn’s handwriting on chemist label, Alfred’s forged beard hair, and Lawrence’s suppressed witness about tonic spoon. Evelyn collapses and confesses.",
       "clues_revealed ": "C20",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C19 ",
+      "required_clues ": "C19 ",
       "unlocks_when": "storyPhase == \"reveal\"       ",
       "status": "locked",
       "preferred_next_scene": "scene_21",
@@ -594,7 +594,7 @@ const STORY_DATA = {"characters": [
       "location": "loc_21",
       "summary": "Police take Evelyn and Alfred into custody. Family reconciles; John inherits; Poirot and Hastings share quietly triumphant breakfast.",
       "clues_revealed ": "C21",
-      "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "C20",
+      "required_clues ": "C20",
       "unlocks_when": "storyPhase == \"reveal\"       ",
       "status": "locked",
       "preferred_next_scene": "N/A",
@@ -835,9 +835,7 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
 15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
 16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "hints" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
 17. When the narrative reveals information that corresponds to a clue in the StoryState, you MUST include the 'clue_id' of that clue in the 'stateDelta.revealedClues' array in your response.
-18. STRUCTURED NARRATIVE: For the 'narrative' field, you MUST return an array of objects. Identify 2-4 key nouns or phrases a player might interact with. For each of these, create an object of `{"type": "keyword", "content": "phrase", "action": "verb phrase"}`. All other text should be in objects of `{"type": "text", "content": "..."}`.
-
-
+18. STRUCTURED NARRATIVE: For the 'narrative' field, you MUST return an array of objects. Identify 2-4 key nouns or phrases a player might interact with. For each of these, create an object of {"type": "keyword", "content": "phrase", "action": "verb phrase"}. All other text should be in objects of {"type": "text", "content": "..."}.
 ────────────────────────────────────────
 ## Current StoryState (trim to essentials)
 {
@@ -886,16 +884,16 @@ export default async function handler(req, res) {
 
   const { playerId, userAction } = req.body;
 
-  try {
-    // -- pull current state
-    const row = await fetchPlayerRow(playerId);   // row is the object you need
+try {
+  // -- pull current state
+  const row = await fetchPlayerRow(playerId);   // row is the object you need
 
   const {
-  story_phase: phase,
-  current_scene: scene,
-  revealed_clues: revealed,            
-  turns_since_last_progress      
-} = row;
+    story_phase: phase,
+    current_scene: scene,
+    revealed_clues: revealed,            
+    turns_since_last_progress      
+  } = row;
 
 
 // Filter scenes to only include those available in the current phase
@@ -971,9 +969,9 @@ res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 res.status(200).json({
   narrative: assistant.narrative,
   hints:     assistant.hints,
-  scene:     assistant.stateDelta.global.current_scene, // <-- Add the scene
-  stateDelta: assistant.stateDelta, // <-- Also send the stateDelta for the mustache
-newlyRevealedClues: newlyRevealedClues
+  scene:     assistant.stateDelta.global.current_scene, 
+  stateDelta: assistant.stateDelta, 
+  newlyRevealedClues: newlyRevealedClues
 });
 
   } catch (err) {
