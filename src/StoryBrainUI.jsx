@@ -197,14 +197,14 @@ return (
              bg-cover bg-center transition-all duration-1000"
   style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
 >
- <Container className="max-w-5xl mx-auto"> {/* narrative + buttons */}
- <article className="max-w-3xl mx-auto whitespace-pre-wrap leading-relaxed space-y-6
-                        bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+ <Container className="max-w-5xl mx-auto lg:flex lg:flex-row lg:gap-12 lg:items-start"> {/* narrative + buttons */}
+ <article className="lg:w-3/5 whitespace-pre-wrap leading-relaxed space-y-6
+                      bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
         {narrative}
       </article>
      <div className="mt-10 flex flex-col items-center gap-3">
         {choices.map((c) => (
-          <div className="w-full max-w-sm"> 
+          <div className="w-full max-w-sm mx-auto">  
 <ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
       </div>
         ))}
