@@ -62,11 +62,11 @@ const Header = () => (
    
 const ChoiceButton = ({ label, onClick }) => (
   <button
-    onClick={onClick} className="w-full rounded-lg py-3 px-4 text-sm font-semibold shadow-sm transition
-           mb-3 first:mt-2 last:mb-0 active:scale-[0.98] active:brightness-90
-           focus:outline-none focus:ring-2 focus:ring-slate-500 
-           bg-slate-700 text-slate-100 hover:bg-slate-600
-           dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+    onClick={onClick}     className="w-full rounded-lg py-3 px-4 text-sm font-semibold shadow-sm transition
+               mb-3 first:mt-2 last:mb-0 active:scale-[0.98] active:brightness-90
+               focus:outline-none focus:ring-2 focus:ring-slate-500 
+               bg-slate-700 text-slate-100 hover:bg-slate-600
+               dark:bg-slate-700 dark:hover:bg-slate-600"
 
 
   >
@@ -101,7 +101,7 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
           disabled={loading}
           className="bg-slate-700 px-4 py-3 text-sm font-semibold text-slate-100
              transition hover:bg-slate-600 disabled:opacity-50
-             dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600"
+             dark:bg-slate-700 dark:hover:bg-slate-600"
 
 
         >
@@ -119,7 +119,12 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
 
 {/* Notebook on the right */}
 <div className="flex-1">
-   <button onClick={onNotebookClick} className="w-full h-full transition-transform active:scale-95">
+   <button onClick={onNotebookClick} className="mt-6 w-full font-semibold py-2 rounded-lg transition
+             active:scale-[0.98] active:brightness-90
+             focus:outline-none focus:ring-2 focus:ring-slate-500
+             bg-slate-700 text-slate-100 hover:bg-slate-600
+             dark:bg-slate-700 dark:hover:bg-slate-600"
+>
     <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
   </button>
 </div>
