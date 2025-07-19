@@ -113,7 +113,7 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
 
 {/* Notebook on the right */}
 <div className="flex-1">
-  <button className="w-full h-full transition-transform active:scale-95">
+   <button onClick={onNotebookClick} className="w-full h-full transition-transform active:scale-95">
     <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
   </button>
 </div>
