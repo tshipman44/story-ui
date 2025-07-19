@@ -236,12 +236,13 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-<main 
-  className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden bg-cover bg-center transition-all duration-1000"
-  style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
->
+<main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden">
+
   {/* Column 1: Narrative (No background styles here) */}
-  <div className="flex-1 overflow-y-auto pr-4">
+  <div 
+    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-24"
+    style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+  >
     <article className="whitespace-pre-wrap leading-relaxed space-y-6
                         bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
       {narrative}

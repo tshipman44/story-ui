@@ -960,7 +960,7 @@ res.status(200).json({
   narrative: assistant.narrative,
   choices:   assistant.choices,
   scene:     assistant.stateDelta.global.current_scene, // <-- Add the scene
-  stateDelta: assistant.stateDelta // <-- Also send the stateDelta for the mustache
+  stateDelta: assistant.stateDelta, // <-- Also send the stateDelta for the mustache
 newlyRevealedClues: newlyRevealedClues
 });
 
