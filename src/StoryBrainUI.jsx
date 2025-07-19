@@ -280,9 +280,9 @@ return (
             {segment.content}
           </button>
           {/* add a trailing space if the next piece starts with a word‑char */}
-+            {index < narrative.length - 1 &&
-+             /^[\\w]/.test(narrative[index + 1].content) && ' '}
-+          </span>
+            {index < narrative.length - 1 &&
+             /^[\\w]/.test(narrative[index + 1].content) && ' '}
+          </span>
         );
       }
       return <span key={index}>{segment.content}</span>;
