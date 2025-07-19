@@ -917,16 +917,23 @@ console.log("--- SYSTEM PROMPT ---", systemPrompt);
 console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- ADD THIS LINE
 
        // Get the raw text from the AI
-    const rawResponse = chat.choices[0].message.content;
+const rawResponse = chat.choices[0].message.content;
 
-// Sanitize control characters like newlines BEFORE cleaning commas
-const sanitizedResponse = rawResponse.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");
+// Find the first '{' and the last '}' to extract the JSON object
+const firstBrace = rawResponse.indexOf('{');
+const lastBrace = rawResponse.lastIndexOf('}');
+
+if (firstBrace === -1 || lastBrace === -1) {
+  throw new Error("AI response did not contain a valid JSON object.");
+}
+
+const jsonString = rawResponse.substring(firstBrace, lastBrace + 1);
 
 // Clean up trailing commas that cause JSON errors
-const cleanedResponse = sanitizedResponse.replace(/,\s*([}\]])/g, "$1");
-
-    // Now, parse the clean and valid JSON
-    const assistant = JSON.parse(cleanedResponse);
+const cleanedResponse = jsonString.replace(/,\s*([}\]])/g, "$1");
+    
+// Now, parse the clean and valid JSON
+const assistant = JSON.parse(cleanedResponse);
 
     let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
 

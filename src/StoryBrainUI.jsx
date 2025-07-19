@@ -113,7 +113,7 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
 
 {/* Notebook on the right */}
 <div className="flex-1">
-  <button className="w-full h-full ...">
+  <button className="w-full h-full transition-transform active:scale-95">
     <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
   </button>
 </div>
@@ -246,7 +246,7 @@ return (
 
   {/* Column 1: Narrative (No background styles here) */}
   <div 
-    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-36"
+    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-40"
  
   >
     <article className="whitespace-pre-wrap leading-relaxed space-y-6
