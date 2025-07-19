@@ -194,22 +194,16 @@ return (
   
       
 <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden">
-  {/* Column 1: Narrative (now has its own scrollbar) */}
-  <div className="flex-1 overflow-y-auto pr-4">
-    <article className="whitespace-pre-wrap leading-relaxed space-y-6
-                        bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+  {/* Column 1: Narrative (now has its own scrollbar and the background) */}
+  <div 
+    className="flex-1 overflow-y-auto pr-4 bg-cover bg-center transition-all duration-1000"
+    style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+  >
+    <article className="...">
       {narrative}
     </article>
   </div>
-
-  {/* Column 2: Buttons (this column will not scroll) */}
-  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
-    {choices.map((c) => (
-      <div className="w-full max-w-sm mx-auto"> 
-        <ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
-      </div>
-    ))}
-  </div>
+    {/* ... Column 2 ... */}
 </main>
  {/* ✅ keep ONLY the new unified footer */}
     <Footer
