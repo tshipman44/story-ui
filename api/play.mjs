@@ -792,8 +792,8 @@ Return **one** valid JSON object *and nothing else*.
 Use **this exact schema** (order doesn’t matter, keys do):
 
 {
-  "narrative": "string — vivid prose in Christie’s voice, written to the player-detective",
-  "choices":   ["string", …]           // 1-4 suggested next actions
+  "narrative": [ { "type": "text", "content": "..." }, { "type": "keyword", "content": "...", "action": "..." } ],
+  "hints":     ["string", …]          // 1-2 suggested next actions
   "stateDelta": {
     "revealedClues":        ["clue_id", …],                  // may be empty
     "readerKnowledgeUpdates":[{"object_id":"id","confidence":0-1}, …],
@@ -816,7 +816,7 @@ Use **this exact schema** (order doesn’t matter, keys do):
 1. **Maintain canon:** never contradict facts in *StoryState*.  The story is always told from the point of view of Arthur Hastings.
 2. *Fair-play mystery:* a clue used to solve the case must have been (or become) discoverable by the reader.  
 3. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** **and** the player explicitly accuses.  
-4. CRITICAL PLOT MOMENT: After narrating the events of scene_05, the 'current_scene' in the stateDelta you return MUST be 'scene_06'. The narrative should lead directly into this event, and the choices offered should not prevent it. 
+4. CRITICAL PLOT MOMENT: After narrating the events of scene_05, the 'current_scene' in the stateDelta you return MUST be 'scene_06'. The narrative should lead directly into this event, and the hints offered should not prevent it. 
 5. Keep tone, diction, and era appropriate for 1920s–30s Christie.
 6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == "eligible".
 7. Always output in stateDelta.global:
@@ -825,7 +825,7 @@ Use **this exact schema** (order doesn’t matter, keys do):
 8. After each action:
    • If player uncovers a clue/scene advances plot → set turnsSinceLastProgress = 0.
    • Else increment it by 1.
-9. PLOT NUDGE: 9. If turnsSinceLastProgress ≥ 3, the narrative MUST contain a hint from a character  that guides the player towards the 'preferred_next_scene' of the current scene. One of the 'choices' offered MUST be the action that leads to that preferred scene.
+9. PLOT NUDGE: If turnsSinceLastProgress ≥ 2, you MUST provide 1-2 helpful suggestions in the 'hints' array to guide the player. Otherwise, the 'hints' array should include more whimsical options.
 10. Phase update – When a scene whose phase_change_to is not blank is played, set stateDelta.global.storyPhase to that value in the same turn. Update turnsSinceLastProgress to 0. 
 11. If confidencePoirotKnowsKiller ≥ 0.8 and storyPhase is still "investigation", change it to "reveal".
 12. Poirot always speaks in an arch tone, complete with inserted French when appropriate.
@@ -833,8 +833,9 @@ Use **this exact schema** (order doesn’t matter, keys do):
 The assistant must reference revealedCluesGlobal, not just the local scene array, when checking what Poirot already knows.
 14. Mustache Mood - the default for mustacheMood is neutral. Set the value to surprised if a brand new clue is revealed at the start of the scene. Set the value to thoughtful if Poirot is analysing evidence or explaining deductions
 15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
-16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "choices" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
+16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "hints" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
 17. When the narrative reveals information that corresponds to a clue in the StoryState, you MUST include the 'clue_id' of that clue in the 'stateDelta.revealedClues' array in your response.
+18. STRUCTURED NARRATIVE: For the 'narrative' field, you MUST return an array of objects. Identify 2-4 key nouns or phrases a player might interact with. For each of these, create an object of `{"type": "keyword", "content": "phrase", "action": "verb phrase"}`. All other text should be in objects of `{"type": "text", "content": "..."}`.
 
 
 ────────────────────────────────────────
@@ -916,24 +917,8 @@ console.log("--- SYSTEM PROMPT ---", systemPrompt);
     });
 console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- ADD THIS LINE
 
-       // Get the raw text from the AI
-const rawResponse = chat.choices[0].message.content;
+const assistant = JSON.parse(chat.choices[0].message.content);
 
-// Find the first '{' and the last '}' to extract the JSON object
-const firstBrace = rawResponse.indexOf('{');
-const lastBrace = rawResponse.lastIndexOf('}');
-
-if (firstBrace === -1 || lastBrace === -1) {
-  throw new Error("AI response did not contain a valid JSON object.");
-}
-
-const jsonString = rawResponse.substring(firstBrace, lastBrace + 1);
-
-// Clean up trailing commas that cause JSON errors
-const cleanedResponse = jsonString.replace(/,\s*([}\]])/g, "$1");
-    
-// Now, parse the clean and valid JSON
-const assistant = JSON.parse(cleanedResponse);
 
     let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
 
@@ -970,7 +955,7 @@ const newlyRevealedClues = (assistant.stateDelta.revealedClues || [])
 res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 res.status(200).json({
   narrative: assistant.narrative,
-  choices:   assistant.choices,
+  hints:     assistant.hints,
   scene:     assistant.stateDelta.global.current_scene, // <-- Add the scene
   stateDelta: assistant.stateDelta, // <-- Also send the stateDelta for the mustache
 newlyRevealedClues: newlyRevealedClues

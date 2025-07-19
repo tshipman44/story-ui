@@ -151,7 +151,7 @@ const NotebookModal = ({ clues, onClose }) => (
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
-  const [choices, setChoices] = useState([]);
+  const [hints, setHints] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
 const [scene, setScene] = useState(1);
@@ -203,7 +203,7 @@ const sceneImages = {
       // If data.narrative is missing, show the error from the API instead.
       setNarrative(data.narrative || `🚨 Error: ${data.error}`);
       // If data.choices is missing, default to an empty array to prevent a crash.
-      setChoices(data.choices || []);
+      setChoices(data.hints || []);
 
       // grab the mood if present
       setMustacheMood(
@@ -257,20 +257,39 @@ return (
     className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-40"
  
   >
-    <article className="whitespace-pre-wrap leading-relaxed space-y-6
-                        bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
-      {narrative}
-    </article>
+   <article className="whitespace-pre-wrap leading-relaxed space-y-6
+                    bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+  {Array.isArray(narrative) ? (
+    narrative.map((segment, index) => {
+      if (segment.type === 'keyword') {
+        return (
+          <button
+            key={index}
+            onClick={() => playTurn(segment.action)}
+            disabled={loading}
+            className="text-indigo-300 font-semibold hover:underline focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded transition p-1"
+          >
+            {segment.content}
+          </button>
+        );
+      }
+      return <span key={index}>{segment.content}</span>;
+    })
+  ) : (
+    narrative // Fallback for the initial "…loading…" string
+  )}
+</article>
+
   </div>
 
-  {/* Column 2: Buttons (this column will not scroll) */}
-  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
-    {choices.map((c) => (
-      <div className="w-full max-w-sm mx-auto"> 
-        <ChoiceButton key={c} label={c} onClick={() => playTurn(c)} />
-      </div>
-    ))}
-  </div>
+{/* Column 2: Buttons (this column will now be for hints) */}
+<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+  {hints.map((hint) => (
+    <div key={hint} className="w-full max-w-sm mx-auto"> 
+      <ChoiceButton label={hint} onClick={() => playTurn(hint)} />
+    </div>
+  ))}
+</div>
 </main>
  {/* ✅ keep ONLY the new unified footer */}
     <Footer
