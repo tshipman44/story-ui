@@ -72,13 +72,10 @@ const ChoiceButton = ({ label, onClick }) => (
 );
 const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
   <footer
-    className="fixed bottom-0 left-0 right-0 flex flex-row items-end justify-center gap-4 px-4 py-3
+    className="fixed bottom-0 left-0 right-0 flex flex-col items-center gap-3 px-4 py-3
              bg-slate-900/80 shadow-inner backdrop-blur"
   >
-    {/* Left Spacer - This pushes the center and right content */}
-    <div className="flex-1 hidden lg:block"></div>
-
-    {/* Center Content - The form and the mustache */}
+    {/* Form - Centered on its own line */}
     <div className="w-full max-w-sm">
       <form
         onSubmit={onSubmit}
@@ -105,16 +102,21 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
           Send
         </button>
       </form>
-      <div className="mt-3">
-        <Mustache mood={mood} className="w-full" />
-      </div>
     </div>
 
-    {/* Right Content - The notebook button */}
-    <div className="flex-1 hidden lg:flex justify-end">
-      <button onClick={onNotebookClick} className="w-48 transition-transform active:scale-95">
-        <img src={notebookIcon} alt="Open Clue Notebook" className="rounded-lg shadow-md" />
-      </button>
+    {/* Container for the two images below the form */}
+    <div className="w-full max-w-sm flex flex-row items-end justify-center gap-4">
+      {/* Mustache on the left */}
+      <div className="flex-1">
+        <Mustache mood={mood} className="w-full" />
+      </div>
+      
+      {/* Notebook on the right */}
+      <div className="flex-1">
+        <button onClick={onNotebookClick} className="w-full transition-transform active:scale-95">
+          <img src={notebookIcon} alt="Open Clue Notebook" className="rounded-lg shadow-md" />
+        </button>
+      </div>
     </div>
   </footer>
 );
@@ -244,8 +246,8 @@ return (
 
   {/* Column 1: Narrative (No background styles here) */}
   <div 
-    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-32"
-    style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-36"
+ 
   >
     <article className="whitespace-pre-wrap leading-relaxed space-y-6
                         bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
