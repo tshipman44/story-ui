@@ -919,8 +919,11 @@ console.log("--- AI RAW RESPONSE ---", chat.choices[0].message.content); // <-- 
        // Get the raw text from the AI
     const rawResponse = chat.choices[0].message.content;
 
-    // Clean up trailing commas that cause JSON errors
-    const cleanedResponse = rawResponse.replace(/,\s*([}\]])/g, "$1");
+// Sanitize control characters like newlines BEFORE cleaning commas
+const sanitizedResponse = rawResponse.replace(/\n/g, "\\n").replace(/\r/g, "\\r").replace(/\t/g, "\\t");
+
+// Clean up trailing commas that cause JSON errors
+const cleanedResponse = sanitizedResponse.replace(/,\s*([}\]])/g, "$1");
 
     // Now, parse the clean and valid JSON
     const assistant = JSON.parse(cleanedResponse);

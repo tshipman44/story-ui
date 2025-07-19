@@ -105,18 +105,18 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
     </div>
 
     {/* Container for the two images below the form */}
-    <div className="w-full max-w-sm flex flex-row items-end justify-center gap-4">
-      {/* Mustache on the left */}
-      <div className="flex-1">
-        <Mustache mood={mood} className="w-full" />
-      </div>
-      
-      {/* Notebook on the right */}
-      <div className="flex-1">
-        <button onClick={onNotebookClick} className="w-full transition-transform active:scale-95">
-          <img src={notebookIcon} alt="Open Clue Notebook" className="rounded-lg shadow-md" />
-        </button>
-      </div>
+   <div className="w-full max-w-sm flex flex-row items-stretch justify-center gap-4 h-24">
+     {/* Mustache on the left */}
+<div className="flex-1">
+  <Mustache mood={mood} className="w-full h-full object-contain" />
+</div>
+
+{/* Notebook on the right */}
+<div className="flex-1">
+  <button className="w-full h-full ...">
+    <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
+  </button>
+</div>
     </div>
   </footer>
 );
