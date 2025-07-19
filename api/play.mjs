@@ -819,7 +819,7 @@ Use **this exact schema** (order doesn’t matter, keys do):
 4. CRITICAL PLOT MOMENT: After narrating the events of scene_05, the 'current_scene' in the stateDelta you return MUST be 'scene_06'. The narrative should lead directly into this event, and the choices offered should not prevent it. 
 5. Keep tone, diction, and era appropriate for 1920s–30s Christie.
 6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == "eligible".
-7. 7. Always output in stateDelta.global:
+7. Always output in stateDelta.global:
    { "current_scene": "<scene_id>", "storyPhase": "<str>",
      "turnsSinceLastProgress": <int>, "revealedCluesGlobal": [ ... ] }
 8. After each action:
@@ -834,6 +834,8 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
 14. Mustache Mood - the default for mustacheMood is neutral. Set the value to surprised if a brand new clue is revealed at the start of the scene. Set the value to thoughtful if Poirot is analysing evidence or explaining deductions
 15. **Hercule Poirot is NOT present** and should not speak or be mentioned by the narrator until the storyPhase is 'investigation'. The narrative should focus solely on Hastings's perspective.
 16. **After clue C8 ('Doctors confirm strychnine poisoning') is revealed, one of the suggested "choices" MUST be an action related to seeking help from Hercule Poirot, referencing the fact that Hastings knows he is nearby.**
+17. When the narrative reveals information that corresponds to a clue in the StoryState, you MUST include the 'clue_id' of that clue in the 'stateDelta.revealedClues' array in your response.
+
 
 ────────────────────────────────────────
 ## Current StoryState (trim to essentials)
