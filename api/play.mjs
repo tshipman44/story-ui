@@ -781,7 +781,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
 
   if (error) throw error;
 }
-function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes }) {
+function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues }) {
 return `
 You are **StoryBrain v0.1**, the narrative engine for an adaptive Agatha-Christie-style mystery based off the novel The Mysterious Affair at Styles.  
 You hold an internal object called **StoryState** (see “Current StoryState” below).
@@ -843,7 +843,7 @@ The assistant must reference revealedCluesGlobal, not just the local scene array
   "turnsSinceLastProgress": ${turns || 0},
   "revealedCluesGlobal": ${JSON.stringify(revealed)},
   "characters": ${JSON.stringify(STORY_DATA.characters)},
-  "clues": ${JSON.stringify(STORY_DATA.clues)},
+  "clues": ${JSON.stringify(availableClues)},
   "scenes": ${JSON.stringify(availableScenes)}, // <-- Use the filtered list
   "locations": ${JSON.stringify(STORY_DATA.locations)}
 }
@@ -897,10 +897,13 @@ export default async function handler(req, res) {
 
 // Filter scenes to only include those available in the current phase
 const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(phase));
+const availableSceneIds = availableScenes.map(s => s.scene_id.trim());
+const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c.found_in_scene.trim()));
    
 
     // -- build prompt & call OpenAI
-    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes });
+    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes,
+  availableClues: availableClues });
 console.log("--- SYSTEM PROMPT ---", systemPrompt);   
   const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
