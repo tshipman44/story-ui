@@ -832,11 +832,16 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-"18. STRUCTURED NARRATIVE – Write in Hastings’s *first‑person* voice and keep the flow inline:",
-"   • Embed **2–4 keyword clauses** per turn.  Each keyword clause must start with “I …”, end with proper punctuation, *and never be preceded by a hard line‑break*.",
-"   • Wrap that clause exactly as written in {\"type\":\"keyword\", …}.  Its `action` must be a clear, unique imperative (e.g. \"Observe the grandeur of Styles Court\") not used earlier in the story.",
-"   • Do NOT place a newline before or after a keyword segment; spacing must read naturally when all objects are concatenated.",
-"   • Reject or rewrite any keyword whose `action` duplicates an earlier `action` in this or previous turns.",
+"18. STRUCTURED NARRATIVE – Write in Hastings’s *first‑person* voice, vary what’s clickable:",
+"   • Embed **1–3 keyword clauses** *distributed through the paragraph* (never all at the end).  Each clause must start with “I …” and end with punctuation.",
+"   • At least **one** keyword each turn must involve an *object, person, or action* that could reveal or advance the plot – not only scenic details.",
+"   • Wrap the clause exactly as written in {\"type\":\"keyword\",…}.  Give it a clear, unique imperative `action` (e.g. \"Inspect the strained greeting between Emily and Alfred\").",
+"   • Do NOT use an `action` that was already used in previous turns.",
+"   • Do NOT insert extra line‑breaks around keyword segments; spacing must read as continuous prose.",
+"19. SCENE ADVANCE – Immediately after narrating a scene:",
+"   • If every clue listed in that scene’s `clues_revealed` field is now present in revealedCluesGlobal,",
+"     set stateDelta.global.current_scene to that scene’s `preferred_next_scene`.",
+"   • Reset turnsSinceLastProgress to 0 when you advance.  Never leave the reader stuck in a scene once its required clue(s) are found.",
 
 
 
