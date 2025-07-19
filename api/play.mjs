@@ -819,9 +819,9 @@ Use **this exact schema** (order doesn’t matter, keys do):
 4. If three consecutive turns advance neither plot nor clues, add a subtle hint via Poirot.  
 5. Keep tone, diction, and era appropriate for 1920s–30s Christie.
 6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == "eligible".
-7. Always output in stateDelta.global:
-   { "turnsSinceLastProgress": <int>, "storyPhase": "<str>",
-     "revealedCluesGlobal": [ ... ] }
+7. 7. Always output in stateDelta.global:
+   { "current_scene": "<scene_id>", "storyPhase": "<str>",
+     "turnsSinceLastProgress": <int>, "revealedCluesGlobal": [ ... ] }
 8. After each action:
    • If player uncovers a clue/scene advances plot → set turnsSinceLastProgress = 0.
    • Else increment it by 1.
