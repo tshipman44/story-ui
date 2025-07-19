@@ -64,9 +64,8 @@ const ChoiceButton = ({ label, onClick }) => (
   <button
     onClick={onClick} className="w-full rounded-lg py-3 px-4 text-sm font-semibold shadow-sm transition
            mb-3 first:mt-2 last:mb-0 active:scale-[0.98] active:brightness-90
-           focus:outline-none focus:ring-2 focus:ring-indigo-500 
-           bg-slate-200 text-slate-900 hover:bg-slate-300
-           dark:bg-indigo-600 dark:text-white dark:hover:bg-indigo-500"
+           focus:outline-none focus:ring-2 focus:ring-slate-500 
+           bg-slate-700 text-slate-100 hover:bg-slate-600"
 
   >
     {label}
@@ -98,8 +97,9 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
         <button
           type="submit"
           disabled={loading}
-          className="bg-indigo-600 px-4 py-3 text-sm font-semibold text-white
-                     transition hover:bg-indigo-500 disabled:opacity-50"
+          className="bg-slate-700 px-4 py-3 text-sm font-semibold text-slate-100
+             transition hover:bg-slate-600 disabled:opacity-50"
+
         >
           Send
         </button>
