@@ -815,6 +815,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
 
     "────────────────────────────────────────",
     "## Story rules",
+    "0. **You are a state machine.** Your primary goal is to return a perfectly formed JSON object that accurately updates the game state according to all rules.",
     "1. **Maintain canon:** never contradict facts in StoryState. The story is always told from Hastings’s POV in strict first person.",
     "2. *Fair‑play mystery:* a clue used to solve the case must have been (or become) discoverable by the reader.",
     "3. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
@@ -823,7 +824,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "6. Before emitting a scene, consider only Scenes where unlocks_when equals the current storyPhase AND status == 'eligible'.",
     "7. Always output in stateDelta.global: current_scene, storyPhase, turnsSinceLastProgress, revealedCluesGlobal.",
     "8. If the player reveals a clue → turnsSinceLastProgress = 0; otherwise increment it.",
-    "9. HINTS: You MUST always provide 1-2 helpful, contextual or whimsical suggestions in the 'hints' array to guide the player.",
+    "9. HINTS: The 'hints' array MUST contain 1-2 short, imperative action phrases to guide a stuck player (e.g., 'Ask about the will,' or 'Examine the fireplace').",
     "10. When a scene contains phase_change_to, update storyPhase and reset turnsSinceLastProgress.",
     "11. If confidencePoirotKnowsKiller ≥ 0.8 during investigation, change storyPhase to 'reveal'.",
     "12. Poirot always speaks in an arch tone with occasional French phrases.",
@@ -832,12 +833,17 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-"18. STRUCTURED NARRATIVE – Write in Hastings’s *first‑person* voice, vary what’s clickable:",
-"   • Embed **1–3 keyword clauses** *distributed through the paragraph* (never all at the end).  Each clause must start with “I …” and end with punctuation.",
-"   • At least **one** keyword each turn must involve an *object, person, or action* that could reveal or advance the plot – not only scenic details.",
-"   • Wrap the clause exactly as written in {\"type\":\"keyword\",…}.  Give it a clear, unique imperative `action` (e.g. \"Inspect the strained greeting between Emily and Alfred\").",
-"   • Do NOT use an `action` that was already used in previous turns.",
-"   • Do NOT insert extra line‑breaks around keyword segments; spacing must read as continuous prose.",
+"18. STRUCTURED NARRATIVE – Write in Hastings’s *first‑person* voice and vary what’s clickable:",
+"   • Embed **1–3 keyword clauses** scattered through the paragraph (never all at the end).  Each clause must start with “I …” and end with punctuation.",
+"   • At least **one** keyword each turn must involve an object, person, or action that could reveal or advance the plot — not just scenic details.",
+"   • Good example of the required structure:",
+"     [",
+"       {\"type\":\"text\",\"content\":\"As I examined the room, \"},",
+"       {\"type\":\"keyword\",\"content\":\"I noticed a half‑burned letter on the grate.\",\"action\":\"Examine the half‑burned letter\"},",
+"       {\"type\":\"text\",\"content\":\" The air smelled faintly of bitter almonds.\"}",
+"     ]",
+"   • Wrap the clause exactly as written inside the keyword object and supply a clear, unique imperative in the `action` field (e.g. \"Examine the half‑burned letter\").",
+"   • Do NOT reuse an `action` that appeared in previous turns, and do NOT insert extra line‑breaks around keyword segments; the array must read as seamless prose.",
 "19. SCENE ADVANCE – Immediately after narrating a scene:",
 "   • If every clue listed in that scene’s `clues_revealed` field is now present in revealedCluesGlobal,",
 "     set stateDelta.global.current_scene to that scene’s `preferred_next_scene`.",
@@ -966,6 +972,14 @@ const assistant = JSON.parse(cleanedResponse);
 const newlyRevealedClues = (assistant.stateDelta.revealedClues || [])
   .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
   .filter(Boolean);
+
+const updatePayload = {
+  phase: g.storyPhase,
+  scene: g.current_scene,
+  revealed: mergedRevealed,
+  turns: nextTurnsSinceProgress
+};
+console.log("--- Updating Supabase with ---", updatePayload);
 
    await updatePlayerRow(playerId, {
          phase: g.storyPhase,
