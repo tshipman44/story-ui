@@ -351,7 +351,7 @@ const STORY_DATA = {"characters": [
       "scene_id": "scene_01",
       "timestamp": "1917-07-16T18:15:00.000Z",
       "location": "loc_01",
-      "summary": "Captain Hastings, on medical leave, arrives in Essex and is driven to Styles Court by his old friend John Cavendish. He meets Cynthia Murdoch on the way in and catches his first glimpse of the gracious—but faintly tense—household.\n",
+      "summary": "Captain Hastings, on medical leave, arrives in Essex and is driven to Styles Court by his old friend John Cavendish. He sees a Belgian refugee camp and recalls hearing that the famous detective Hercule Poirot is in the area. He meets Cynthia Murdoch on the way in and catches his first glimpse of the gracious—but faintly tense—household.",
       "clues_revealed ": "C1",
       "required_clues ": "None",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
@@ -363,7 +363,7 @@ const STORY_DATA = {"characters": [
       "scene_id": "scene_02",
       "timestamp": "1917-07-16T20:30:00.000Z",
       "location": "loc_02",
-      "summary": "Hastings is introduced to Emily Inglethorp, Alfred Inglethorp, Lawrence Cavendish, Mary Cavendish, and Evelyn Howard. Lady of the house and second husband seem oddly formal; Evelyn’s hostility toward Alfred crackles.",
+      "summary": "Hastings is introduced to Emily Inglethorp, Alfred Inglethorp, Lawrence Cavendish, Mary Cavendish, and Evelyn Howard. Emily Inglethorp, the Lady of the house and Alfred Inglethorp, her second husband, seem oddly formal; Evelyn’s hostility toward Alfred crackles.",
       "clues_revealed ": "C2",
       "required_clues ": "C1",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
@@ -375,7 +375,7 @@ const STORY_DATA = {"characters": [
       "scene_id": "scene_03",
       "timestamp": "1917-07-16T23:00:00.000Z",
       "location": "loc_03",
-      "summary": "Evelyn and Emily quarrel loudly about Alfred’s influence and Emily’s new will. Evelyn announces she will leave at once.",
+      "summary": "Evelyn and Emily quarrel loudly about Alfred’s influence and Emily’s new will. Evelyn announces she will leave at once. Dinner is to be served soon.",
       "clues_revealed ": "C3",
       "required_clues ": "C2",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
@@ -387,7 +387,7 @@ const STORY_DATA = {"characters": [
       "scene_id": "scene_04",
       "timestamp": "1917-07-17T02:10:00.000Z",
       "location": "loc_04",
-      "summary": "Alfred (bearded, nervous) is seen purchasing strychnine in his wife’s name, claiming it is “to put down a dog.”",
+      "summary": "Lawrence Cavendish arrives to the house for dinner. He mentions offhandedly that he saw Alfred (bearded, nervous) purchasing strychnine in Emily's name, claiming it is “to put down a dog.” They eat dinner with a simmering tension in the room.",
       "clues_revealed ": "C4",
       "required_clues ": "C2",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
@@ -815,7 +815,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
 
     "────────────────────────────────────────",
     "## Story rules",
-    "1. **Maintain canon:** never contradict facts in StoryState. The story is always told from Hastings’s POV.",
+    "1. **Maintain canon:** never contradict facts in StoryState. The story is always told from Hastings’s POV in strict first person.",
     "2. *Fair‑play mystery:* a clue used to solve the case must have been (or become) discoverable by the reader.",
     "3. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "4. CRITICAL PLOT MOMENT: After narrating scene_05 you must set current_scene = 'scene_06' in stateDelta.",
@@ -832,14 +832,13 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "15. Poirot is absent until storyPhase === 'investigation'.",
     "16. After clue C8, one suggested hint must involve seeking Poirot’s help.",
     "17. Any narrative information matching a clue must list that clue_id in stateDelta.revealedClues.",
-"18. STRUCTURED NARRATIVE – The `narrative` array must read like finished prose.",
-"   • Keep the original word order.  Split the text where you want a choice.",
-"   • Wrap **2‑4 full phrases** (≥ 2 words — not lone nouns) in " +
-      "{\"type\":\"keyword\",\"content\":\"phrase\",\"action\":\"imperative\"}.",
-"   • Put every other fragment — including surrounding spaces / punctuation — in " +
-      "{\"type\":\"text\",\"content\":\"…\"}.",
-"   • The `action` string must be a clear, stand‑alone command (e.g. \"observe the façade\"), " +
-      "so the LLM never receives a blank or cryptic verb.",
+"18. STRUCTURED NARRATIVE – Write in Hastings’s **first‑person** voice and keep the text fluent:",
+"   • Insert **2 – 4 keyword segments per turn**.  Each keyword segment must be a full clause or sentence that begins with “I …” and ends with proper punctuation.",
+"   • Wrap that clause exactly as it appears in the story in:",
+"       {\"type\":\"keyword\",\"content\":\"I was struck by its grandeur.\",\"action\":\"Observe the elegance of Styles Court\"}",
+"   • The `action` string is the same idea rewritten as a clear imperative (drop the “I …”).  All other prose belongs in {\"type\":\"text\",…} segments, preserving spacing and punctuation so the array reads as one seamless paragraph.",
+
+
 
     "────────────────────────────────────────",
     "## Current StoryState (trimmed)",
