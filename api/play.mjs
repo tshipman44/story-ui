@@ -140,8 +140,8 @@ const STORY_DATA = {"characters": [
     {
       "clue_id": "C1",
       "title": "Arrival at Styles / knowledge Poirot is nearby",
-      "found_in_scene": "scene_01 ",
-      "points_to": "scene_02 ",
+      "found_in_scene": "scene_01",
+      "points_to": "scene_02",
       "isRedHerring": false,
       "revealed": "narrative"
     },
@@ -348,7 +348,7 @@ const STORY_DATA = {"characters": [
   ],
   "scenes": [
     {
-      "scene_id": "scene_01 ",
+      "scene_id": "scene_01",
       "timestamp": "1917-07-16T18:15:00.000Z",
       "location": "loc_01",
       "summary": "Captain Hastings, on medical leave, arrives in Essex and is driven to Styles Court by his old friend John Cavendish. He meets Cynthia Murdoch on the way in and catches his first glimpse of the gracious—but faintly tense—household.\n",
@@ -356,11 +356,11 @@ const STORY_DATA = {"characters": [
       "required_clues //required_clues is a comma-sep list of clue_ids that must be discovered first.\n\n": "None",
       "unlocks_when": "storyPhase == \"pre-murder\"       ",
       "status": "eligible",
-      "preferred_next_scene": "scene_02 ",
+      "preferred_next_scene": "scene_02",
       "possible_next_scenes": "scene_02, scene_03, scene_04"
     },
     {
-      "scene_id": "scene_02 ",
+      "scene_id": "scene_02",
       "timestamp": "1917-07-16T20:30:00.000Z",
       "location": "loc_02",
       "summary": "Hastings is introduced to Emily Inglethorp, Alfred Inglethorp, Lawrence Cavendish, Mary Cavendish, and Evelyn Howard. Lady of the house and second husband seem oddly formal; Evelyn’s hostility toward Alfred crackles.",
