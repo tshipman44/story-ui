@@ -210,8 +210,12 @@ async function playTurn(action) {
   setHints([]); 
   
   try {
-    const res = await fetch(API_URL, { /* ... */ });
-    const data = await res.json();
+    const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ playerId: PLAYER_ID, userAction: action })
+  });
+  const data = await res.json();
     
     // The new narrative from the API (either an entry_narrative or an event narrative)
     setNarrative(data.narrative || `🚨 Error: ${data.error}`);
