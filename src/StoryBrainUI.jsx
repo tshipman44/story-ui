@@ -117,7 +117,7 @@ const Footer = ({
 
       {/* notebook */}
       <div className="flex-1 relative">
-        <div className="overflow-hidden rounded-lg">
+        <div className="h-full overflow-hidden rounded-lg">
           <button
             onClick={onNotebookClick}
             className="w-full h-full transition active:scale-95 hover:ring-2 hover:ring-indigo-300"
@@ -275,7 +275,8 @@ return (
     {/* MAIN SCROLL AREA */}
   
       
-    <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden">
+    <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4
+                lg:overflow-hidden">
 
 
   {/* Column 1: Narrative (No background styles here) */}
