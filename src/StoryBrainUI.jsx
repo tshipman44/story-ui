@@ -204,23 +204,19 @@ const sceneImages = {
     // ... add more scenes and images as needed
   };
   // The playTurn function should be defined here, in the main component body
-     async function playTurn(action) {
-    setLoading(true);
-    // Optimistically update the narrative with the player's action
-    setNarrative(current => current + `\n\n> ${action}`);
+async function playTurn(action) {
+  setLoading(true);
+  // Clear out old hints while loading the new scene/event
+  setHints([]); 
+  
+  try {
+    const res = await fetch(API_URL, { /* ... */ });
+    const data = await res.json();
     
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ playerId: PLAYER_ID, userAction: action })
-      });
-      const data = await res.json();
-      
-      // If data.narrative is missing, show the error from the API instead.
-      setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-      // If data.choices is missing, default to an empty array to prevent a crash.
-      setHints(data.hints || []);
+    // The new narrative from the API (either an entry_narrative or an event narrative)
+    setNarrative(data.narrative || `🚨 Error: ${data.error}`);
+    // The new hints are the events from the current scene
+    setHints(data.events || []); 
 
       // grab the mood if present
       setMustacheMood(
@@ -292,10 +288,10 @@ return (
   </div>
 
 {/* Column 2: Buttons (this column will now be for hints) */}
-<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto max-h-64 lg:max-h-none" >
-  {hints.map((hint) => (
-    <div key={hint} className="w-full max-w-sm mx-auto"> 
-      <ChoiceButton label={hint} onClick={() => playTurn(hint)} />
+<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+  {hints.map((event) => (
+    <div key={event.event_id} className="w-full max-w-sm mx-auto"> 
+      <ChoiceButton label={event.trigger} onClick={() => playTurn(event.event_id)} />
     </div>
   ))}
 </div>
