@@ -109,17 +109,20 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick, unreadClueCount }) =
     </div>
 
     {/* Container for the two images below the form */}
-   <div className="w-full max-w-sm flex flex-row items-stretch justify-center gap-4 h-24">
+   <div className="w-full max-w-sm flex justify-center gap-4 h-28">
      {/* Mustache on the left */}
-<div className="flex-1 relative">
-  <Mustache mood={mood} className="w-full h-full object-contain" />
++<div className="flex-1 relative overflow-hidden rounded-lg">
++  <Mustache mood={mood}
+className="w-full h-full object-cover"   /* fills, trims if needed */
+/>
 </div>
 
 {/* Notebook on the right */}
-<div className="flex-1 relative">
-  <button onClick={onNotebookClick} className="w-full h-full transition-transform active:scale-95">
+<div className="flex-1 relative overflow-hidden rounded-lg">
+  <button onClick={onNotebookClick} className="w-full h-full transition
+             active:scale-95 hover:ring-2 hover:ring-indigo-300">
 
-    <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
+    <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-cover"/>
   </button>
   {unreadClueCount > 0 && (
    <span
@@ -267,7 +270,7 @@ return (
 
   {/* Column 1: Narrative (No background styles here) */}
   <div 
-    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-40"
+    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-44"
  
   >
    <article className="whitespace-pre-wrap leading-relaxed space-y-6
