@@ -132,7 +132,6 @@ className="w-full h-full object-cover"   /* fills, trims if needed */
  {unreadClueCount}
 </span>
 )}
-</div>
     </div>
   </footer>
 );
