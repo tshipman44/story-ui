@@ -276,7 +276,7 @@ return (
   
       
     <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4
-                overflow-y-auto lg:overflow-hidden">
+                overflow-y-auto lg:overflow-hidden pb-40">
 
 
   {/* Column 1: Narrative (No background styles here) */}
