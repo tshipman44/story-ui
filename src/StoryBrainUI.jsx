@@ -111,8 +111,8 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick, unreadClueCount }) =
     {/* Container for the two images below the form */}
    <div className="w-full max-w-sm flex justify-center gap-4 h-28">
      {/* Mustache on the left */}
-+<div className="flex-1 relative overflow-hidden rounded-lg">
-+  <Mustache mood={mood}
+<div className="flex-1 relative overflow-hidden rounded-lg">
+<Mustache mood={mood}
 className="w-full h-full object-cover"   /* fills, trims if needed */
 />
 </div>
