@@ -51,8 +51,9 @@ const Container = ({ children, className = "" }) => (
 );
 
 const Header = () => (
-  <header className="sticky top-0 z-10 bg-slate-900 text-white shadow-md">
-    <Container className="w-full max-w-5xl mx-auto">
+  <header className="sticky top-0 z-50 w-full bg-slate-900/80
+                     backdrop-blur text-white shadow-md">
+    <Container className="w-full">
       <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide font-serif">
         The Mysterious Affair at Styles
       </h1>
@@ -72,69 +73,79 @@ const ChoiceButton = ({ label, onClick }) => (
     {label}
   </button>
 );
-const Footer = ({ mood, onSubmit, loading, onNotebookClick, unreadClueCount }) => (
-  <footer
-    className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center gap-3 px-4 py-3
-             bg-slate-900/80 shadow-inner backdrop-blur"
-  >
-    {/* Form - Centered on its own line */}
+const Footer = ({
+  mood,
+  onSubmit,
+  loading,
+  onNotebookClick,
+  unreadClueCount,
+}) => (
+  <footer className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center gap-3 px-4 py-3
+                     bg-slate-900/80 shadow-inner backdrop-blur">
+    {/* ── form ── */}
     <div className="w-full max-w-sm">
       <form
         onSubmit={onSubmit}
-        className="
-          flex overflow-hidden rounded-lg
-          bg-slate-900/80 border border-slate-600 shadow
-          focus-within:ring-2 focus-within:ring-indigo-500
-        "
+        className="flex overflow-hidden rounded-lg
+                   bg-slate-900/80 border border-slate-600 shadow
+                   focus-within:ring-2 focus-within:ring-indigo-500"
       >
         <input
           name="free"
           aria-label="Custom action"
           disabled={loading}
           placeholder="Or type your own action…"
-          className="flex-1 bg-transparent px-4 py-3 text-sm
-                     placeholder-slate-400 focus:outline-none"
+          className="flex-1 bg-transparent px-4 py-3 text-sm placeholder-slate-400 focus:outline-none"
         />
         <button
           type="submit"
           disabled={loading}
-            className="bg-slate-700 px-4 py-3 text-sm font-semibold text-white
-             transition hover:bg-slate-600 disabled:opacity-50"
-
-
+          className="bg-slate-700 px-4 py-3 text-sm font-semibold text-white
+                     transition hover:bg-slate-600 disabled:opacity-50"
         >
           Send
         </button>
       </form>
     </div>
 
-    {/* Container for the two images below the form */}
-   <div className="w-full max-w-sm flex justify-center gap-4 h-28">
-     {/* Mustache on the left */}
-<div className="flex-1 relative overflow-hidden rounded-lg">
-<Mustache mood={mood}
-className="w-full h-full object-cover"   /* fills, trims if needed */
-/>
-</div>
+    {/* ── image row ── */}
+    <div className="w-full max-w-sm flex justify-center gap-4 h-28">
+      {/* mustache */}
+      <div className="flex-1 relative overflow-hidden rounded-lg">
+        <Mustache mood={mood} className="w-full h-full" />
+      </div>
 
-{/* Notebook on the right */}
-<div className="flex-1 relative overflow-hidden rounded-lg">
-  <button onClick={onNotebookClick} className="w-full h-full transition
-             active:scale-95 hover:ring-2 hover:ring-indigo-300">
+      {/* notebook */}
+      <div className="flex-1 relative">
+        <div className="overflow-hidden rounded-lg">
+          <button
+            onClick={onNotebookClick}
+            className="w-full h-full transition active:scale-95 hover:ring-2 hover:ring-indigo-300"
+          >
+            <img
+              src={notebookIcon}
+              alt="Open Clue Notebook"
+              className="w-full h-full object-cover object-top"
+            />
+          </button>
+        </div>
 
-    <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-cover"/>
-  </button>
-  {unreadClueCount > 0 && (
-   <span
-     className="absolute -top-1 -right-1 flex items-center justify-center
-                w-5 h-5 rounded-full bg-red-500 text-[10px] font-bold text-white
-                ring-2 ring-slate-900 animate-ping-short">
- {unreadClueCount}
-</span>
-)}
+        {unreadClueCount > 0 && (
+          <span
+            className="absolute -top-1 -right-1 z-10
+                       flex items-center justify-center
+                       w-5 h-5 rounded-full bg-red-500 text-[10px] font-bold text-white
+                       ring-2 ring-slate-900 animate-ping-short pointer-events-none"
+          >
+            {unreadClueCount}
+          </span>
+        )}
+      </div>
     </div>
   </footer>
 );
+
+
 const NotebookModal = ({ clues, onClose }) => (
   <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
     <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 w-full max-w-md shadow-lg">
@@ -280,7 +291,7 @@ return (
   </div>
 
 {/* Column 2: Buttons (this column will now be for hints) */}
-<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto max-h-64 lg:max-h-none" >
   {hints.map((hint) => (
     <div key={hint} className="w-full max-w-sm mx-auto"> 
       <ChoiceButton label={hint} onClick={() => playTurn(hint)} />

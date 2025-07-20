@@ -14,7 +14,7 @@ export default function Mustache({ mood = "neutral", className = "" }) {
       src={moodMap[mood] ?? neutralGif}
       alt={`Poirot's ${mood} moustache`}
       /* fill the wrapper & crop to the rounded frame */
-      className={`w-full h-full object-cover ${className}`}
+      className={`w-full h-full object-cover object-top ${className}`}
     />
   );
 
