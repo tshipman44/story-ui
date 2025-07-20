@@ -341,7 +341,7 @@ const STORY_DATA = {"characters": [
       "clue_id": "C26",
       "title": "I have found a scrap of green ribbon with spirit gum",
       "found_in_scene": "scene_17",
-      "points_to": "scene18",
+      "points_to": "scene_18",
       "isRedHerring": false,
       "revealed": "Discovered by a careful examination of the dispatch-case. Hinted at if the user discovers C18"
     }
@@ -965,7 +965,7 @@ try {
 
 
 // Filter scenes to only include those available in the current phase
-const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(phase));
+const availableScenes = STORY_DATA.scenes.filter(s => s.status === "eligible" && s.unlocks_when.includes(phase));
 const availableSceneIds = availableScenes.map(s => s.scene_id.trim());
 const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c.found_in_scene.trim()));
    
