@@ -1025,6 +1025,8 @@ const newlyRevealedClues = (assistant.stateDelta.revealedClues || [])
   .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
   .filter(Boolean);
 
+  const currentSceneObject = STORY_DATA.scenes.find(s => s.scene_id === g.current_scene);
+
 const updatePayload = {
   phase: g.storyPhase,
   scene: g.current_scene,
