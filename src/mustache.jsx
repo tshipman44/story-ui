@@ -8,12 +8,14 @@ const moodMap = {
   thoughtful: thoughtfulGif,
 };
 
-export default function Mustache({ mood = "neutral" }) {
+export default function Mustache({ mood = "neutral", className = "" }) {
   return (
     <img
       src={moodMap[mood] ?? neutralGif}
       alt={`Poirot's ${mood} moustache`}
-      className="w-32 mx-auto mb-4"
+      /* fill the wrapper & crop to the rounded frame */
+      className={`w-full h-full object-cover ${className}`}
     />
   );
+
 }
