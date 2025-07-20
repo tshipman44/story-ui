@@ -172,7 +172,7 @@ const NotebookModal = ({ clues, onClose }) => (
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
-  const [hints, setHints] = useState([]);
+  const [hints, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
 const [scene, setScene] = useState(1);
@@ -207,20 +207,29 @@ const sceneImages = {
 async function playTurn(action) {
   setLoading(true);
   // Clear out old hints while loading the new scene/event
-  setHints([]); 
-  
-  try {
-    const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ playerId: PLAYER_ID, userAction: action })
+  setchoices([]); 
+  let currentNarrative = "";
+  setNarrative(prev => {
+    currentNarrative = prev; // Grab the latest narrative string
+    return prev + `\n\n> ${action}`; // Optimistic update still works
   });
+try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      // Update the body to include the current narrative
+      body: JSON.stringify({ 
+        playerId: PLAYER_ID, 
+        userAction: action,
+        currentNarrative: currentNarrative // <-- New property
+      })
+    });
   const data = await res.json();
     
     // The new narrative from the API (either an entry_narrative or an event narrative)
     setNarrative(data.narrative || `🚨 Error: ${data.error}`);
     // The new hints are the events from the current scene
-    setHints(data.events || []); 
+    setChoices(data.choices || []); 
 
       // grab the mood if present
       setMustacheMood(
@@ -293,7 +302,7 @@ return (
 
 {/* Column 2: Buttons (this column will now be for hints) */}
 <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
-  {hints.map((event) => (
+  {choices.map((event) => (
     <div key={event.event_id} className="w-full max-w-sm mx-auto"> 
       <ChoiceButton label={event.trigger} onClick={() => playTurn(event.event_id)} />
     </div>

@@ -851,24 +851,31 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
 
   if (error) throw error;
 }
-function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues }) {
+function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues, userAction, currentNarrative }) {
   const lines = [
+    "You are StoryBrain v0.6, a master storyteller and narrative engine for an Agatha Christie-style mystery. Your goal is to create a seamless, beautifully written, first-person narrative from the perspective of Arthur Hastings.",
 
-    // ── Header ──────────────────────────
-    "You are **StoryBrain v0.5**, the narrative engine for an adaptive Agatha‑Christie‑style mystery based on *The Mysterious Affair at Styles.*",
-    "You hold an internal object called **StoryState** (see “Current StoryState” below).",
-
+    "────────────────────────────────────────",
+    "## YOUR TASK (3 Steps)",
+    "1. **MATCH ACTION:** Look at the `userAction` and the `events` available in the `currentScene`. Determine which `event` is the most logical consequence of the player's action.",
+    "2. **SYNTHESIZE NARRATIVE:** Write a new, single paragraph of narrative. This paragraph must seamlessly blend the `narrative` from the triggered event with the `entry_narrative` of the `moves_to_scene` it points to. It must flow logically from the `currentNarrative`. The result should be a fluid, well-written continuation of the story.",
+    "3. **GENERATE HINTS:** Look at the `events` available in the new scene you are moving to. Based on their `trigger` descriptions, generate 3 new, short, player-friendly action phrases for the `hints` array.",
+    "4. **DEFAULT REACTION:** If the player's action does not logically match any event `trigger`, you MUST generate a 'default reaction.' A default reaction has three parts:",
+    "   a. The narrative must describe Hastings performing the unexpected action.",
+    "   b. Any characters present must react in a believable, in-character way appropriate to the 1920s setting.",
+    "   c. The `stateDelta` you return MUST NOT reveal any new clues or change the `current_scene`.",
+    "5. **Maintain canon:** The story is always told from Hastings’s POV in strict first person. Never contradict facts in StoryState.",
+    "6. **PHASE CHANGE:** When an event moves the story to a scene that has a `phase_change_to` property, you MUST update `storyPhase` in the stateDelta.",
+    "7. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
+    "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "────────────────────────────────────────",
     "## ⚠️  OUTPUT FORMAT – STRICT",
     "Return **one** valid JSON object and nothing else.",
-    "Schema (order doesn’t matter, keys do):",
-    "",
     "{",
-    '  "narrative": "string— vivid prose in Agatha Christie’s voice",',
-    '  "hints":     ["string", …],',
+    '  "narrative": "string — your new, synthesized paragraph of prose from Hastings\' POV.",',
+    '  "hints":     ["hint 1", "hint 2", "hint 3"],',
     '  "stateDelta": {',
-    '    "revealedClues":        ["clue_id", …],',
-    '    "readerKnowledgeUpdates":[{"object_id":"id","confidence":0-1}, …],',
+    '    "revealedClues":        ["clue_id from the triggered event"],',
     '    "global": {',
     '      "mustacheMood": "neutral",',
     '      "current_scene": "scene_id",',
@@ -878,51 +885,26 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "    }",
     "  }",
     "}",
+
+    "────────────────────────────────────────",
+    "## CONTEXT FOR YOUR TASK",
+    `The user just took the action: "${userAction}"`,
+    `The story so far: "${currentNarrative}"`,
     "",
-    "*Always include all three top‑level keys even if some arrays are empty.*",
-    "*Do NOT wrap the JSON in Markdown or prose.*",
-    "*Do NOT call any functions; this JSON is the only response.*",
-
-    "────────────────────────────────────────",
-"## Story rules",
-"0. **PRIME DIRECTIVE:** Your highest priority is to write a beautiful, immersive narrative. Fulfilling the JSON schema is your second priority.",
-"1. **NARRATIVE FLOW:** Always begin a new scene by presenting its `entry_narrative`.",
-"2. **EVENT MATCHING:** After the entry narrative, compare the player's action to the `trigger` descriptions for the events in the current scene. If there is a logical match, you MUST:",
-"   a. Narrate that event's `narrative` as the main response.",
-"   b. Add the `reveals_clue` ID to the `stateDelta.revealedClues` array if it exists.",
-"   c. Set the `stateDelta.global.current_scene` to the event's `moves_to_scene` ID.",
-"3. **DEFAULT REACTION:** If the player's action does not logically match any event `trigger`, you MUST generate a 'default reaction.' A default reaction has three parts:",
-"   a. The narrative must describe Hastings performing the unexpected action.",
-"   b. Any characters present must react in a believable, in-character way appropriate to the 1920s setting.",
-"   c. The `stateDelta` you return MUST NOT reveal any new clues or change the `current_scene`.",
-"4. **HINTS:** The 'hints' array must contain 1-2 short, imperative phrases that suggest actions which would match an available event `trigger`.",
-"5. **Maintain canon:** The story is always told from Hastings’s POV in strict first person. Never contradict facts in StoryState.",
-"6. *Fair‑play mystery:* A clue used to solve the case must have been (or become) discoverable by the reader.",
-"7. **PHASE CHANGE:** When an event moves the story to a scene that has a `phase_change_to` property, you MUST update `storyPhase` in the stateDelta.",
-"8. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
-"9. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
-
-
-    "────────────────────────────────────────",
-    "## Current StoryState (trimmed)",
+    "## Current Game State",
     "{",
     `  "storyPhase": "${phase}",`,
     `  "currentScene": "${scene}",`,
-    `  "turnsSinceLastProgress": ${turns || 0},`,
     `  "revealedCluesGlobal": ${JSON.stringify(revealed)},`,
-    `  "characters": ${JSON.stringify(STORY_DATA.characters)},`,
-    `  "clues": ${JSON.stringify(availableClues)},`,
-    `  "scenes": ${JSON.stringify(availableScenes)},`,
-    `  "locations": ${JSON.stringify(STORY_DATA.locations)}`,
+    `  "availableScenes": ${JSON.stringify(availableScenes)}`,
     "}",
-    "",
-    "────────────────────────────────────────",
     "## Initialization reminder",
     "On the next user message, begin the scene currently in scene_01."
   ];
 
   return lines.join("\n");
 }
+
 
 
 
@@ -949,8 +931,8 @@ export default async function handler(req, res) {
     return res.status(405).end("Use POST");
   }
 
-
-  const { playerId, userAction } = req.body;
+  const { playerId, userAction, currentNarrative } = req.body; 
+  
 
 try {
   // -- pull current state
@@ -972,7 +954,8 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
 
     // -- build prompt & call OpenAI
     const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes,
-  availableClues: availableClues });
+  availableClues: availableClues,
+  userAction, currentNarrative    });
 console.log("--- SYSTEM PROMPT ---", systemPrompt);   
   const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -1048,7 +1031,7 @@ res.status(200).json({
   narrative: assistant.narrative,
   hints:     assistant.hints,
   scene:     assistant.stateDelta.global.current_scene, 
-  events:    currentSceneObject ? currentSceneObject.events : [],
+  choices:    currentSceneObject ? currentSceneObject.events : [],
   stateDelta: assistant.stateDelta, 
   newlyRevealedClues: newlyRevealedClues
 });
