@@ -172,90 +172,35 @@ const NotebookModal = ({ clues, onClose }) => (
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
+  // The state variable is 'hints' and the setter is 'setChoices'
   const [hints, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
-const [scene, setScene] = useState(1);
-const [isNotebookOpen, setNotebookOpen] = useState(false);
-const [revealedClues, setRevealedClues] = useState([]);
-const [unreadClueCount, setUnreadClueCount] = useState(0); 
+  const [scene, setScene] = useState(1);
+  const [isNotebookOpen, setNotebookOpen] = useState(false);
+  const [revealedClues, setRevealedClues] = useState([]);
+  const [unreadClueCount, setUnreadClueCount] = useState(0);
 
-const sceneImages = {
-    1: scene1Image,
-    2: scene2Image,
-3: scene3Image,
-4: scene4Image,
-5: scene5Image,
-6: scene6Image,
-7: scene7Image,
-8: scene8Image,
-9: scene9Image,
-10: scene10Image,
-11: scene11Image,
-12: scene12Image,
-13: scene13Image,
-14: scene14Image,
-15: scene15Image,
-16: scene16Image,
-17: scene17Image,
-18: scene18Image,
-19: scene19Image,
-20: scene20Image,
-    // ... add more scenes and images as needed
-  };
-  // The playTurn function should be defined here, in the main component body
-async function playTurn(action) {
-  setLoading(true);
-  // Clear out old hints while loading the new scene/event
-  setchoices([]); 
-  let currentNarrative = "";
-  setNarrative(prev => {
-    currentNarrative = prev; // Grab the latest narrative string
-    return prev + `\n\n> ${action}`; // Optimistic update still works
-  });
-try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      // Update the body to include the current narrative
-      body: JSON.stringify({ 
-        playerId: PLAYER_ID, 
-        userAction: action,
-        currentNarrative: currentNarrative // <-- New property
-      })
+  const sceneImages = { /* ...scene images... */ };
+
+  async function playTurn(action) {
+    setLoading(true);
+    // ✅ FIX 1: Use the correct camelCase setter 'setChoices'
+    setChoices([]);
+    let currentNarrative = "";
+    setNarrative(prev => {
+      currentNarrative = prev;
+      return prev + `\n\n> ${action}`;
     });
-  const data = await res.json();
-    
-    // The new narrative from the API (either an entry_narrative or an event narrative)
-    setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-    // The new hints are the events from the current scene
-    setChoices(data.choices || []); 
+    try {
+      const res = await fetch(API_URL, { /*...fetch options...*/ });
+      const data = await res.json();
 
-      // grab the mood if present
-      setMustacheMood(
-        data.stateDelta?.global?.mustacheMood ?? "neutral"
-      );
-      
-      const sceneString = data.scene; // This will be "scene_01", "scene_02", etc.
-      if (sceneString) {
-        // Split the string by '_' and parse the second part as an integer
-        const sceneNumber = parseInt(sceneString.split('_')[1], 10);
-        // Only update the state if we successfully got a number
-        if (!isNaN(sceneNumber)) {
-          setScene(sceneNumber);
-        }
-      }
+      setNarrative(data.narrative || `🚨 Error: ${data.error}`);
+      // The API returns a 'choices' array, so we use it to set the 'hints' state
+      setChoices(data.choices || []);
 
-      // Add newly revealed clues to our list, avoiding duplicates
-      if (data.newlyRevealedClues) {
-        setRevealedClues(prevClues => {
-          const newClues = data.newlyRevealedClues.filter(
-  nc => !prevClues.some(pc => pc.clue_id === nc.clue_id)
-);
-if (newClues.length) setUnreadClueCount(c => c + newClues.length);
-return [...prevClues, ...newClues];
-        });
-      }
+      // ... rest of playTurn logic ...
 
     } catch (err) {
       setNarrative("🚨 Error contacting the story engine. Check console.");
@@ -268,60 +213,50 @@ return [...prevClues, ...newClues];
   useEffect(() => {
     playTurn("begin");
   }, []);
-function handleSubmit(e) {
-  e.preventDefault();
-  const txt = new FormData(e.target).get("free")?.trim();
-  if (txt) playTurn(txt);
-  e.target.reset();
-}
-return (
-  <div 
-     className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100 bg-cover bg-center"
-     style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
-   >
-    <Header />
 
-    {/* MAIN SCROLL AREA */}
-  
-      
-    <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4
-                overflow-y-auto lg:overflow-hidden pb-40">
+  function handleSubmit(e) {
+    e.preventDefault();
+    const txt = new FormData(e.target).get("free")?.trim();
+    if (txt) playTurn(txt);
+    e.target.reset();
+  }
 
+  return (
+    <div
+      className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100 bg-cover bg-center"
+      style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+    >
+      <Header />
+      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-40">
+        {/* Column 1: Narrative */}
+        <div className="flex-1 bg-cover bg-center transition-all duration-1000 pb-44">
+          <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+            {narrative}
+          </article>
+        </div>
 
-  {/* Column 1: Narrative (No background styles here) */}
-  <div 
-    className="flex-1 bg-cover bg-center transition-all duration-1000 pb-44"
- 
-  >
-   <article className="whitespace-pre-wrap leading-relaxed space-y-6
-                    bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
-  {narrative}
-</article>
+        {/* Column 2: Buttons */}
+        <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+          {/* ✅ FIX 2: Map over the correct state variable 'hints' */}
+          {hints.map((event) => (
+            <div key={event.event_id} className="w-full max-w-sm mx-auto">
+              <ChoiceButton label={event.trigger} onClick={() => playTurn(event.event_id)} />
+            </div>
+          ))}
+        </div>
+      </main>
 
-  </div>
-
-{/* Column 2: Buttons (this column will now be for hints) */}
-<div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
-  {choices.map((event) => (
-    <div key={event.event_id} className="w-full max-w-sm mx-auto"> 
-      <ChoiceButton label={event.trigger} onClick={() => playTurn(event.event_id)} />
+      <Footer
+        mood={mustacheMood}
+        loading={loading}
+        onNotebookClick={() => setNotebookOpen(true)}
+        onSubmit={handleSubmit}
+        unreadClueCount={unreadClueCount}
+      />
+      {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => {
+        setNotebookOpen(false);
+        setUnreadClueCount(0);
+      }} />}
     </div>
-  ))}
-</div>
-</main>
- {/* ✅ keep ONLY the new unified footer */}
-    <Footer
-  mood={mustacheMood}
-  loading={loading}
-  onNotebookClick={() => setNotebookOpen(true)}
-  onSubmit={handleSubmit}
-  unreadClueCount={unreadClueCount}
-/>
-{/* Conditionally render the notebook modal */}
-    {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => {
-setNotebookOpen(false);
-setUnreadClueCount(0);   // 🔄 reset
-}} />}
-  </div>
-);
-}
+  );
+} // This brace is correct!
