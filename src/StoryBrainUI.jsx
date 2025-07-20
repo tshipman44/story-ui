@@ -72,7 +72,7 @@ const ChoiceButton = ({ label, onClick }) => (
     {label}
   </button>
 );
-const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
+const Footer = ({ mood, onSubmit, loading, onNotebookClick, unreadClueCount }) => (
   <footer
     className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center gap-3 px-4 py-3
              bg-slate-900/80 shadow-inner backdrop-blur"
@@ -111,16 +111,24 @@ const Footer = ({ mood, onSubmit, loading, onNotebookClick }) => (
     {/* Container for the two images below the form */}
    <div className="w-full max-w-sm flex flex-row items-stretch justify-center gap-4 h-24">
      {/* Mustache on the left */}
-<div className="flex-1">
+<div className="flex-1 relative">
   <Mustache mood={mood} className="w-full h-full object-contain" />
 </div>
 
 {/* Notebook on the right */}
-<div className="flex-1">
+<div className="flex-1 relative">
   <button onClick={onNotebookClick} className="w-full h-full transition-transform active:scale-95">
 
     <img src={notebookIcon} alt="Open Clue Notebook" className="w-full h-full object-contain rounded-lg" />
   </button>
+  {unreadClueCount > 0 && (
+   <span
+     className="absolute -top-1 -right-1 flex items-center justify-center
+                w-5 h-5 rounded-full bg-red-500 text-[10px] font-bold text-white
+                ring-2 ring-slate-900 animate-ping-short">
+ {unreadClueCount}
+</span>
+)}
 </div>
     </div>
   </footer>
@@ -156,7 +164,8 @@ export default function StoryBrainUI() {
   const [mustacheMood, setMustacheMood] = useState("neutral");
 const [scene, setScene] = useState(1);
 const [isNotebookOpen, setNotebookOpen] = useState(false);
-const [revealedClues, setRevealedClues] = useState([]); 
+const [revealedClues, setRevealedClues] = useState([]);
+const [unreadClueCount, setUnreadClueCount] = useState(0); 
 
 const sceneImages = {
     1: scene1Image,
@@ -219,9 +228,10 @@ const sceneImages = {
       if (data.newlyRevealedClues) {
         setRevealedClues(prevClues => {
           const newClues = data.newlyRevealedClues.filter(
-            newClue => !prevClues.some(prevClue => prevClue.clue_id === newClue.clue_id)
-          );
-          return [...prevClues, ...newClues];
+  nc => !prevClues.some(pc => pc.clue_id === nc.clue_id)
+);
+if (newClues.length) setUnreadClueCount(c => c + newClues.length);
+return [...prevClues, ...newClues];
         });
       }
 
@@ -236,7 +246,12 @@ const sceneImages = {
   useEffect(() => {
     playTurn("begin");
   }, []);
-
+function handleSubmit(e) {
+  e.preventDefault();
+  const txt = new FormData(e.target).get("free")?.trim();
+  if (txt) playTurn(txt);
+  e.target.reset();
+}
 return (
   <div 
      className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100 bg-cover bg-center"
@@ -273,18 +288,17 @@ return (
 </main>
  {/* ✅ keep ONLY the new unified footer */}
     <Footer
-      mood={mustacheMood}
-      loading={loading}
+  mood={mustacheMood}
+  loading={loading}
   onNotebookClick={() => setNotebookOpen(true)}
-      onSubmit={(e) => {
-        e.preventDefault();
-        const txt = new FormData(e.target).get("free")?.toString().trim();
-        if (txt) playTurn(txt);
-        e.target.reset();
-      }}
-    />
+  onSubmit={handleSubmit}
+  unreadClueCount={unreadClueCount}
+/>
 {/* Conditionally render the notebook modal */}
-    {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => setNotebookOpen(false)} />}
+    {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => {
+setNotebookOpen(false);
+setUnreadClueCount(0);   // 🔄 reset
+}} />}
   </div>
 );
 }

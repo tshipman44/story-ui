@@ -7,4 +7,7 @@ export default {
   darkMode: 'media',
   theme: { extend: {} },
   plugins: [],
+  animation: {
+        'ping-short': 'ping 0.8s cubic-bezier(0, 0, 0.2, 1) 1'
+      }
 };
