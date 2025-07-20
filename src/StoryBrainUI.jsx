@@ -276,12 +276,12 @@ return (
   
       
     <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4
-                lg:overflow-hidden">
+                overflow-y-auto lg:overflow-hidden">
 
 
   {/* Column 1: Narrative (No background styles here) */}
   <div 
-    className="flex-1 overflow-y-auto bg-cover bg-center transition-all duration-1000 pb-44"
+    className="flex-1 bg-cover bg-center transition-all duration-1000 pb-44"
  
   >
    <article className="whitespace-pre-wrap leading-relaxed space-y-6
