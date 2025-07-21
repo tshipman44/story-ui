@@ -284,16 +284,16 @@ export default function StoryBrainUI() {
       style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
     >
       <Header />
-      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden pb-40">
+<main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden">
         {/* Column 1: Narrative */}
-        <div className="flex-1 transition-all duration-1000 overflow-y-auto pb-44 pr-2">
+  <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto pb-44 pr-2">
           <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
             {narrative}
           </article>
         </div>
 
         {/* Column 2: Buttons */}
-        <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto pb-16">
+  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 lg:overflow-y-auto pb-16">
 
   {/* This div now correctly WRAPS the list of choices. */}
   {/* It's hidden on mobile by default, but becomes visible when the button is clicked. */}
@@ -309,12 +309,12 @@ export default function StoryBrainUI() {
     ))}
   </div>
 
-  {/* This div for the 'What are my options?' button remains the same. */}
+  {/* This div for the 'Investigate my options' button remains the same. */}
   {/* It's visible on mobile by default, and hidden when choices are open or on large screens. */}
   <div className={`${isMobileChoicesOpen ? 'hidden' : 'block'} lg:hidden w-full max-w-sm mx-auto`}>
     { !loading && choices.length > 0 && (
       <ChoiceButton
-        label="What are my options?"
+        label="Investigate my options"
         onClick={() => setIsMobileChoicesOpen(true)}
       />
     )}
