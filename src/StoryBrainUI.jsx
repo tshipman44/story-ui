@@ -176,12 +176,34 @@ export default function StoryBrainUI() {
   const [hints, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
-  const [scene, setScene] = useState(1);
+  const [scene, setScene] = useState("scene_01");
   const [isNotebookOpen, setNotebookOpen] = useState(false);
   const [revealedClues, setRevealedClues] = useState([]);
   const [unreadClueCount, setUnreadClueCount] = useState(0);
 
-  const sceneImages = { /* ...scene images... */ };
+  const sceneImages = {
+    'scene_01': scene1Image,
+    'scene_02': scene2Image,
+    'scene_03': scene3Image,
+    'scene_04': scene4Image,
+    'scene_05': scene5Image,
+    'scene_06': scene6Image,
+    'scene_07': scene7Image,
+    'scene_08': scene8Image,
+    'scene_09': scene9Image,
+    'scene_10': scene10Image,
+    'scene_11': scene11Image,
+    'scene_12': scene12Image,
+    'scene_13': scene13Image,
+    'scene_14': scene14Image,
+    'scene_15': scene15Image,
+    'scene_16': scene16Image,
+    'scene_17': scene17Image,
+    'scene_18': scene18Image,
+    'scene_19': scene19Image,
+    'scene_20': scene20Image,
+    'scene_21': scene21Image,
+  };
 
 // Replace the existing playTurn function in StoryBrainUI.jsx
 
