@@ -281,19 +281,19 @@ export default function StoryBrainUI() {
   return (
     <div
       className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100 bg-cover bg-center"
-      style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
+      style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages['scene_01']})` }}
     >
       <Header />
-<main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden">
+      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-40 lg:pb-0">
         {/* Column 1: Narrative */}
-  <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto pb-44 pr-2">
+        <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto lg:pb-44 pr-2">
           <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
             {narrative}
           </article>
         </div>
 
         {/* Column 2: Buttons */}
-  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 lg:overflow-y-auto pb-16">
+  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 lg:overflow-y-auto lg:pb-16">
 
   {/* This div now correctly WRAPS the list of choices. */}
   {/* It's hidden on mobile by default, but becomes visible when the button is clicked. */}
