@@ -1148,13 +1148,13 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
 }
 function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues, userAction, currentNarrative }) {
   const lines = [
-    "You are StoryBrain v0.6, a master storyteller and narrative engine for an Agatha Christie-style mystery. Your goal is to create a seamless, beautifully written, first-person narrative from the perspective of Arthur Hastings.",
+    "You are StoryBrain v0.7, a master storyteller and narrative engine for an Agatha Christie-style mystery. Your goal is to create a seamless, beautifully written, first-person narrative from the perspective of Arthur Hastings.",
 
     "────────────────────────────────────────",
     "## YOUR TASK",
     "1. **MATCH ACTION:** Look at the `userAction` and the `events` available in the `currentScene`. Determine which `event` is the most logical consequence of the player's action.",
     "2. **SYNTHESIZE NARRATIVE:** Write a new narrative passage of about 225 words. This text must seamlessly blend the `narrative` from the triggered event with the `entry_narrative` of the `moves_to_scene` it points to. It must flow logically from the `currentNarrative`. The result should be a fluid, well-written continuation of the story, respecting paragraph breaks.",
-    "3. **GENERATE HINTS:** Look at the `events` available in the new scene you are moving to. Based on their `trigger` descriptions, generate 3 new, short, player-friendly action phrases for the `hints` array.",
+    "3. Look at the `events` available in the new scene. Based on their `trigger` descriptions, generate 3 new, short, player-friendly action phrases for the `hints` array. Each hint MUST be a complete imperative sentence (e.g., 'Ask John about his day.') and be properly capitalized.",
     "4. **DEFAULT REACTION:** If the player's action does not logically match any event `trigger`, you MUST generate a 'default reaction.' A default reaction has three parts:",
     "   a. The narrative must describe Hastings performing the unexpected action.",
     "   b. Any characters present must react in a believable, in-character way appropriate to the 1920s setting.",
@@ -1273,7 +1273,7 @@ if (firstBrace === -1 || lastBrace === -1) {
 const jsonString = rawResponse.substring(firstBrace, lastBrace + 1);
 
 // Clean up trailing commas that might cause errors
-const cleanedResponse = jsonString.replace(/,\s*([}\]])/g, "$1");
+const cleanedResponse = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
     
 // Now, parse the clean and valid JSON
 const assistant = JSON.parse(cleanedResponse);

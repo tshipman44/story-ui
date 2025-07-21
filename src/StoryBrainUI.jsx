@@ -281,16 +281,16 @@ export default function StoryBrainUI() {
       style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages[1]})` }}
     >
       <Header />
-      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-40">
+      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-hidden pb-40">
         {/* Column 1: Narrative */}
-        <div className="flex-1 bg-cover bg-center transition-all duration-1000 pb-44">
+        <div className="flex-1 transition-all duration-1000 overflow-y-auto pb-44 pr-2">
           <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
             {narrative}
           </article>
         </div>
 
         {/* Column 2: Buttons */}
-       <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+       <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto pb-44">
           {choices.map((choice) => (
             <div key={choice.event_id} className="w-full max-w-sm mx-auto">
               <ChoiceButton
