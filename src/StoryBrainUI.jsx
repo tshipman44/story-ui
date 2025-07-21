@@ -293,7 +293,7 @@ export default function StoryBrainUI() {
         </div>
 
         {/* Column 2: Buttons */}
-  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 lg:overflow-y-auto lg:pb-16">
+  <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 lg:overflow-y-auto pb-16">
 
   {/* This div now correctly WRAPS the list of choices. */}
   {/* It's hidden on mobile by default, but becomes visible when the button is clicked. */}
