@@ -803,38 +803,52 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const openai   = new OpenAI({ apiKey: OPENAI_KEY });
 
 /* ─── helpers ──────────────────────────── */
+async function createPlayerRow(playerId) {
+  const initial_state = {
+    player_id: playerId,
+    story_phase: "pre-murder", // Start of the game
+    current_scene: "scene_01",
+    revealed_clues: [],
+    turn_count: 0
+  };
 
+  const { data, error } = await supabase
+    .from('PlayerState')
+    .insert([initial_state])
+    .select()
+    .single();
 
-async function fetchPlayerRow(playerId) {
-  const { data, error, status } = await supabase
-    .from("PlayerState")
-    .select("*")
-    .eq("player_id", playerId)
-    .maybeSingle();                 // ← avoids throw on no rows
-
-  if (error && status !== 406) throw error;  // 406 = no rows
-
-  if (!data) {
-    const defaults = {
-      player_id:     playerId,
-      story_phase:   "pre-murder",
-      current_scene: "scene_01",
-      revealed_clues: [],
-      turns_since_last_progress: 0,
-      updated_at:    new Date().toISOString(),
-    };
-
-    const { data: inserted, error: insertErr } = await supabase
-      .from("PlayerState")
-      .insert(defaults)
-      .select("*");                 // returns an array
-
-    if (insertErr) throw insertErr;
-    return inserted[0];            // ← grab the first row
+  if (error) {
+    console.error("Error creating new player:", error);
+    throw new Error(`Could not create new player in Supabase: ${error.message}`);
   }
 
-  return data;                      // object when row already exists
+  console.log("Successfully created new player:", data.player_id);
+  return data;
 }
+
+async function fetchPlayerRow(playerId) {
+  const { data, error } = await supabase
+    .from('PlayerState')
+    .select('*')
+    .eq('player_id', playerId)
+    .single(); // .single() returns one object, or null if not found
+
+  if (error && error.code !== 'PGRST116') {
+    // An actual error occurred (other than 'not found')
+    console.error("Error fetching player:", error);
+    throw new Error(`Supabase fetch error: ${error.message}`);
+  }
+
+  if (data) {
+    // Player was found
+    return data;
+  } else {
+    // Player not found, so create them
+    return await createPlayerRow(playerId);
+  }
+}
+
 
 
 async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
