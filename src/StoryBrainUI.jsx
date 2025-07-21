@@ -183,27 +183,58 @@ export default function StoryBrainUI() {
 
   const sceneImages = { /* ...scene images... */ };
 
+// Replace the existing playTurn function in StoryBrainUI.jsx
+
   async function playTurn(action) {
     setLoading(true);
-    // ✅ FIX 1: Use the correct camelCase setter 'setChoices'
-    setChoices([]);
+    setChoices([]); // Use setChoices, which is correct now
+
+    // Get the most recent narrative text *before* the API call
     let currentNarrative = "";
     setNarrative(prev => {
       currentNarrative = prev;
-      return prev + `\n\n> ${action}`;
+      // For a new game, don't show "> begin"
+      return action === "begin" ? prev : prev + `\n\n> ${action}`;
     });
+
     try {
-      const res = await fetch(API_URL, { /*...fetch options...*/ });
+      // ✅ FIX: Added method, headers, and body to the fetch call
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerId: PLAYER_ID,
+          userAction: action,
+          currentNarrative: action === "begin" ? "" : currentNarrative,
+        }),
+      });
+
+      if (!res.ok) {
+        // Handle server errors (like 500)
+        const errorData = await res.json();
+        throw new Error(errorData.error || `Server responded with ${res.status}`);
+      }
+      
       const data = await res.json();
 
+      // Update all state based on the full response from the server
       setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-      // The API returns a 'choices' array, so we use it to set the 'hints' state
       setChoices(data.choices || []);
+      setScene(data.scene || 1); // Update scene for background image
+      
+      if (data.stateDelta?.global?.mustacheMood) {
+          setMustacheMood(data.stateDelta.global.mustacheMood);
+      }
 
-      // ... rest of playTurn logic ...
+      // Update clues in the notebook
+      if (data.newlyRevealedClues && data.newlyRevealedClues.length > 0) {
+        setRevealedClues(prev => [...prev, ...data.newlyRevealedClues]);
+        setUnreadClueCount(prev => prev + data.newlyRevealedClues.length);
+      }
 
     } catch (err) {
-      setNarrative("🚨 Error contacting the story engine. Check console.");
+      // This will now show more specific errors from the server
+      setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
       console.error(err);
     } finally {
       setLoading(false);
