@@ -174,7 +174,7 @@ const NotebookModal = ({ clues, onClose }) => (
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
   // The state variable is 'hints' and the setter is 'setChoices'
-  const [hints, setChoices] = useState([]);
+  const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");
   const [scene, setScene] = useState("scene_01");
@@ -239,11 +239,18 @@ export default function StoryBrainUI() {
       }
       
       const data = await res.json();
-
+  // ✅ FIX: Combine the AI hints with the event data
+      const apiChoices = data.choices || [];
+      const apiHints = data.hints || [];
+      const combinedChoices = apiChoices.map((choice, index) => ({
+        event_id: choice.event_id,
+        label: apiHints[index] || choice.trigger, // Use AI hint, with a fallback
+      }));
+      
       // Update all state based on the full response from the server
       setNarrative(data.narrative || `🚨 Error: ${data.error}`);
       setChoices(data.choices || []);
-      setScene(data.scene || 1); // Update scene for background image
+      setScene(data.scene || 'scene_01'); // Update scene for background image
       
       if (data.stateDelta?.global?.mustacheMood) {
           setMustacheMood(data.stateDelta.global.mustacheMood);
