@@ -950,7 +950,29 @@ const STORY_DATA = {"characters": [
       ],
       "unlocks_when": "storyPhase == \"reveal\"",
       "status": "locked"
+    },
+    {
+  "scene_id": "scene_22",
+  "entry_narrative": "The story has reached an unfortunate conclusion. Even in 1917 Essex, there are limits to a gentleman's behavior, and I have found them.",
+  "events": [
+    {
+      "event_id": "action_restart_game",
+      "trigger": "Player chooses to start the story over.",
+      "narrative": "",
+      "reveals_clue": null,
+      "moves_to_scene": null
+    },
+    {
+      "event_id": "action_linger_on_failure",
+      "trigger": "Player chooses to reflect on their failure.",
+      "narrative": "There is nothing more to be done. The path has ended.",
+      "reveals_clue": null,
+      "moves_to_scene": null
     }
+  ],
+  "unlocks_when": "storyPhase == \"game_over\"",
+  "status": "eligible"
+}
   ],
   "locations": [
     {
@@ -1163,6 +1185,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "6. **PHASE CHANGE:** When an event moves the story to a scene that has a `phase_change_to` property, you MUST update `storyPhase` in the stateDelta.",
     "7. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
+    "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
     "────────────────────────────────────────",
     "## ⚠️  OUTPUT FORMAT – STRICT",
     "Return **one** valid JSON object and nothing else.",

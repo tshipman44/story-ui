@@ -21,6 +21,7 @@ import scene18Image from './assets/scene_18.png';
 import scene19Image from './assets/scene_19.png';
 import scene20Image from './assets/scene_20.png';
 import scene21Image from './assets/scene_21.png';
+import scene22Image from './assets/scene_22.png';
 import notebookIcon from './assets/notebook.png';
 
 /**
@@ -206,11 +207,17 @@ export default function StoryBrainUI() {
     'scene_19': scene19Image,
     'scene_20': scene20Image,
     'scene_21': scene21Image,
+    'scene_22': scene22Image,
   };
 
 // Replace the existing playTurn function in StoryBrainUI.jsx
 
  async function playTurn(action) {
+  if (action === 'action_restart_game') {
+    localStorage.removeItem('playerId');
+    window.location.reload();
+    return; // Stop further execution
+  }
     setLoading(true);
     setChoices([]);
     setIsMobileChoicesOpen(false);
