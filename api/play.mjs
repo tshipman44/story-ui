@@ -350,311 +350,592 @@ const STORY_DATA = {"characters": [
     {
       "scene_id": "scene_01",
       "entry_narrative": "The intense interest aroused in the public by what was known at the time as 'The Styles Case' has now somewhat subsided. Nevertheless, in view of the world-wide notoriety which attended it, I have been asked, both by my friend Poirot and the family themselves, to write an account of the whole story. \n\n I had been invalided home from the Front; and, after spending some months in a rather depressing Convalescent Home, was given a month’s sick leave. Having no near relations or friends, I was trying to make up my mind what to do, when I ran across John Cavendish. I had seen very little of him for some years. Indeed, I had never known him particularly well. He was a good fifteen years my senior, for one thing, though he hardly looked his forty-five years. As a boy, though, I had often stayed at Styles, his mother’s place in Essex. \n\n We had a good yarn about old times, and it ended in his inviting me down to Styles to spend my leave there. Thus it came about that, three days later, I descended from the train at Styles St. Mary, an absurd little station, with no apparent reason for existence, perched up in the midst of green fields and country lanes. John Cavendish was waiting on the platform",
-      "events": [
-        {
-          "event_id": "E1_DriveToStyles",
-          "trigger": "Player gets in the car, greets John, or agrees to go to Styles Court.",
-          "narrative": "The drive to Styles Court is a pleasant one, winding through sleepy Essex lanes. You pass a small, newly-established Belgian refugee camp, and the sight jogs your memory—you'd heard the famous detective Hercule Poirot was staying in the area. As the car turns into the grand driveway, you meet Miss Cynthia Murdoch, a vibrant young woman who is a ward of the family. The manor itself, Styles Court, looms ahead—a magnificent Elizabethan façade, beautiful, yet somehow holding its secrets close.",
-          "reveals_clue": "C1",
-          "moves_to_scene": "scene_02"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_02",
-      "entry_narrative": "John leads you into the morning-room. The entire family seems to be present, and the air is dense with unspoken tensions. You are introduced to the matriarch, Emily Inglethorp, and her much younger husband, Alfred, who hovers near her chair. You also meet John's brother Lawrence, John's enchanting wife Mary, and Emily's companion, the formidable Evelyn Howard, whose hostility towards Alfred is almost a physical presence in the room.",
-      "events": [
-        {
-          "event_id": "E2_MeetTheFamily",
-          "trigger": "Player attempts to greet the family, asks John to make introductions, or observes the room.",
-          "narrative": "The introductions are made. Lady Emily is gracious but commands the room with an iron will. Alfred seems nervous, fussing with his pince-nez. You can't help but notice the way Evelyn Howard glares at him when she thinks no one is looking. The tension is palpable.",
-          "reveals_clue": "C2",
-          "moves_to_scene": "scene_03"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_03",
-      "entry_narrative": "The group begins to disperse from the morning-room, the strained pleasantries having run their course. You move in to the Rose Garden path, where you hear the beginnings of a heated discussion.",
-      "events": [
-        {
-          "event_id": "E3_OverhearQuarrel",
-          "trigger": "Player lingers, moves towards the sound of the argument, or asks about the tension.",
-          "narrative": "You find a reason to remain behind as the voices from the drawing-room grow louder. It is Evelyn and Emily, arguing fiercely over Alfred's influence and a new will. 'He has the arts of a devil!' you hear Evelyn declare. The argument ends with Evelyn announcing she will leave Styles at once.",
-          "reveals_clue": "C3",
-          "moves_to_scene": "scene_04"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_04",
-      "entry_narrative": "With Evelyn Howard's dramatic departure hanging in the air, the family gathers awkwardly for dinner. Lawrence Cavendish, John's brother, arrives just as you are sitting down, looking slightly dishevelled.",
-      "events": [
-        {
-          "event_id": "E4_PoisonPurchase",
-          "trigger": "Player engages Lawrence in conversation or asks about his day.",
-          "narrative": "Making small talk, Lawrence mentions off-handedly that he saw Alfred in the village chemist earlier. 'Looked devilishly nervous, the fellow did,' Lawrence remarks. 'Buying a great deal of strychnine, enough to put down a mad dog, he said.' A sudden, sharp silence falls over the dinner table.",
-          "reveals_clue": "C4",
-          "moves_to_scene": "scene_05"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_05",
-      "entry_narrative": "Dinner has concluded, and the family has retired to the drawing-room for coffee. The atmosphere is still incredibly strained. Dorcas, the maid, brings in the coffee service.",
-      "events": [
-        {
-          "event_id": "E5_CocoaRitual",
-          "trigger": "Player observes the coffee service or pays close attention to Emily.",
-          "narrative": "You watch as Mary Cavendish pours the coffee. When she offers a cup to her stepmother-in-law, Emily waves it away. 'No coffee for me tonight, Mary dear. I shall have my cocoa, as usual.' Dorcas appears with a cup of cocoa on a separate tray, which Emily accepts. Shortly after, the family begins to disperse for the evening.",
-          "reveals_clue": "C5",
-          "moves_to_scene": "scene_06"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_06",
-      "entry_narrative": "The house is quiet, but sleep evades you. You decide to take a brief stroll down the upstairs corridor to clear your head. The gas lamps cast long, flickering shadows.",
-      "events": [
-        {
-          "event_id": "E6-1_SeeLight",
-          "trigger": "Player approaches Emily's room or looks towards her door.",
-          "narrative": "As you pass Mrs. Inglethorp's room, you notice a faint sliver of light from beneath her door, followed by the soft, metallic chink of something being set down on a marble-topped surface. A moment later, the light is extinguished. Shortly after, you see John Cavendish in his pajamas, who seems startled to see you and mutters something about closing windows before quickly retiring to his room.",
-          "reveals_clue": "C6",
-          "moves_to_scene": "scene_07"
-        },
-        {
-          "event_id": "E6-2_SeeFootprints",
-          "trigger": "Player looks out a nearby corridor window.",
-          "narrative": "Glancing out the large corridor window at the moonlit garden below, you notice something odd in the flowerbed directly under Emily's window: a set of distinct, muddy footprints leading away from the house.",
-          "reveals_clue": "C23",
-          "moves_to_scene": null
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_07",
-      "entry_narrative": "You have only just returned to your room when a violent cry shatters the silence of the house, followed by the sound of a crash from Mrs. Inglethorp's room!",
-      "events": [
-        {
-          "event_id": "E7-1_BreakDoor",
-          "trigger": "Player rushes out of their room, investigates the noise, or tries to help.",
-          "narrative": "You race into the corridor. Lawrence and John are already there, trying to force the locked door to Emily's room. With a combined effort, the lock splinters and you all burst in. The scene is one of chaos: a small table is overturned, and Emily Inglethorp is in the throes of terrible convulsions. It's a truly horrific sight.",
-          "reveals_clue": "C7",
-          "moves_to_scene": "scene_08"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"pre-murder\"",
-      "phase_change_to": "investigation",
-      "status": "eligible"
-    },
-    {
-      "scene_id": "scene_08",
-      "entry_narrative": "The local physician, Dr. Wilkins, has been summoned and arrives along with Dr. Bauerstein who was staying nearby. They have been with Mrs. Inglethorp for some time. The household waits in a dreadful, anticipatory silence.",
-      "events": [
-        {
-          "event_id": "E8-1_HearDiagnosis",
-          "trigger": "Player asks one of the doctors for news or waits for them to emerge from the room.",
-          "narrative": "Dr. Wilkins emerges from the bedroom, his face grim. 'I am sorry,' he says, his voice low. 'She is gone.' Dr. Bauerstein adds, his toxicologist's mind clearly at work, 'The symptoms... the violent convulsions... it is unmistakably strychnine poisoning.'",
-          "reveals_clue": "C8",
-          "moves_to_scene": "scene_09"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_09",
-      "entry_narrative": "The local police have been called, but you feel a sense of helplessness. The official investigation will be slow and clumsy. You recall the Belgian refugee camp nearby and the rumor that the great Hercule Poirot is among them. The thought takes root: only he can solve this.",
-      "events": [
-        {
-          "event_id": "E9-1_FetchPoirot",
-          "trigger": "Player decides to go to the refugee camp, explicitly seeks out Poirot, or follows a hint to get help.",
-          "narrative": "You make your way to the cottage where the Belgian refugees are housed. There, you find the man himself, Hercule Poirot, meticulously arranging items on his mantlepiece. You lay out the terrible events of the night. His egg-shaped head tilts. 'A crime of this nature,' he says, his eyes gleaming, 'it is of the first order. I will assist, mon ami, but we must be discreet.'",
-          "reveals_clue": "C9",
-          "moves_to_scene": "scene_10"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_10",
-      "entry_narrative": "You and Poirot have returned to Styles Court. The police are present, but Poirot, with an air of quiet authority, begins his own methodical investigation. He asks to speak with the maid, Dorcas, in the boudoir.",
-      "events": [
-        {
-          "event_id": "E10-1_QuestionDorcas",
-          "trigger": "Player listens to the interview with Dorcas or asks her about the night of the murder.",
-          "narrative": "Poirot gently questions the loyal maid about the after-dinner coffee service. She confirms that Mrs. Inglethorp did not take coffee, but her usual cocoa. Poirot's eyes light up. 'And the cup, was it her usual?' he asks. Dorcas explains the coffee cups are all the same, but Mrs. Inglethorp's cocoa cup was a special one, kept on a tray in this very room. Poirot nods slowly. 'We must find this cocoa cup,' he declares.",
-          "reveals_clue": "C10",
-          "moves_to_scene": "scene_11"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_11",
-      "entry_narrative": "Following the conversation with Dorcas, Poirot leads you to the dispensary at the nearby Red Cross Hospital where Cynthia works. The room is lined with amber bottles and smells faintly of ether.",
-      "events": [
-        {
-          "event_id": "E11-1_ExamineCupboard",
-          "trigger": "Player chooses to examine the poison cupboard or follows Poirot's lead.",
-          "narrative": "Poirot's eyes scan the shelves before settling on the poison cupboard. Inside, among the neatly arranged bottles, he points out a small box of loose strychnine tablets. More importantly, wedged behind the cupboard, he retrieves a soiled label from a chemist's bottle, clearly marked 'Strychnine Hydrochloride.'",
-          "reveals_clue": "C11",
-          "moves_to_scene": "scene_12"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_12",
-      "entry_narrative": "Back at Styles Court that evening, the mood is somber. After dinner, Poirot suggests a stroll in the garden. From the shadows of a yew hedge, he motions for you to be silent, pointing towards a garden bench.",
-      "events": [
-        {
-          "event_id": "E12-1_ObserveMeeting",
-          "trigger": "Player agrees to watch from the shadows or looks where Poirot is pointing.",
-          "narrative": "You see two figures in a hushed, intense conversation: Mary Cavendish and Dr. Bauerstein. Their body language is secretive, their faces filled with anxiety. The conversation ends abruptly as they seem to sense your presence, and they part ways with a final, worried glance.",
-          "reveals_clue": "C12",
-          "moves_to_scene": "scene_13"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_13",
-      "entry_narrative": "The day of the inquest arrives. You and Poirot take seats in the crowded assembly-room over the village post-office. The air is stuffy and thick with morbid curiosity as the coroner begins the proceedings.",
-      "events": [
-        {
-          "event_id": "E13-1_HearInquest",
-          "trigger": "Player listens to the proceedings.",
-          "narrative": "The local chemist is called to the stand. He testifies that he sold a quantity of strychnine to Mr. Alfred Inglethorp, who signed the poison-register. When questioned, Alfred does not deny it, claiming his wife asked him to purchase it for a dog. After all testimonies, the jury returns a verdict of 'Wilful murder by person or persons unknown.'",
-          "reveals_clue": "C13",
-          "moves_to_scene": "scene_14"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_14",
-      "entry_narrative": "That evening, Poirot gathers a few of you in Cynthia's room. 'We must reconstruct the events of that night,' he announces. He hands Cynthia her usual bromide sleeping-draft.",
-      "events": [
-        {
-          "event_id": "E14-1_Reenactment",
-          "trigger": "Player observes the reenactment.",
-          "narrative": "You watch as Cynthia drinks the bromide, just as she did on the night of the murder, and bolts her door. Poirot then retrieves the bromide bottle for testing. Later, he confirms his suspicions: the bromide bottle is completely uncontaminated with poison. The method of delivery remains a mystery.",
-          "reveals_clue": "C14",
-          "moves_to_scene": "scene_15"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_15",
-      "entry_narrative": "The official investigation, led by Inspector Japp, has focused squarely on the most obvious suspect. You are in the drawing-room when Japp enters, looking resolute.",
-      "events": [
-        {
-          "event_id": "E15-1_WitnessArrest",
-          "trigger": "Player watches the events unfold.",
-          "narrative": "Inspector Japp formally arrests Alfred Inglethorp for the murder of his wife. As a stunned silence falls over the family, Evelyn Howard makes a dramatic and unexpected return to Styles Court. She produces a letter, she claims, that provides a solid alibi for Alfred.",
-          "reveals_clue": "C15",
-          "moves_to_scene": "scene_16"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
+"events": [
 {
-      "scene_id": "scene_16",
-      "entry_narrative": "Despite the alibi letter from Evelyn, Poirot seems unconvinced. 'Let us take a trip to the village, Hastings,' he says. 'I wish to speak with the landlord of the inn where Monsieur Inglethorp stayed.'",
-      "events": [
-        {
-          "event_id": "E16-1_InterviewLandlord",
-          "trigger": "Player accompanies Poirot to the inn or asks the landlord about Alfred.",
-          "narrative": "At the inn, the landlord confirms Alfred's story. He saw him retire for the night and saw him again at breakfast. The alibi appears solid. Poirot, however, seems more interested in the clock on the wall than the landlord's testimony.",
-          "reveals_clue": "C16",
-          "moves_to_scene": "scene_17"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
+      "event_id": "We drove to Styles",
+      "trigger": "Player gets in the car, greets John, or agrees to go to Styles Court.",
+      "narrative": "The drive to Styles Court is a pleasant one, winding through sleepy Essex lanes. As the car turns into the grand driveway, you meet Miss Cynthia Murdoch, a vibrant young woman who is a ward of the family. The manor itself, Styles Court, looms ahead—a magnificent Elizabethan façade, beautiful, yet somehow holding its secrets close.",
+      "reveals_clue": "C1",
+      "moves_to_scene": "scene_02"
     },
     {
-      "scene_id": "scene_17",
-      "entry_narrative": "Back at Styles, Poirot's attention turns to the fireplace in Emily Inglethorp's boudoir. 'A fire in July, Hastings. It is curious, no?' he remarks, kneeling to examine the grate.",
-      "events": [
-        {
-          "event_id": "E17-1_FindWillScrap",
-          "trigger": "Player helps Poirot search the fireplace or examines the ashes.",
-          "narrative": "Sifting through the ashes, Poirot carefully retrieves a small, charred scrap of paper. Though mostly burned, you can just make out a few words. It appears to be a fragment of a will, and the name 'Alfred Inglethorp' is clearly visible. Poirot says nothing, merely tucking it into his wallet with a thoughtful expression.",
-          "reveals_clue": "C17",
-          "moves_to_scene": "scene_18"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
+      "event_id": "I ask John about the family",
+      "trigger": "Player asks John about the family or how things are at Styles before getting in the car.",
+      "narrative": "'Things are... a bit different now, old chap,' John says, his smile not quite reaching his eyes. 'Mother remarried. We can talk more on the way.' His brief, almost evasive answer hangs in the air, hinting at unspoken tensions within the family.",
+      "reveals_clue": null,
+      "moves_to_scene": null
     },
+
     {
-      "scene_id": "scene_18",
-      "entry_narrative": "Poirot is in his element, his 'little grey cells' working at full capacity. He leads you to Alfred Inglethorp's dressing-room, now sealed by the police. With a nod from Inspector Japp, you enter.",
-      "events": [
-        {
-          "event_id": "E18-1_FindBeardGum",
-          "trigger": "Player searches the dressing-case or watches Poirot's examination.",
-          "narrative": "Poirot ignores the obvious, instead picking up a small pot from the dressing-table. He later demonstrates that the spirit-gum inside is identical to a residue found on a scrap of fake black beard hair discovered near Emily's bed. Someone, it seems, was wearing a disguise.",
-          "reveals_clue": "C18",
-          "moves_to_scene": "scene_19"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"investigation\"",
-      "status": "locked"
-    },
+
+      "event_id": "I take a look around",
+      "trigger": "Player hesitates, looks around the station, or comments on the quietness of the area.",
+      "narrative": "You take a moment to breathe in the country air, a stark contrast to the grim realities of the Front. The station is indeed absurdly small, little more than a shed and a platform. Beyond the tracks, a small, newly-established Belgian refugee camp is visible, a quiet reminder that the war has reached even this peaceful corner of England.",
+      "reveals_clue": null,
+      "moves_to_scene": null
+    }
+
+  ],
+
+  "unlocks_when": "storyPhase == \"pre-murder\"",
+
+  "status": "eligible"
+
+},
+      
+   {
+    "scene_id": "scene_02",
+    "entry_narrative": "John leads you into the morning-room. The entire family seems to be present, and the air is dense with unspoken tensions. You are introduced to the matriarch, Emily Inglethorp, and her much younger husband, Alfred, who hovers near her chair. You also meet John's brother Lawrence, John's enchanting wife Mary, and Emily's companion, the formidable Evelyn Howard, whose hostility towards Alfred is almost a physical presence in the room.",
+    "events": [
+      {
+        "event_id": "I am introduced to the family",
+        "trigger": "Player attempts to greet the family, asks John to make introductions, or observes the room.",
+        "narrative": "The introductions are made. Lady Emily is gracious but commands the room with an iron will. Alfred seems nervous, fussing with his pince-nez. You can't help but notice the way Evelyn Howard glares at him when she thinks no one is looking. The tension is palpable.",
+        "reveals_clue": "C2",
+        "moves_to_scene": "scene_03"
+      },
+      {
+        "event_id": "I attempt to speak with Mary Cavendish",
+        "trigger": "Player tries to engage Mary Cavendish in conversation or compliments her.",
+        "narrative": "You make your way over to Mary Cavendish, whose beauty is even more striking up close. You offer a pleasantry about the house, and she replies with a cool, reserved smile. Her eyes, however, seem distant, as if her thoughts are a thousand miles away. The conversation is polite but brief.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I observe Alfred Inglethorp more closely",
+        "trigger": "Player watches Alfred, comments on his demeanor, or asks John about him under his breath.",
+        "narrative": "Your eyes are drawn to Alfred Inglethorp. There is something about the man that puts you on edge. He fusses and hovers around his wife, his attentiveness feeling more performed than genuine. He seems acutely aware of the family's disapproval, yet tries to maintain an air of jaunty confidence.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_03",
+    "entry_narrative": "The group begins to disperse from the morning-room, the strained pleasantries having run their course. You move out onto the Rose Garden path, where you hear the beginnings of a heated discussion from the drawing-room window.",
+    "events": [
+      {
+        "event_id": "I linger to overhear the quarrel",
+        "trigger": "Player lingers, moves towards the sound of the argument, or tries to listen in.",
+        "narrative": "You find a reason to remain behind as the voices from the drawing-room grow louder. It is Evelyn and Emily, arguing fiercely over Alfred's influence and a new will. 'He has the arts of a devil!' you hear Evelyn declare. The argument ends with Evelyn announcing she will leave Styles at once.",
+        "reveals_clue": "C3",
+        "moves_to_scene": "scene_04"
+      },
+      {
+        "event_id": "I try to make small talk with John",
+        "trigger": "Player attempts to engage John Cavendish in a private conversation or asks what the argument is about.",
+        "narrative": "You draw John aside, asking if everything is alright. He forces a smile. 'Just another of Evelyn's tempers. Don't you worry about it, old man. She and mother are always at odds about something.' He quickly changes the subject, though his eyes betray a deep-seated worry.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I admire the rose garden",
+        "trigger": "Player chooses to ignore the argument and focuses on the surroundings, perhaps commenting on the flowers.",
+        "narrative": "Choosing not to pry, you turn your attention to the magnificent rose garden. The blooms are splendid, a riot of colour and scent in the afternoon sun. It's a peaceful scene, strangely at odds with the emotional turmoil brewing just a few feet away inside the house.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_04",
+    "entry_narrative": "With Evelyn Howard's dramatic departure hanging in the air, the family gathers awkwardly for dinner. Lawrence Cavendish, John's brother, arrives just as you are sitting down, looking slightly dishevelled.",
+    "events": [
+      {
+        "event_id": "I talk to Lawrence about his day",
+        "trigger": "Player engages Lawrence in conversation or asks about his day.",
+        "narrative": "Making small talk, you ask Lawrence what kept him. He mentions off-handedly that he saw Alfred in the village chemist earlier. 'Looked devilishly nervous, the fellow did,' Lawrence remarks. 'Buying a great deal of strychnine, enough to put down a mad dog, he said.' A sudden, sharp silence falls over the dinner table.",
+        "reveals_clue": "C4",
+        "moves_to_scene": "scene_05"
+      },
+      {
+        "event_id": "I ask John about Evelyn's departure",
+        "trigger": "Player quietly asks John about Evelyn Howard and the argument.",
+        "narrative": "'It's for the best,' John mutters, keeping his voice low. 'Evelyn's a good sort, but she could never hold her tongue about Alfred. It was bound to come to a head.' He glances nervously towards his step-mother, who is pointedly ignoring the empty seat at the table.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I try to compliment the meal",
+        "trigger": "Player attempts to lighten the mood by commenting on the food or the house.",
+        "narrative": "You attempt to inject a note of cheerfulness into the oppressive silence by complimenting the cook. Mrs. Inglethorp gives a curt nod of agreement, but the other family members merely murmur in assent, their minds clearly elsewhere. The oppressive atmosphere remains.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_05",
+    "entry_narrative": "Dinner has concluded, and the family has retired to the drawing-room for coffee. The atmosphere is still incredibly strained. Dorcas, the maid, brings in the coffee service.",
+    "events": [
+      {
+        "event_id": "I observe the coffee service",
+        "trigger": "Player observes the coffee service, pays close attention to Emily, or watches Mary pour.",
+        "narrative": "You watch as Mary Cavendish pours the coffee. When she offers a cup to her stepmother-in-law, Emily waves it away. 'No coffee for me tonight, Mary dear. I shall have my cocoa, as usual.' Dorcas appears with a cup of cocoa on a separate tray, which Emily accepts. Shortly after, the family begins to disperse for the evening.",
+        "reveals_clue": "C5",
+        "moves_to_scene": "scene_06"
+      },
+      {
+        "event_id": "I try to speak with Cynthia",
+        "trigger": "Player approaches Cynthia Murdoch to talk.",
+        "narrative": "You find Cynthia sitting by the window, looking unusually subdued. You ask if she is alright. 'It's just... all the fighting,' she says quietly. 'I hate it. This house used to be so peaceful.' Her youthful innocence seems a fragile thing in this house of secrets.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I reflect on the family's finances",
+        "trigger": "Player thinks about the family's money situation, John's earlier comments, or the inheritance.",
+        "narrative": "You recall John's earlier confession of being 'at his wits' end for money.' Looking around the well-appointed room, you realize that this entire family's lifestyle is dependent on the whims of one elderly woman. A woman who, you've heard, changes her will at least once a year. It's a precarious position for them all.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_06",
+    "entry_narrative": "The house is quiet, but sleep evades you. You decide to take a brief stroll down the upstairs corridor to clear your head. The gas lamps cast long, flickering shadows.",
+    "events": [
+      {
+        "event_id": "I see the light under Emily's door",
+        "trigger": "Player approaches Emily's room or looks towards her door.",
+        "narrative": "As you pass Mrs. Inglethorp's room, you notice a faint sliver of light from beneath her door, followed by the soft, metallic chink of something being set down on a marble-topped surface. A moment later, the light is extinguished. Shortly after, you see John Cavendish in his pajamas, who seems startled to see you and mutters something about closing windows before quickly retiring to his room.",
+        "reveals_clue": "C6",
+        "moves_to_scene": "scene_07"
+      },
+      {
+        "event_id": "I look out the corridor window",
+        "trigger": "Player looks out a nearby corridor window at the garden.",
+        "narrative": "Glancing out the large corridor window at the moonlit garden below, you notice something odd in the flowerbed directly under Emily's window: a set of distinct, muddy footprints leading away from the house towards the woods.",
+        "reveals_clue": "C23",
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I listen carefully for any sounds",
+        "trigger": "Player stops to listen intently or tries to hear what is happening in the other rooms.",
+        "narrative": "You stand perfectly still, straining your ears in the profound silence of the country night. The old house creaks and groans around you, as old houses do. From the other rooms, you hear nothing but the faint sound of steady, sleeping breaths. All seems peaceful.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_07",
+    "entry_narrative": "You have only just returned to your room when a violent cry shatters the silence of the house, followed by the sound of a crash from Mrs. Inglethorp's room!",
+    "events": [
+      {
+        "event_id": "We break down the door",
+        "trigger": "Player rushes out of their room, investigates the noise, or tries to help force the door.",
+        "narrative": "You race into the corridor. Lawrence and John are already there, trying to force the locked door to Emily's room. With a combined effort, the lock splinters and you all burst in. The scene is one of chaos: a small table is overturned, and Emily Inglethorp is in the throes of terrible convulsions. It's a truly horrific sight.",
+        "reveals_clue": "C7",
+        "moves_to_scene": "scene_08",
+        "phase_change_to": "investigation"
+      },
+      {
+        "event_id": "I shout to ask what is wrong",
+        "trigger": "Player calls out, asks what's happening, or tries to get a response from inside the room.",
+        "narrative": "You rush into the hallway and shout towards Emily's room, 'Is everything alright?' Your only answer is another agonizing cry from within, followed by a series of violent thuds. It's clear that whoever is in there cannot answer, and that something is terribly wrong.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I check on the other family members",
+        "trigger": "Player checks on Mary or Cynthia first.",
+        "narrative": "As doors open along the corridor, you see Mary and Cynthia emerge, their faces pale with alarm. 'What on earth was that?' Mary cries, clutching her robe. It's clear the entire household has been woken by the terrible sounds coming from the mistress's bedroom.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"pre-murder\"",
+    "status": "eligible"
+  },
+  {
+    "scene_id": "scene_08",
+    "entry_narrative": "The local physician, Dr. Wilkins, has been summoned and arrives along with Dr. Bauerstein who was staying nearby. They have been with Mrs. Inglethorp for some time. The household waits in a dreadful, anticipatory silence.",
+    "events": [
+      {
+        "event_id": "I hear the doctor's diagnosis",
+        "trigger": "Player asks one of the doctors for news or waits for them to emerge from the room.",
+        "narrative": "Dr. Wilkins emerges from the bedroom, his face grim. 'I am sorry,' he says, his voice low. 'She is gone.' Dr. Bauerstein, a known toxicologist, adds, 'The symptoms... the violent convulsions... it is unmistakably strychnine poisoning.'",
+        "reveals_clue": "C8",
+        "moves_to_scene": "scene_09"
+      },
+      {
+        "event_id": "I ask John how he is holding up",
+        "trigger": "Player approaches John Cavendish to offer condolences or ask about his state.",
+        "narrative": "You find John slumped in a chair, his head in his hands. 'It's a nightmare, Hastings. An absolute nightmare.' He looks up at you, his face a mixture of grief and disbelief. 'To die like that... so horribly... Who would do such a thing?'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I look for Alfred Inglethorp",
+        "trigger": "Player asks where Alfred is or looks for him amongst the family.",
+        "narrative": "You scan the anxious faces of the gathered family and realize someone is missing. 'Where is Inglethorp?' you ask. John shakes his head. 'He's not here. He said he was spending the night in the village.' The absence of the victim's husband at such a crucial moment is deeply unsettling.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_09",
+    "entry_narrative": "The local police have been called, but you feel a sense of helplessness. The official investigation will be slow and clumsy. You recall the Belgian refugee camp nearby and the rumor that the great Hercule Poirot is among them. The thought takes root: only he can solve this.",
+    "events": [
+      {
+        "event_id": "I go to fetch Poirot",
+        "trigger": "Player decides to go to the refugee camp, explicitly seeks out Poirot, or follows a hint to get help.",
+        "narrative": "You make your way to the cottage where the Belgian refugees are housed. There, you find the man himself, Hercule Poirot, meticulously arranging items on his mantlepiece. You lay out the terrible events of the night. His egg-shaped head tilts. 'A crime of this nature,' he says, his eyes gleaming, 'it is of the first order. I will assist, mon ami, but we must be discreet.'",
+        "reveals_clue": "C9",
+        "moves_to_scene": "scene_10"
+      },
+      {
+        "event_id": "I wait for the local police",
+        "trigger": "Player decides to wait for the authorities to arrive and handle it.",
+        "narrative": "You decide the proper course of action is to wait for the official constabulary. A stout, self-important officer eventually arrives and begins taking notes in a slow, ponderous manner. Watching him, your heart sinks. You feel certain that the true complexities of this crime will be far beyond his grasp.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask the family if they suspect anyone",
+        "trigger": "Player asks John or Lawrence if they know who could have done this.",
+        "narrative": "You ask John if he has any idea who could be responsible. He hesitates, then looks towards the door. 'I... I dare not say. But one cannot ignore the fact that my step-father, Alfred Inglethorp, stood to gain everything. And he was so eager to purchase that poison...'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_10",
+    "entry_narrative": "You and Poirot have returned to Styles Court. The police are present, but Poirot, with an air of quiet authority, begins his own methodical investigation. He asks to speak with the maid, Dorcas, in the boudoir.",
+    "events": [
+      {
+        "event_id": "I listen as Poirot questions Dorcas",
+        "trigger": "Player listens to the interview with Dorcas or asks her about the night of the murder.",
+        "narrative": "Poirot gently questions the loyal maid about the after-dinner coffee service. She confirms that Mrs. Inglethorp did not take coffee, but her usual cocoa. Poirot's eyes light up. 'And the cup, was it her usual?' he asks. Dorcas explains the coffee cups are all the same, but Mrs. Inglethorp's cocoa cup was a special one, kept on a tray in this very room. Poirot nods slowly. 'We must find this cocoa cup,' he declares.",
+        "reveals_clue": "C10",
+        "moves_to_scene": "scene_11"
+      },
+      {
+        "event_id": "I offer my own theory to Poirot",
+        "trigger": "Player suggests a theory to Poirot, for example, about the muddy footprints.",
+        "narrative": "'Poirot,' you say, 'I saw muddy footprints in the garden last night! Someone must have climbed in through the window!' Poirot pats your arm. 'Ah, mon ami Hastings, you have the eyes of a hawk. But do not leap to conclusions. Order and method, always order and method. First, we establish the facts.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I examine the boudoir myself",
+        "trigger": "Player looks around the room for clues while Poirot is talking.",
+        "narrative": "While Poirot is occupied with Dorcas, you take a moment to survey the boudoir. It is a very feminine room, filled with trinkets and lace. Your eyes are drawn to a large, purple despatch-case sitting on a writing desk. It seems slightly out of place amongst the delicate decor.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
     {
-      "scene_id": "scene_19",
-      "entry_narrative": "'The time has come,' Poirot announces dramatically. 'Assemble everyone in the library. Tonight, we shall expose the truth!'",
-      "events": [
-        {
-          "event_id": "E19-1_TheReveal",
-          "trigger": "Player gathers in the library with the others.",
-          "narrative": "With everyone gathered, Poirot begins his reconstruction. He lays out the intricate plot: how Alfred and his secret lover, Evelyn Howard, conspired to make Alfred look guilty to exploit the laws of double jeopardy. He explains their plan to poison Emily via the coffee, a plan that was unwittingly thwarted by Mary Cavendish. 'But,' Poirot says, pausing for effect, 'that does not mean a murder was not committed...'",
-          "reveals_clue": "C19",
-          "moves_to_scene": "scene_20"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"reveal\"",
-      "status": "locked"
-    },
-    {
-      "scene_id": "scene_20",
-      "entry_narrative": "Poirot continues, his voice sharp and clear, holding the room captive. He turns his attention to the true method of the murder.",
-      "events": [
-        {
-          "event_id": "E20-1_FinalAccusation",
-          "trigger": "Player listens to the conclusion of Poirot's explanation.",
-          "narrative": "'The poison was not in the coffee at all!' Poirot declares. 'It was in her evening tonic, administered later by a trusted hand!' He produces the chemist's label with Evelyn's handwriting and explains how Alfred, disguised with the false beard, created a diversion while his accomplice committed the crime. Under the weight of the evidence, Evelyn Howard collapses and confesses.",
-          "reveals_clue": "C20",
-          "moves_to_scene": "scene_21"
-        }
-      ],
-      "unlocks_when": "storyPhase == \"reveal\"",
-      "status": "locked"
-    },
+    "scene_id": "scene_11",
+    "entry_narrative": "Following the conversation with Dorcas, Poirot leads you to the dispensary at the nearby Red Cross Hospital where Cynthia works. The room is lined with amber bottles and smells faintly of ether.",
+    "events": [
+      {
+        "event_id": "We examine the poison cupboard",
+        "trigger": "Player chooses to examine the poison cupboard or follows Poirot's lead.",
+        "narrative": "Poirot's eyes scan the shelves before settling on the poison cupboard. Inside, among the neatly arranged bottles, he points out a small box of loose strychnine tablets. More importantly, wedged behind the cupboard, he retrieves a soiled label from a chemist's bottle, clearly marked 'Strychnine Hydrochloride.'",
+        "reveals_clue": "C11",
+        "moves_to_scene": "scene_12"
+      },
+      {
+        "event_id": "I ask Cynthia about her work",
+        "trigger": "Player engages Cynthia in conversation about her duties at the dispensary.",
+        "narrative": "You ask Cynthia about her work, and she describes the long hours and immense responsibility. 'One must be so careful,' she says, gesturing to the rows of bottles. 'Everything must be exact. A mistake could be... well, fatal.' Her casual familiarity with the dangerous substances sends a slight shiver down your spine.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask Poirot what he expects to find",
+        "trigger": "Player asks Poirot what he is looking for or why they are there.",
+        "narrative": "'Mon ami,' Poirot says softly, 'we look for the facts! The purchase of poison by Monsieur Inglethorp is one fact. But a good detective must ask: are there other facts? Other sources of the poison? We must be methodical.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_12",
+    "entry_narrative": "Back at Styles Court that evening, the mood is somber. After dinner, Poirot suggests a stroll in the garden. From the shadows of a yew hedge, he motions for you to be silent, pointing towards a garden bench.",
+    "events": [
+      {
+        "event_id": "I observe the secret meeting",
+        "trigger": "Player agrees to watch from the shadows or looks where Poirot is pointing.",
+        "narrative": "You see two figures in a hushed, intense conversation: Mary Cavendish and Dr. Bauerstein. Their body language is secretive, their faces filled with anxiety. The conversation ends abruptly as they seem to sense your presence, and they part ways with a final, worried glance.",
+        "reveals_clue": "C12",
+        "moves_to_scene": "scene_13"
+      },
+      {
+        "event_id": "I ask Poirot why we are hiding",
+        "trigger": "Player questions Poirot about the reason for the secrecy or spying.",
+        "narrative": "'Patience, Hastings,' Poirot whispers, putting a finger to his lips. 'In a house of secrets, people will seek out the dark to share them. We will simply provide the darkness an audience.' His eyes gleam with the thrill of the hunt.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I express my doubts about spying",
+        "trigger": "Player voices discomfort with eavesdropping or questions the ethics of their actions.",
+        "narrative": "You whisper to Poirot that you feel like a cad, spying on a private conversation. 'Ah, but murder is a most uncivilized affair, is it not?' he retorts. 'To uncover the truth, sometimes we must put aside the etiquette of the drawing-room.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_13",
+    "entry_narrative": "The day of the inquest arrives. You and Poirot take seats in the crowded assembly-room over the village post-office. The air is stuffy and thick with morbid curiosity as the coroner begins the proceedings.",
+    "events": [
+      {
+        "event_id": "I listen to the inquest testimony",
+        "trigger": "Player listens to the proceedings.",
+        "narrative": "The local chemist is called to the stand. He testifies that he sold a quantity of strychnine to Mr. Alfred Inglethorp, who signed the poison-register. When questioned, Alfred does not deny it, claiming his wife asked him to purchase it for a dog. After all testimonies, the jury returns a verdict of 'Wilful murder by person or persons unknown.'",
+        "reveals_clue": "C13",
+        "moves_to_scene": "scene_14"
+      },
+      {
+        "event_id": "I observe the family's reactions",
+        "trigger": "Player watches the Cavendish family during the testimony.",
+        "narrative": "Your eyes drift to the family. John sits ramrod straight, his face a mask of grim propriety. Lawrence fidgets nervously with his papers. Mary seems detached, her gaze fixed on some distant point. Only Alfred Inglethorp appears calm, almost defiantly so, as the evidence mounts against him.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I share my thoughts with Poirot",
+        "trigger": "Player whispers a theory or observation to Poirot.",
+        "narrative": "You lean over to Poirot. 'It's as clear as day, Poirot! Alfred is the man!' Poirot gives a slight shake of his head. 'It is too clear, mon ami. Like a stage play. And in a stage play, you must always watch the hands of the magician, not the lovely assistant.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_14",
+    "entry_narrative": "That evening, Poirot gathers a few of you in Cynthia's room. 'We must reconstruct the events of that night,' he announces. He hands Cynthia her usual bromide sleeping-draft.",
+    "events": [
+      {
+        "event_id": "I watch the reenactment",
+        "trigger": "Player observes the reenactment.",
+        "narrative": "You watch as Cynthia drinks the bromide, just as she did on the night of the murder, and bolts her door. Poirot then retrieves the bromide bottle for testing. Later, he confirms his suspicions: the bromide bottle is completely uncontaminated with poison. The method of delivery remains a mystery.",
+        "reveals_clue": "C14",
+        "moves_to_scene": "scene_15"
+      },
+      {
+        "event_id": "I question the purpose of this experiment",
+        "trigger": "Player asks Poirot what the point of the reenactment is.",
+        "narrative": "'What does this prove, Poirot?' you ask, confused. 'It proves what is not possible,' he replies, holding up the bromide bottle. 'And when you have eliminated the impossible, whatever remains, however improbable, must be the truth! We now know the poison was not in this draft.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask Cynthia if she noticed anything",
+        "trigger": "Player asks Cynthia if she remembers anything unusual from the night of the murder.",
+        "narrative": "You ask Cynthia if she recalls anything odd from that fateful night. 'No, nothing,' she says, shaking her head. 'I took my bromide and I was asleep in moments. The first thing I knew was everyone banging on my door.' She shudders at the memory.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_15",
+    "entry_narrative": "The official investigation, led by Inspector Japp, has focused squarely on the most obvious suspect. You are in the drawing-room when Japp enters, looking resolute.",
+    "events": [
+      {
+        "event_id": "I witness Alfred Inglethorp's arrest",
+        "trigger": "Player watches the events unfold as Japp makes the arrest.",
+        "narrative": "Inspector Japp formally arrests Alfred Inglethorp for the murder of his wife. As a stunned silence falls over the family, Evelyn Howard makes a dramatic and unexpected return to Styles Court. She produces a letter, she claims, that provides a solid alibi for Alfred.",
+        "reveals_clue": "C15",
+        "moves_to_scene": "scene_16"
+      },
+      {
+        "event_id": "I watch the family's reaction to the arrest",
+        "trigger": "Player focuses on the reactions of John, Lawrence, and Mary.",
+        "narrative": "As Japp claps the cuffs on Alfred, you see a flicker of triumph in John's eyes, quickly suppressed. Lawrence looks pale and shocked, while Mary Cavendish remains impassive, her expression unreadable. It is a moment of high drama, and the conflicting emotions are plain to see.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask Poirot if this is the end",
+        "trigger": "Player asks Poirot if the case is now closed.",
+        "narrative": "'So, that's it then?' you ask Poirot. 'The case is solved?' Poirot merely smiles a mysterious little smile. 'An arrest has been made, Hastings. That is not the same as justice being served. The little grey cells, they tell me the play is not yet over.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_16",
+    "entry_narrative": "Despite the alibi letter from Evelyn, Poirot seems unconvinced. 'Let us take a trip to the village, Hastings,' he says. 'I wish to speak with the landlord of the inn where Monsieur Inglethorp stayed.'",
+    "events": [
+      {
+        "event_id": "I go with Poirot to the inn",
+        "trigger": "Player accompanies Poirot to the inn or asks the landlord about Alfred.",
+        "narrative": "At the inn, the landlord confirms Alfred's story. He saw him retire for the night and saw him again at breakfast. The alibi appears solid. Poirot, however, seems more interested in the clock on the wall than the landlord's testimony.",
+        "reveals_clue": "C16",
+        "moves_to_scene": "scene_17"
+      },
+      {
+        "event_id": "I ask Poirot why he doubts the alibi",
+        "trigger": "Player questions why Poirot is still suspicious despite the letter.",
+        "narrative": "'But Poirot, the letter from Miss Howard was quite clear,' you insist. 'Ah, but it is the timing of her arrival that is of the most beautiful convenience, is it not? She arrives, not a moment before the arrest, but just after. It is all too neat, Hastings. Much too neat.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I examine the poison register again",
+        "trigger": "Player asks to see the poison register from the chemist.",
+        "narrative": "At Poirot's request, Inspector Japp allows you to see the chemist's poison register again. You study the signature: 'Alfred Inglethorp'. The handwriting is a distinctive, spiky scrawl. 'A man's signature is a difficult thing to forge,' you remark sagely. Poirot just nods, a thoughtful look in his eyes.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_17",
+    "entry_narrative": "Back at Styles, Poirot's attention turns to the fireplace in Emily Inglethorp's boudoir. 'A fire in July, Hastings. It is curious, no?' he remarks, kneeling to examine the grate.",
+    "events": [
+      {
+        "event_id": "I help Poirot search the fireplace",
+        "trigger": "Player helps Poirot search the fireplace or examines the ashes.",
+        "narrative": "Sifting through the ashes, Poirot carefully retrieves a small, charred scrap of paper. Though mostly burned, you can just make out a few words. It appears to be a fragment of a will, and the name 'Alfred Inglethorp' is clearly visible. Poirot says nothing, merely tucking it into his wallet with a thoughtful expression.",
+        "reveals_clue": "C17",
+        "moves_to_scene": "scene_18"
+      },
+      {
+        "event_id": "I ask Dorcas about the fire",
+        "trigger": "Player finds the maid, Dorcas, and asks why a fire was lit.",
+        "narrative": "You find Dorcas polishing silver. When you ask about the fire, she looks surprised. 'A fire? In July? Oh no, sir. The mistress was most particular about the heat. There's been no fire in that grate for months.' This information deepens the mystery.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I search the purple despatch-case",
+        "trigger": "Player recalls the purple despatch-case and decides to examine it.",
+        "narrative": "While Poirot is occupied with the fireplace, you notice the purple despatch-case you saw earlier. Finding it unlocked, you open it. Inside are various legal and financial papers, but also a small scrap of green fabric, like a ribbon from a hat, tucked into a side pocket.",
+        "reveals_clue": "C26",
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_18",
+    "entry_narrative": "Poirot is in his element, his 'little grey cells' working at full capacity. He leads you to Alfred Inglethorp's dressing-room, now sealed by the police. With a nod from Inspector Japp, you enter.",
+    "events": [
+      {
+        "event_id": "We find the beard gum",
+        "trigger": "Player searches the dressing-case or watches Poirot's examination.",
+        "narrative": "Poirot ignores the obvious, instead picking up a small pot from the dressing-table. He later demonstrates that the spirit-gum inside is identical to a residue found on a scrap of fake black beard hair discovered near Emily's bed. Someone, it seems, was wearing a disguise.",
+        "reveals_clue": "C18",
+        "moves_to_scene": "scene_19"
+      },
+      {
+        "event_id": "I try to piece together who wore the disguise",
+        "trigger": "Player speculates on who might have worn a fake beard.",
+        "narrative": "'A disguise!' you exclaim. 'So it wasn't Alfred in the chemist's shop after all! But who could it have been? Lawrence, perhaps? Or even John?' Your mind reels with the possibilities, each more outlandish than the last.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask Poirot if this clears Alfred",
+        "trigger": "Player asks if the discovery of a disguise proves Alfred's innocence.",
+        "narrative": "'Does this mean Alfred is innocent?' you ask hopefully. 'It means, mon ami, that the affair is more complex than even Inspector Japp believes,' Poirot replies. 'It does not prove innocence. It only deepens the artifice. We must ask ourselves: who benefits from such a deception?'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"investigation\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_19",
+    "entry_narrative": "'The time has come,' Poirot announces dramatically. 'Assemble everyone in the library. Tonight, we shall expose the truth!'",
+    "events": [
+      {
+        "event_id": "I listen to Poirot's grand reconstruction",
+        "trigger": "Player gathers in the library with the others and listens.",
+        "narrative": "With everyone gathered, Poirot begins his reconstruction. He lays out the intricate plot: how Alfred and his secret lover, Evelyn Howard, conspired to make Alfred look guilty to exploit the laws of double jeopardy. He explains their plan to poison Emily via the coffee, a plan that was unwittingly thwarted by Mary Cavendish. 'But,' Poirot says, pausing for effect, 'that does not mean a murder was not committed...'",
+        "reveals_clue": "C19",
+        "moves_to_scene": "scene_20",
+        "phase_change_to": "reveal"
+      },
+      {
+        "event_id": "I look at Alfred and Evelyn as they are accused",
+        "trigger": "Player watches the reactions of Alfred and Evelyn during Poirot's speech.",
+        "narrative": "As Poirot lays out the conspiracy, you stare at Alfred and Evelyn. Alfred Inglethorp's face is a mask of indignation, but you see a flicker of panic in his eyes. Evelyn Howard, however, is as stoic as ever, her expression unreadable, betraying nothing.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I am utterly confused",
+        "trigger": "Player expresses confusion about the double jeopardy plot.",
+        "narrative": "You're completely lost. 'But Poirot, if they wanted the money, why would they try to make Alfred look guilty?' you whisper. 'Because, Hastings,' he whispers back, 'if he is tried and acquitted, he can never be tried for the same crime again. It would be the perfect alibi.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"reveal\"",
+    "status": "locked"
+  },
+  {
+    "scene_id": "scene_20",
+    "entry_narrative": "Poirot continues, his voice sharp and clear, holding the room captive. He turns his attention to the true method of the murder, producing the charred will fragment and the chemist's label.",
+    "events": [
+      {
+        "event_id": "I hear Poirot's final accusation",
+        "trigger": "Player listens to the conclusion of Poirot's explanation.",
+        "narrative": "'The poison was not in the coffee at all!' Poirot declares. 'It was in her evening tonic, administered later by a trusted hand!' He explains how Alfred, disguised with the false beard, destroyed one will and created a fake alibi, while his accomplice, Evelyn, administered the fatal dose. Under the weight of the evidence and Poirot's relentless logic, Evelyn Howard collapses and confesses.",
+        "reveals_clue": "C20",
+        "moves_to_scene": "scene_21"
+      },
+      {
+        "event_id": "I watch Evelyn's confession",
+        "trigger": "Player focuses on Evelyn as she confesses to the crime.",
+        "narrative": "All eyes are on Evelyn Howard. Her rigid composure finally shatters. 'He made me do it!' she sobs, pointing a trembling finger at Alfred. 'He said it was the only way! I loved him... and I hated her for controlling him, for controlling all of us!' The raw confession is chilling.",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      },
+      {
+        "event_id": "I ask Poirot how he was so certain",
+        "trigger": "Player asks Poirot for the final piece of the puzzle that made him sure.",
+        "narrative": "After the confession, you ask Poirot what made him so certain. 'The signature, mon ami. The signature for the poison was spiky and unnatural. Alfred's true signature is a lazy scrawl. But he is a man of immense ego. So he signed his own name, but in a disguised hand. It was a vanity that proved to be his undoing.'",
+        "reveals_clue": null,
+        "moves_to_scene": null
+      }
+    ],
+    "unlocks_when": "storyPhase == \"reveal\"",
+    "status": "locked"
+  },
     {
       "scene_id": "scene_21",
       "entry_narrative": "In the aftermath of the confession, a quiet order begins to settle over Styles Court. Inspector Japp takes Alfred and Evelyn into custody.",
@@ -870,9 +1151,9 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "You are StoryBrain v0.6, a master storyteller and narrative engine for an Agatha Christie-style mystery. Your goal is to create a seamless, beautifully written, first-person narrative from the perspective of Arthur Hastings.",
 
     "────────────────────────────────────────",
-    "## YOUR TASK (3 Steps)",
+    "## YOUR TASK",
     "1. **MATCH ACTION:** Look at the `userAction` and the `events` available in the `currentScene`. Determine which `event` is the most logical consequence of the player's action.",
-    "2. **SYNTHESIZE NARRATIVE:** Write a new, single paragraph of narrative. This paragraph must seamlessly blend the `narrative` from the triggered event with the `entry_narrative` of the `moves_to_scene` it points to. It must flow logically from the `currentNarrative`. The result should be a fluid, well-written continuation of the story.",
+    "2. **SYNTHESIZE NARRATIVE:** Write a new narrative passage of about 225 words. This text must seamlessly blend the `narrative` from the triggered event with the `entry_narrative` of the `moves_to_scene` it points to. It must flow logically from the `currentNarrative`. The result should be a fluid, well-written continuation of the story, respecting paragraph breaks.",
     "3. **GENERATE HINTS:** Look at the `events` available in the new scene you are moving to. Based on their `trigger` descriptions, generate 3 new, short, player-friendly action phrases for the `hints` array.",
     "4. **DEFAULT REACTION:** If the player's action does not logically match any event `trigger`, you MUST generate a 'default reaction.' A default reaction has three parts:",
     "   a. The narrative must describe Hastings performing the unexpected action.",
