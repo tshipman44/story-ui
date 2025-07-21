@@ -809,7 +809,7 @@ async function createPlayerRow(playerId) {
     story_phase: "pre-murder", // Start of the game
     current_scene: "scene_01",
     revealed_clues: [],
-    turn_count: 0
+    turns_since_last_progress: 0
   };
 
   const { data, error } = await supabase
