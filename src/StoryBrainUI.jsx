@@ -208,20 +208,16 @@ export default function StoryBrainUI() {
 
 // Replace the existing playTurn function in StoryBrainUI.jsx
 
-  async function playTurn(action) {
+ async function playTurn(action) {
     setLoading(true);
-    setChoices([]); // Use setChoices, which is correct now
-
-    // Get the most recent narrative text *before* the API call
+    setChoices([]);
     let currentNarrative = "";
     setNarrative(prev => {
       currentNarrative = prev;
-      // For a new game, don't show "> begin"
       return action === "begin" ? prev : prev + `\n\n> ${action}`;
     });
 
     try {
-      // ✅ FIX: Added method, headers, and body to the fetch call
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -233,37 +229,34 @@ export default function StoryBrainUI() {
       });
 
       if (!res.ok) {
-        // Handle server errors (like 500)
         const errorData = await res.json();
         throw new Error(errorData.error || `Server responded with ${res.status}`);
       }
       
       const data = await res.json();
-  // ✅ FIX: Combine the AI hints with the event data
+  
       const apiChoices = data.choices || [];
       const apiHints = data.hints || [];
       const combinedChoices = apiChoices.map((choice, index) => ({
         event_id: choice.event_id,
-        label: apiHints[index] || choice.trigger, // Use AI hint, with a fallback
+        label: apiHints[index] || choice.trigger,
       }));
       
-      // Update all state based on the full response from the server
       setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-      setChoices(data.choices || []);
-      setScene(data.scene || 'scene_01'); // Update scene for background image
+      // ✅ FIX #1: Use the 'combinedChoices' variable we just created.
+      setChoices(combinedChoices);
+      setScene(data.scene || 'scene_01');
       
       if (data.stateDelta?.global?.mustacheMood) {
           setMustacheMood(data.stateDelta.global.mustacheMood);
       }
 
-      // Update clues in the notebook
       if (data.newlyRevealedClues && data.newlyRevealedClues.length > 0) {
         setRevealedClues(prev => [...prev, ...data.newlyRevealedClues]);
         setUnreadClueCount(prev => prev + data.newlyRevealedClues.length);
       }
 
     } catch (err) {
-      // This will now show more specific errors from the server
       setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
       console.error(err);
     } finally {
@@ -297,11 +290,13 @@ export default function StoryBrainUI() {
         </div>
 
         {/* Column 2: Buttons */}
-        <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
-          {/* ✅ FIX 2: Map over the correct state variable 'hints' */}
-          {hints.map((event) => (
-            <div key={event.event_id} className="w-full max-w-sm mx-auto">
-              <ChoiceButton label={event.trigger} onClick={() => playTurn(event.event_id)} />
+       <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6">
+          {choices.map((choice) => (
+            <div key={choice.event_id} className="w-full max-w-sm mx-auto">
+              <ChoiceButton
+                label={choice.label}
+                onClick={() => playTurn(choice.event_id)}
+              />
             </div>
           ))}
         </div>
@@ -320,4 +315,4 @@ export default function StoryBrainUI() {
       }} />}
     </div>
   );
-} // This brace is correct!
+} 
