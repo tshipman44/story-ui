@@ -20,6 +20,7 @@ import scene17Image from './assets/scene_17.png';
 import scene18Image from './assets/scene_18.png';
 import scene19Image from './assets/scene_19.png';
 import scene20Image from './assets/scene_20.png';
+import scene21Image from './assets/scene_21.png';
 import notebookIcon from './assets/notebook.png';
 
 /**
