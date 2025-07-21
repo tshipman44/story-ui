@@ -181,6 +181,8 @@ export default function StoryBrainUI() {
   const [isNotebookOpen, setNotebookOpen] = useState(false);
   const [revealedClues, setRevealedClues] = useState([]);
   const [unreadClueCount, setUnreadClueCount] = useState(0);
+  const [isMobileChoicesOpen, setIsMobileChoicesOpen] = useState(false);
+
 
   const sceneImages = {
     'scene_01': scene1Image,
@@ -211,6 +213,7 @@ export default function StoryBrainUI() {
  async function playTurn(action) {
     setLoading(true);
     setChoices([]);
+    setIsMobileChoicesOpen(false);
     let currentNarrative = "";
     setNarrative(prev => {
       currentNarrative = prev;
@@ -290,16 +293,34 @@ export default function StoryBrainUI() {
         </div>
 
         {/* Column 2: Buttons */}
-       <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto pb-44">
-          {choices.map((choice) => (
-            <div key={choice.event_id} className="w-full max-w-sm mx-auto">
-              <ChoiceButton
-                label={choice.label}
-                onClick={() => playTurn(choice.event_id)}
-              />
-            </div>
-          ))}
-        </div>
+        <div className="w-full lg:w-2/5 flex flex-col gap-3 pt-6 overflow-y-auto pb-44">
+
+  {/* This div now correctly WRAPS the list of choices. */}
+  {/* It's hidden on mobile by default, but becomes visible when the button is clicked. */}
+  {/* It's always visible on large screens (lg:block). */}
+  <div className={`${isMobileChoicesOpen ? 'block' : 'hidden'} lg:block`}>
+    {choices.map((choice) => (
+      <div key={choice.event_id} className="w-full max-w-sm mx-auto">
+        <ChoiceButton
+          label={choice.label}
+          onClick={() => playTurn(choice.event_id)}
+        />
+      </div>
+    ))}
+  </div>
+
+  {/* This div for the 'What are my options?' button remains the same. */}
+  {/* It's visible on mobile by default, and hidden when choices are open or on large screens. */}
+  <div className={`${isMobileChoicesOpen ? 'hidden' : 'block'} lg:hidden w-full max-w-sm mx-auto`}>
+    { !loading && choices.length > 0 && (
+      <ChoiceButton
+        label="What are my options?"
+        onClick={() => setIsMobileChoicesOpen(true)}
+      />
+    )}
+  </div>
+  
+</div>
       </main>
 
       <Footer
