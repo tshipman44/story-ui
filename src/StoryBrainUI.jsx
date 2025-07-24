@@ -291,9 +291,14 @@ async function playTurn(action) {
     console.log("--- RAW RESPONSE FROM SERVER ---");
     console.log(fullResponse);
 
-    const parts = fullResponse.split(delimiter);
-    const finalNarrative = parts[0];
-    const jsonDataString = parts[1];
+const delim            = "|||~DATA~|||";
+const jsonStart        = fullResponse.lastIndexOf(delim);
+if (jsonStart === -1) {
+console.warn("No delimiter in stream – fallback");
+return;
+}
+const finalNarrative   = fullResponse.slice(0, jsonStart);
+const jsonDataString   = fullResponse.slice(jsonStart + delim.length).trim();
 
     // ✅ DEBUGGING: Log the part we are about to parse as JSON
     console.log("--- JSON PART TO BE PARSED ---");
