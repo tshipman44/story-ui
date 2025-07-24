@@ -1316,9 +1316,11 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
       if (!dataPartFound) {
         if (fullResponse.includes(delimiter)) {
           // Delimiter found, stop streaming to client
-          const narrativePart = fullResponse.split(delimiter)[0];
-          res.write(narrativePart); // Write the last bit of narrative
-          dataPartFound = true;
+  const [alreadySent, tail] = fullResponse.split(delimiter);
+  const remaining = tail ? '' : '';   // nothing more to send from this chunk
+  // we’ve already streamed `alreadySent`, so write only the bit *after*
+  // the previous chunk (usually nothing) and then stop
+  if (remaining) res.write(remaining);          dataPartFound = true;
         } else {
           // Stream narrative chunk to client
           res.write(chunkText);
