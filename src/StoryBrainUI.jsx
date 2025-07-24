@@ -256,94 +256,72 @@ async function playTurn(action) {
       return;
     }
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
+    /* ---------- STREAM → fullResponse ---------- */
+    const reader   = res.body.getReader();
+    const decoder  = new TextDecoder();
     let fullResponse = "";
-    const delimiter = /\|{2,}~DATA~\|{2,}/;
-    let narrativeComplete = false;
 
-    while (true) {
+    while (true) {                            // accumulate the whole stream
       const { value, done } = await reader.read();
       if (done) break;
       fullResponse += decoder.decode(value, { stream: true });
-
-      if (!narrativeComplete) {
-        const delimiterMatch = fullResponse.match(delimiter);
-        if (delimiterMatch) {
-          narrativeComplete = true;
-          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
-          setNarrative(prev => {
-            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-            return base + narrativeToShow;
-          });
-        } else {
-          setNarrative(prev => {
-            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-            return base + fullResponse;
-          });
-        }
-      }
     }
 
-    // --- AFTER THE STREAM IS FULLY READ ---
-    
-    // ✅ DEBUGGING: Log the raw response from the server
+    /* ---------- split narrative / JSON ---------- */
+    const delim = "|||~DATA~|||";
+    const idx   = fullResponse.indexOf(delim);
+    if (idx === -1) {
+      console.error("Server response missing delimiter");
+      return;          // bail out gracefully
+    }
+
+    const narrativePart  = fullResponse.slice(0, idx);
+    const jsonDataString = fullResponse.slice(idx + delim.length).trim();
+
+   // 1️⃣ show the narrative
+    setNarrative(prev =>
+      action === "begin"
+       ? narrativePart               // replace the "…loading…" stub
+        : prev + narrativePart        // simply append for normal turns
+    );
+
+    // 2️⃣ parse the JSON
+    let finalData;
+    try {
+      finalData = JSON.parse(jsonDataString);
+    } catch (e) {
+      console.error("Invalid JSON payload", e);
+      return;
+    }
+
+    /* ---------- use finalData ---------- */
+    const combined = (finalData.choices || []).map((choice, i) => ({
+      event_id: choice.event_id,
+      label:    (finalData.hints || [])[i] || choice.trigger,
+    }));
+    setChoices(combined);
+    setScene(finalData.scene);
+
+    if (finalData.stateDelta?.global?.mustacheMood) {
+      setMustacheMood(finalData.stateDelta.global.mustacheMood);
+    }
+    if (finalData.newlyRevealedClues?.length) {
+      setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+      setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+    }
+
     console.log("--- RAW RESPONSE FROM SERVER ---");
     console.log(fullResponse);
 
-const delim            = "|||~DATA~|||";
-const jsonStart        = fullResponse.lastIndexOf(delim);
-if (jsonStart === -1) {
-console.warn("No delimiter in stream – fallback");
-return;
-}
-const finalNarrative   = fullResponse.slice(0, jsonStart);
-const jsonDataString   = fullResponse.slice(jsonStart + delim.length).trim();
 
     // ✅ DEBUGGING: Log the part we are about to parse as JSON
     console.log("--- JSON PART TO BE PARSED ---");
     console.log(jsonDataString);
 
 
-let finalData = {};
-try {
-  // skip parsing if it doesn’t look like JSON
-  if (!jsonDataString || jsonDataString.trim()[0] !== "{") {
-   throw new Error("non‑JSON payload");
-  }
-  finalData = JSON.parse(jsonDataString);
-} catch (e) {
-  console.error("Delimiter missing or JSON invalid – falling back", e);
-  // keep the old choices so the UI doesn’t crash
-  return;
-}
 
-    if (jsonDataString) {
-      // ✅ DEBUGGING: Add a specific try/catch for the parsing
-      try {
-        const finalData = JSON.parse(jsonDataString);
-        const combined = (finalData.choices || []).map((choice, index) => ({
-          event_id: choice.event_id,
-          label: (finalData.hints || [])[index] || choice.trigger,
-        }));
-        setChoices(combined);
-        setScene(finalData.scene);
-        if (finalData.stateDelta?.global?.mustacheMood) {
-          setMustacheMood(finalData.stateDelta.global.mustacheMood);
-        }
-        if (finalData.newlyRevealedClues?.length > 0) {
-          setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-          setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-        }
-      } catch (e) {
-          console.error("JSON PARSE FAILED:", e);
-          console.error("The string that failed to parse was:", jsonDataString);
-          throw e; // Re-throw to see the original error
-      }
-    } else {
-        console.error("Stream finished but no data payload was found.");
-    }
 
+    
   } catch (err) {
     setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
     console.error(err);
