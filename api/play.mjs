@@ -1325,15 +1325,45 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
         }
       }
     }
+const hasDelimiter = fullResponse.includes(delimiter);
+if (!hasDelimiter) {
+  console.warn("AI omitted delimiter – sending fallback.");
+  const safeJson = {
+    hints:       ["Take stock of your surroundings."],
+    scene:       scene,                 // stay in same scene
+    stateDelta:  { global: {} },
+    choices:     STORY_DATA.scenes.find(s => s.scene_id === scene)?.events || [],
+    newlyRevealedClues: []
+  };
 
+  res.write(delimiter + JSON.stringify(safeJson));
+  res.end();
+  return;          // skip the normal JSON.parse/update path
+}
     // --- 4. PROCESS JSON AND UPDATE DATABASE (after stream ends) ---
     const jsonDataString = fullResponse.split(delimiter)[1];
-    const assistant = JSON.parse(jsonDataString.trim());
-    
-    // Perform state updates using the received JSON data
-    const g = assistant.stateDelta.global;
-const mergedRevealed = Array.from(new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])]));
-    
+let assistant;
+try {
+  assistant = JSON.parse(jsonDataString.trim());
+} catch (e) {
+  console.error("AI returned invalid JSON, sending safe fallback", e);
+  const safeJson = {
+    hints: [],
+    scene,
+    stateDelta: { global: {} },
+    choices: STORY_DATA.scenes.find(s => s.scene_id === scene)?.events || [],
+    newlyRevealedClues: []
+  };
+  res.write(delimiter + JSON.stringify(safeJson));
+  res.end();
+ return;            
+}
+
+// Perform state updates using the received JSON data    
+const g = assistant.stateDelta.global;
+const mergedRevealed = Array.from(
+  new Set([...(revealed || []), ...(assistant.stateDelta.revealedClues || [])])
+);    
     let nextTurnsSinceProgress = turns_since_last_progress || 0;
     if ((assistant.stateDelta.revealedClues || []).length > 0 || phase !== g.storyPhase) {
       nextTurnsSinceProgress = 0;

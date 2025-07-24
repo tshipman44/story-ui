@@ -299,10 +299,15 @@ async function playTurn(action) {
     console.log("--- JSON PART TO BE PARSED ---");
     console.log(jsonDataString);
 
-    setNarrative(prev => {
-       const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-       return base + finalNarrative;
-    });
+
+let finalData = {};
+try {
+  finalData = JSON.parse(jsonDataString);
+} catch (e) {
+  console.error("Delimiter missing or JSON invalid – falling back", e);
+  // keep the old choices so the UI doesn’t crash
+  return;
+}
 
     if (jsonDataString) {
       // ✅ DEBUGGING: Add a specific try/catch for the parsing
