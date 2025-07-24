@@ -1318,7 +1318,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
 
  const idx = fullResponse.indexOf(delimiter);
   if (idx === -1) {
-    res.write(txt);                      // still narrative – keep streaming
+    res.write(chunkText);                      // still narrative – keep streaming
   } else {
     res.write(fullResponse.slice(0, idx)); // stream ONLY text *before* delim
     streamingNarr = false;               // switch off further writes
