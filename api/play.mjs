@@ -1158,7 +1158,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
   const { error } = await supabase
     .from("PlayerState")
     .update({
-      story_phase:   phase,
+      story_phase: phase,
       current_scene: scene,
       revealed_clues: revealed,
       turns_since_last_progress: turns,
@@ -1187,23 +1187,22 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
     "────────────────────────────────────────",
-    "## ⚠️  OUTPUT FORMAT – STRICT",
-    "Return **one** valid JSON object and nothing else.",
-    "{",
-    '  "narrative": "string — your new, synthesized paragraph of prose from Hastings\' POV.",',
-    '  "hints":     ["hint 1", "hint 2", "hint 3"],',
-    '  "stateDelta": {',
-    '    "revealedClues":        ["clue_id from the triggered event"],',
-    '    "global": {',
-    '      "mustacheMood": "neutral",',
-    '      "current_scene": "scene_id",',
-    '      "confidencePoirotKnowsKiller": 0-1,',
-    '      "turnsSinceLastProgress": <int>,',
-    '      "storyPhase": "<pre-murder|investigation|reveal>"',
-    "    }",
-    "  }",
-    "}",
-
+    "## ⚠️ OUTPUT FORMAT – STREAMING (CRITICAL)",
+    "Your response MUST be in two parts, separated by a unique delimiter.",
+    "1. **NARRATIVE TEXT:** First, write the narrative prose directly from Hastings' POV. Use \\n for paragraph breaks.",
+    "2. **DELIMITER:** After the narrative, you MUST output the exact delimiter `|||~DATA~|||` on a new line.",
+    "3. **JSON OBJECT:** After the delimiter, output a single, valid JSON object containing the other fields. Do NOT include the narrative in this JSON.",
+    `{
+      "hints": ["A complete, capitalized hint.", "Another hint.", "A final hint."],
+      "stateDelta": {
+        "revealedClues": ["clue_id or null"],
+        "global": {
+          "mustacheMood": "neutral",
+          "current_scene": "scene_id",
+          "storyPhase": "<pre-murder|investigation|reveal>"
+        }
+      }
+    }`,
     "────────────────────────────────────────",
     "## CONTEXT FOR YOUR TASK",
     `The user just took the action: "${userAction}"`,
@@ -1251,6 +1250,7 @@ export default async function handler(req, res) {
 
   const { playerId, userAction, currentNarrative } = req.body; 
   
+    // --- 1. PRE-AI LOGIC ---
 
 try {
   // -- pull current state
@@ -1262,6 +1262,20 @@ try {
     revealed_clues: revealed,            
     turns_since_last_progress      
   } = row;
+    // ✅ FIX #2: The 'begin' action handler is restored.
+    if (userAction === "begin") {
+      const startScene = STORY_DATA.scenes.find(s => s.scene_id === "scene_01");
+      const finalData = {
+          narrative: startScene.entry_narrative,
+          choices: startScene.events,
+          hints: ["Get in the car with John.", "Ask John about the family.", "Take a moment to look around the station."],
+          scene: startScene.scene_id,
+          newlyRevealedClues: [],
+          stateDelta: { global: { mustacheMood: "neutral" } }
+      };
+      res.setHeader("Access-Control-Allow-Origin", CORS.origin);
+      return res.status(200).json(finalData);
+    }
 
 
 // Filter scenes to only include those available in the current phase
@@ -1269,111 +1283,98 @@ const availableScenes = STORY_DATA.scenes.filter(s => s.status === "eligible" &&
 const availableSceneIds = availableScenes.map(s => s.scene_id.trim());
 const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c.found_in_scene.trim()));
    
+    const systemPrompt = buildSystemPrompt({
+        phase: phase,
+        scene: scene,
+        revealed: revealed,
+        turns: turns,
+        availableScenes,
+        userAction,
+        currentNarrative,
+    });
 
-    // -- build prompt & call OpenAI
-    const systemPrompt = buildSystemPrompt({ phase, scene, revealed, turns: turns_since_last_progress, availableScenes: availableScenes,
-  availableClues: availableClues,
-  userAction, currentNarrative    });
-console.log("--- SYSTEM PROMPT ---", systemPrompt);   
-  const chat = await openai.chat.completions.create({
+// --- 2. INITIATE STREAM ---
+    const stream = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userAction },
       ],
+      stream: true,
     });
-// Get the raw text from the AI
-const rawResponse = chat.choices[0].message.content;
 
-// Find the first '{' and the last '}' to extract the JSON object
-const firstBrace = rawResponse.indexOf('{');
-const lastBrace = rawResponse.lastIndexOf('}');
+    // --- 3. PIPE NARRATIVE TO CLIENT ---
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Transfer-Encoding", "chunked");
+    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
-if (firstBrace === -1 || lastBrace === -1) {
-  throw new Error("AI response did not contain a valid JSON object.");
-}
+    let fullResponse = "";
+    const delimiter = "|||~DATA~|||";
+    let dataPartFound = false;
 
-const jsonString = rawResponse.substring(firstBrace, lastBrace + 1);
+    for await (const chunk of stream) {
+      const chunkText = chunk.choices[0]?.delta?.content || "";
+      fullResponse += chunkText;
 
-// Clean up trailing commas that might cause errors
-const cleanedResponse = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+      if (!dataPartFound) {
+        if (fullResponse.includes(delimiter)) {
+          // Delimiter found, stop streaming to client
+          const narrativePart = fullResponse.split(delimiter)[0];
+          res.write(narrativePart); // Write the last bit of narrative
+          dataPartFound = true;
+        } else {
+          // Stream narrative chunk to client
+          res.write(chunkText);
+        }
+      }
+    }
+
+    // --- 4. PROCESS JSON AND UPDATE DATABASE (after stream ends) ---
+    const jsonDataString = fullResponse.split(delimiter)[1];
+    const assistant = JSON.parse(jsonDataString.trim());
     
-// Now, parse the clean and valid JSON
-const assistant = JSON.parse(cleanedResponse);
-
-
-    let nextTurnsSinceProgress = row.turns_since_last_progress || 0;
-
-    const oldClues = new Set(row.revealed_clues);
-    const newClues = new Set(assistant.stateDelta.revealedClues || []);
-    const phaseChanged = row.story_phase !== assistant.stateDelta.global.storyPhase;
-
-    // Progress is made if new clues are found or the story phase changes.
-    if (newClues.size > oldClues.size || phaseChanged) {
+    // Perform state updates using the received JSON data
+    const g = assistant.stateDelta.global;
+    const mergedRevealed = [...new Set([...revealed_clues, ...(assistant.stateDelta.revealedClues || [])])];
+    
+    let nextTurnsSinceProgress = turns_since_last_progress || 0;
+    if ((assistant.stateDelta.revealedClues || []).length > 0 || story_phase !== g.storyPhase) {
       nextTurnsSinceProgress = 0;
     } else {
       nextTurnsSinceProgress += 1;
     }
-    // -- merge stateDelta
-    const g = assistant.stateDelta.global;
-    const mergedRevealed = [
-      ...new Set([
-        ...revealed,
-        ...(assistant.stateDelta.revealedClues || []),
-      ]),
-    ];
-const newlyRevealedClues = (assistant.stateDelta.revealedClues || [])
-  .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
-  .filter(Boolean);
 
-  const currentSceneObject = STORY_DATA.scenes.find(s => s.scene_id === g.current_scene);
+    await updatePlayerRow(playerId, {
+      phase: g.storyPhase,
+      scene: g.current_scene,
+      revealed: mergedRevealed,
+      turns: nextTurnsSinceProgress,
+    });
 
-const updatePayload = {
-  phase: g.storyPhase,
-  scene: g.current_scene,
-  revealed: mergedRevealed,
-  turns: nextTurnsSinceProgress
-};
-console.log("--- Updating Supabase with ---", updatePayload);
-
-   await updatePlayerRow(playerId, {
-         phase: g.storyPhase,
-         scene: g.current_scene,
-         revealed: mergedRevealed,
-         turns: nextTurnsSinceProgress
-     });
-
-    // -- send narrative + choices back
-res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-res.status(200).json({
-  narrative: assistant.narrative,
-  hints:     assistant.hints,
-  scene:     assistant.stateDelta.global.current_scene, 
-  choices:    currentSceneObject ? currentSceneObject.events : [],
-  stateDelta: assistant.stateDelta, 
-  newlyRevealedClues: newlyRevealedClues
-});
+    // --- 5. SEND FINAL DATA CHUNK & END ---
+    // We need to send the final state data back to the client. We'll append it to the stream.
+    const finalData = {
+      hints: assistant.hints,
+      scene: g.current_scene,
+      stateDelta: assistant.stateDelta,
+      choices: STORY_DATA.scenes.find(s => s.scene_id === g.current_scene)?.events || [],
+      newlyRevealedClues: (assistant.stateDelta.revealedClues || [])
+        .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
+        .filter(Boolean),
+    };
+    
+    res.write(delimiter + JSON.stringify(finalData));
+    res.end();
 
   } catch (err) {
-    console.error(err);
-    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-    res.status(500).json({ error: err.message });
+    console.error("Streaming Handler Error:", err);
+    // If headers haven't been sent, we can send a proper error.
+    if (!res.headersSent) {
+      res.status(500).json({ error: err.message });
+    } else {
+      // Otherwise, we just have to end the response.
+      res.end();
+    }
   }
 }
 
-if (process.env.LOCAL_DEV === 'true') {
-  (async () => {
-    const express    = (await import('express')).default;
-    const bodyParser = (await import('body-parser')).default;
-
-    const app = express();
-    app.use(bodyParser.json());
-
-    // mount the existing handler you exported above
-    app.post('/play', (req, res) => handler(req, res));
-
-    const PORT = 8787;
-    app.listen(PORT, () =>
-      console.log(`Local API listening on http://localhost:${PORT}/play`));
-  })();
-}

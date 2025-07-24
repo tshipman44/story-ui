@@ -212,19 +212,23 @@ export default function StoryBrainUI() {
 
 // Replace the existing playTurn function in StoryBrainUI.jsx
 
- async function playTurn(action) {
-  if (action === 'action_restart_game') {
-    localStorage.removeItem('playerId');
-    window.location.reload();
-    return; // Stop further execution
-  }
+  async function playTurn(action) {
+    if (action === 'action_restart_game') {
+      localStorage.removeItem('playerId');
+      window.location.reload();
+      return;
+    }
+    
     setLoading(true);
     setChoices([]);
     setIsMobileChoicesOpen(false);
+
     let currentNarrative = "";
     setNarrative(prev => {
       currentNarrative = prev;
-      return action === "begin" ? prev : prev + `\n\n> ${action}`;
+      if (action === "begin") return "…loading…";
+      // Show the user's action immediately for better perceived speed
+      return prev + `\n\n> ${action}\n\n`;
     });
 
     try {
@@ -238,34 +242,71 @@ export default function StoryBrainUI() {
         }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || `Server responded with ${res.status}`);
-      }
-      
-      const data = await res.json();
-  
-      const apiChoices = data.choices || [];
-      const apiHints = data.hints || [];
-      const combinedChoices = apiChoices.map((choice, index) => ({
-        event_id: choice.event_id,
-        label: apiHints[index] || choice.trigger,
-      }));
-      
-      setNarrative(data.narrative || `🚨 Error: ${data.error}`);
-      // ✅ FIX #1: Use the 'combinedChoices' variable we just created.
-      setChoices(combinedChoices);
-      setScene(data.scene || 'scene_01');
-      
-      if (data.stateDelta?.global?.mustacheMood) {
-          setMustacheMood(data.stateDelta.global.mustacheMood);
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+
+      const contentType = res.headers.get("content-type");
+      const delimiter = "|||~DATA~|||";
+
+      // --- BRANCH 1: Handle the non-streaming 'begin' action ---
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setNarrative(data.narrative);
+        const combined = (data.choices || []).map((choice, index) => ({
+          event_id: choice.event_id,
+          label: (data.hints || [])[index] || choice.trigger,
+        }));
+        setChoices(combined);
+        setScene(data.scene);
+        return; // Exit after processing
       }
 
-      if (data.newlyRevealedClues && data.newlyRevealedClues.length > 0) {
-        setRevealedClues(prev => [...prev, ...data.newlyRevealedClues]);
-        setUnreadClueCount(prev => prev + data.newlyRevealedClues.length);
-      }
+      // --- BRANCH 2: Handle the streaming response for all other actions ---
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
 
+      // Set the narrative to an empty string after the prompt to make way for the stream
+      setNarrative(prev => prev + ""); 
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        
+        // Check if the delimiter is in our buffer
+        if (buffer.includes(delimiter)) {
+          const parts = buffer.split(delimiter);
+          const narrativeChunk = parts[0];
+          const jsonDataString = parts[1];
+
+          // Append the final part of the narrative before the delimiter
+          setNarrative(prev => prev + narrativeChunk);
+
+          // Parse the final JSON data to update choices, scene, etc.
+          if (jsonDataString) {
+            const finalData = JSON.parse(jsonDataString);
+            const combined = (finalData.choices || []).map((choice, index) => ({
+              event_id: choice.event_id,
+              label: (finalData.hints || [])[index] || choice.trigger,
+            }));
+            setChoices(combined);
+            setScene(finalData.scene);
+            if (finalData.stateDelta?.global?.mustacheMood) {
+              setMustacheMood(finalData.stateDelta.global.mustacheMood);
+            }
+            if (finalData.newlyRevealedClues?.length > 0) {
+              setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+              setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+            }
+          }
+          return; // Exit after processing the complete stream
+        } else {
+          // No delimiter yet, so it's all narrative text. Append to state.
+          setNarrative(prev => prev + buffer);
+          buffer = ""; // Clear buffer after appending
+        }
+      }
     } catch (err) {
       setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
       console.error(err);
