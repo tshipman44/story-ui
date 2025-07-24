@@ -260,30 +260,23 @@ async function playTurn(action) {
     const decoder = new TextDecoder();
     let fullResponse = "";
     const delimiter = /\|{2,}~DATA~\|{2,}/;
-
-    // This flag will help us stop updating the narrative visually once the data part starts
     let narrativeComplete = false;
 
-    // The loop's ONLY exit condition is when the stream is fully done.
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-
       fullResponse += decoder.decode(value, { stream: true });
 
-      // Update the visual narrative only if we haven't found the delimiter yet
       if (!narrativeComplete) {
         const delimiterMatch = fullResponse.match(delimiter);
         if (delimiterMatch) {
           narrativeComplete = true;
-          // Show only the text before the delimiter
           const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
           setNarrative(prev => {
             const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
             return base + narrativeToShow;
           });
         } else {
-          // No delimiter yet, so the whole response is narrative
           setNarrative(prev => {
             const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
             return base + fullResponse;
@@ -293,31 +286,45 @@ async function playTurn(action) {
     }
 
     // --- AFTER THE STREAM IS FULLY READ ---
-    // Now we can safely process the complete response
+    
+    // ✅ DEBUGGING: Log the raw response from the server
+    console.log("--- RAW RESPONSE FROM SERVER ---");
+    console.log(fullResponse);
+
     const parts = fullResponse.split(delimiter);
     const finalNarrative = parts[0];
     const jsonDataString = parts[1];
 
-    // Final, clean update of the narrative text
+    // ✅ DEBUGGING: Log the part we are about to parse as JSON
+    console.log("--- JSON PART TO BE PARSED ---");
+    console.log(jsonDataString);
+
     setNarrative(prev => {
        const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
        return base + finalNarrative;
     });
 
     if (jsonDataString) {
-      const finalData = JSON.parse(jsonDataString);
-      const combined = (finalData.choices || []).map((choice, index) => ({
-        event_id: choice.event_id,
-        label: (finalData.hints || [])[index] || choice.trigger,
-      }));
-      setChoices(combined);
-      setScene(finalData.scene);
-      if (finalData.stateDelta?.global?.mustacheMood) {
-        setMustacheMood(finalData.stateDelta.global.mustacheMood);
-      }
-      if (finalData.newlyRevealedClues?.length > 0) {
-        setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-        setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+      // ✅ DEBUGGING: Add a specific try/catch for the parsing
+      try {
+        const finalData = JSON.parse(jsonDataString);
+        const combined = (finalData.choices || []).map((choice, index) => ({
+          event_id: choice.event_id,
+          label: (finalData.hints || [])[index] || choice.trigger,
+        }));
+        setChoices(combined);
+        setScene(finalData.scene);
+        if (finalData.stateDelta?.global?.mustacheMood) {
+          setMustacheMood(finalData.stateDelta.global.mustacheMood);
+        }
+        if (finalData.newlyRevealedClues?.length > 0) {
+          setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+          setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+        }
+      } catch (e) {
+          console.error("JSON PARSE FAILED:", e);
+          console.error("The string that failed to parse was:", jsonDataString);
+          throw e; // Re-throw to see the original error
       }
     } else {
         console.error("Stream finished but no data payload was found.");
