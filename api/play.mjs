@@ -1287,7 +1287,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
         phase: phase,
         scene: scene,
         revealed: revealed,
-        turns: turns,
+        turns: turns_since_last_progress,
         availableScenes,
         userAction,
         currentNarrative,
