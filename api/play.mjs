@@ -1308,24 +1308,21 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     let fullResponse = "";
     const delimiter = "|||~DATA~|||";
     let dataPartFound = false;
+    let streamingNarr = true;                 
 
     for await (const chunk of stream) {
       const chunkText = chunk.choices[0]?.delta?.content || "";
       fullResponse += chunkText;
 
-      if (!dataPartFound) {
-        if (fullResponse.includes(delimiter)) {
-          // Delimiter found, stop streaming to client
-  const [alreadySent, tail] = fullResponse.split(delimiter);
-  const remaining = tail ? '' : '';   // nothing more to send from this chunk
-  // we’ve already streamed `alreadySent`, so write only the bit *after*
-  // the previous chunk (usually nothing) and then stop
-  if (remaining) res.write(remaining);          dataPartFound = true;
-        } else {
-          // Stream narrative chunk to client
-          res.write(chunkText);
-        }
-      }
+      if (!streamingNarr) continue;          // already hit delimiter, swallow chunks
+
+ const idx = fullResponse.indexOf(delimiter);
+  if (idx === -1) {
+    res.write(txt);                      // still narrative – keep streaming
+  } else {
+    res.write(fullResponse.slice(0, idx)); // stream ONLY text *before* delim
+    streamingNarr = false;               // switch off further writes
+  }
     }
 const hasDelimiter = fullResponse.includes(delimiter);
 if (!hasDelimiter) {
@@ -1338,8 +1335,6 @@ if (!hasDelimiter) {
     newlyRevealedClues: []
   };
 
-  res.write(delimiter + JSON.stringify(safeJson));
-  res.end();
   return;          // skip the normal JSON.parse/update path
 }
     // --- 4. PROCESS JSON AND UPDATE DATABASE (after stream ends) ---
@@ -1392,8 +1387,8 @@ const mergedRevealed = Array.from(
         .filter(Boolean),
     };
     
-    res.write(delimiter + JSON.stringify(finalData));
-    res.end();
+    res.write(fullResponse.slice(idx));  // this is "|||~DATA~|||" + JSON
+ res.end();
 
   } catch (err) {
     console.error("Streaming Handler Error:", err);
