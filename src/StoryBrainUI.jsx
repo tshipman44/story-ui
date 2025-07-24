@@ -211,101 +211,125 @@ export default function StoryBrainUI() {
     'scene_22': scene22Image,
   };
 
-// Replace the existing playTurn function in StoryBrainUI.jsx
 
 async function playTurn(action) {
-    if (action === 'action_restart_game') {
-      localStorage.removeItem('playerId');
-      window.location.reload();
-      return;
-    }
-    
-    setLoading(true);
-    setChoices([]);
-    setIsMobileChoicesOpen(false);
+  if (action === 'action_restart_game') {
+    localStorage.removeItem('playerId');
+    window.location.reload();
+    return;
+  }
+  
+  setLoading(true);
+  setChoices([]);
+  setIsMobileChoicesOpen(false);
 
-    let baseNarrative = "";
-    setNarrative(prev => {
-      baseNarrative = prev;
-      if (action === "begin") return "…loading…";
-      return prev + `\n\n> ${action}\n\n`;
+  let baseNarrative = "";
+  setNarrative(prev => {
+    baseNarrative = prev;
+    if (action === "begin") return "…loading…";
+    return prev + `\n\n> ${action}\n\n`;
+  });
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playerId: PLAYER_ID,
+        userAction: action,
+        currentNarrative: action === "begin" ? "" : baseNarrative,
+      }),
     });
 
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerId: PLAYER_ID,
-          userAction: action,
-          currentNarrative: action === "begin" ? "" : baseNarrative,
-        }),
-      });
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
 
-      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data = await res.json();
-        setNarrative(data.narrative);
-        const combined = (data.choices || []).map((choice, index) => ({
-          event_id: choice.event_id,
-          label: (data.hints || [])[index] || choice.trigger,
-        }));
-        setChoices(combined);
-        setScene(data.scene);
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let fullResponse = "";
-      const delimiter = "|||~DATA~|||";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        fullResponse += decoder.decode(value, { stream: true });
-
-        const delimiterIndex = fullResponse.search(/\|{2,}~DATA~\|{2,}/);
-        
-        const narrativeToShow = delimiterIndex !== -1 ? fullResponse.substring(0, delimiterIndex) : fullResponse;
-        
-        setNarrative(prev => {
-          const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-          return base + narrativeToShow;
-        });
-
-        if (delimiterIndex !== -1) {
-          break;
-        }
-      }
-
-const jsonDataString = fullResponse.split(/\|{2,}~DATA~\|{2,}/)[1];
-      if (jsonDataString) {
-        const finalData = JSON.parse(jsonDataString);
-        const combined = (finalData.choices || []).map((choice, index) => ({
-          event_id: choice.event_id,
-          label: (finalData.hints || [])[index] || choice.trigger,
-        }));
-        setChoices(combined);
-        setScene(finalData.scene);
-        if (finalData.stateDelta?.global?.mustacheMood) {
-          setMustacheMood(finalData.stateDelta.global.mustacheMood);
-        }
-        if (finalData.newlyRevealedClues?.length > 0) {
-          setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-          setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-        }
-      }
-
-    } catch (err) {
-      setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
-      console.error(err);
-    } finally {
-      setLoading(false);
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await res.json();
+      setNarrative(data.narrative);
+      const combined = (data.choices || []).map((choice, index) => ({
+        event_id: choice.event_id,
+        label: (data.hints || [])[index] || choice.trigger,
+      }));
+      setChoices(combined);
+      setScene(data.scene);
+      return;
     }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let fullResponse = "";
+    const delimiter = /\|{2,}~DATA~\|{2,}/;
+
+    // This flag will help us stop updating the narrative visually once the data part starts
+    let narrativeComplete = false;
+
+    // The loop's ONLY exit condition is when the stream is fully done.
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      fullResponse += decoder.decode(value, { stream: true });
+
+      // Update the visual narrative only if we haven't found the delimiter yet
+      if (!narrativeComplete) {
+        const delimiterMatch = fullResponse.match(delimiter);
+        if (delimiterMatch) {
+          narrativeComplete = true;
+          // Show only the text before the delimiter
+          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
+          setNarrative(prev => {
+            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+            return base + narrativeToShow;
+          });
+        } else {
+          // No delimiter yet, so the whole response is narrative
+          setNarrative(prev => {
+            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+            return base + fullResponse;
+          });
+        }
+      }
+    }
+
+    // --- AFTER THE STREAM IS FULLY READ ---
+    // Now we can safely process the complete response
+    const parts = fullResponse.split(delimiter);
+    const finalNarrative = parts[0];
+    const jsonDataString = parts[1];
+
+    // Final, clean update of the narrative text
+    setNarrative(prev => {
+       const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+       return base + finalNarrative;
+    });
+
+    if (jsonDataString) {
+      const finalData = JSON.parse(jsonDataString);
+      const combined = (finalData.choices || []).map((choice, index) => ({
+        event_id: choice.event_id,
+        label: (finalData.hints || [])[index] || choice.trigger,
+      }));
+      setChoices(combined);
+      setScene(finalData.scene);
+      if (finalData.stateDelta?.global?.mustacheMood) {
+        setMustacheMood(finalData.stateDelta.global.mustacheMood);
+      }
+      if (finalData.newlyRevealedClues?.length > 0) {
+        setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+        setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+      }
+    } else {
+        console.error("Stream finished but no data payload was found.");
+    }
+
+  } catch (err) {
+    setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
+    console.error(err);
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => { playTurn("begin"); }, []);
   
