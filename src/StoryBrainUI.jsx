@@ -269,7 +269,7 @@ async function playTurn(action) {
 
     /* ---------- split narrative / JSON ---------- */
     const delim = "|||~DATA~|||";
-    const idx   = fullResponse.indexOf(delim);
+    const idx   = fullResponse.lastIndexOf(delim);
     if (idx === -1) {
       console.error("Server response missing delimiter");
       return;          // bail out gracefully
