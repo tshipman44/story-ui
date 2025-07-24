@@ -302,6 +302,10 @@ async function playTurn(action) {
 
 let finalData = {};
 try {
+  // skip parsing if it doesn’t look like JSON
+  if (!jsonDataString || jsonDataString.trim()[0] !== "{") {
+   throw new Error("non‑JSON payload");
+  }
   finalData = JSON.parse(jsonDataString);
 } catch (e) {
   console.error("Delimiter missing or JSON invalid – falling back", e);
