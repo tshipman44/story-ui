@@ -1340,7 +1340,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     
     // Perform state updates using the received JSON data
     const g = assistant.stateDelta.global;
-    const mergedRevealed = [...new Set([...revealed_clues, ...(assistant.stateDelta.revealedClues || [])])];
+    const mergedRevealed = [...new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])])];
     
     let nextTurnsSinceProgress = turns_since_last_progress || 0;
     if ((assistant.stateDelta.revealedClues || []).length > 0 || story_phase !== g.storyPhase) {
