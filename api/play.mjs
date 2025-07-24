@@ -1343,7 +1343,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     const mergedRevealed = [...new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])])];
     
     let nextTurnsSinceProgress = turns_since_last_progress || 0;
-    if ((assistant.stateDelta.revealedClues || []).length > 0 || story_phase !== g.storyPhase) {
+    if ((assistant.stateDelta.revealedClues || []).length > 0 || phase !== g.storyPhase) {
       nextTurnsSinceProgress = 0;
     } else {
       nextTurnsSinceProgress += 1;
