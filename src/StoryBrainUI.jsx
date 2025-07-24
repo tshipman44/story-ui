@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Mustache from "./mustache.jsx";     // ← new line
 import scene1Image from './assets/scene_01.png';
 import scene2Image from './assets/scene_02.png';
@@ -23,7 +23,6 @@ import scene20Image from './assets/scene_20.png';
 import scene21Image from './assets/scene_21.png';
 import scene22Image from './assets/scene_22.png';
 import notebookIcon from './assets/notebook.png';
-import { useEffect, useState, useRef } from "react";
 
 /**
  * Skeleton StoryBrain front‑end
