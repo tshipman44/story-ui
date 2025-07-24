@@ -213,7 +213,7 @@ export default function StoryBrainUI() {
 
 // Replace the existing playTurn function in StoryBrainUI.jsx
 
-  async function playTurn(action) {
+async function playTurn(action) {
     if (action === 'action_restart_game') {
       localStorage.removeItem('playerId');
       window.location.reload();
@@ -224,28 +224,28 @@ export default function StoryBrainUI() {
     setChoices([]);
     setIsMobileChoicesOpen(false);
 
-    let currentNarrative = "";
+    let baseNarrative = "";
     setNarrative(prev => {
-      currentNarrative = prev;
+      baseNarrative = prev;
       if (action === "begin") return "…loading…";
       return prev + `\n\n> ${action}\n\n`;
     });
 
     try {
-const res = await fetch(API_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    playerId: PLAYER_ID,
-    userAction: action,
-    currentNarrative: action === "begin" ? "" : currentNarrative,
-  }),
-});     
- if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerId: PLAYER_ID,
+          userAction: action,
+          currentNarrative: action === "begin" ? "" : baseNarrative,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
 
       const contentType = res.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        // Handle the non-streaming 'begin' action
         const data = await res.json();
         setNarrative(data.narrative);
         const combined = (data.choices || []).map((choice, index) => ({
@@ -257,48 +257,45 @@ const res = await fetch(API_URL, {
         return;
       }
 
-      // --- New, Simpler Streaming Logic ---
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let fullResponse = "";
-      
+      const delimiter = "|||~DATA~|||";
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        // Append the raw chunk to the narrative for the typing effect
-        setNarrative(prev => prev + chunk);
-        fullResponse += chunk;
-      }
-      
-      // Now, process the full response AFTER the stream is finished
-      const delimiter = "|||~DATA~|||";
-      if (fullResponse.includes(delimiter)) {
-        const parts = fullResponse.split(delimiter);
-        const finalNarrative = parts[0];
-        const jsonDataString = parts[1];
+        fullResponse += decoder.decode(value, { stream: true });
 
-        // Do a final, clean update of the narrative text
+        const delimiterIndex = fullResponse.search(/\|{2,}~DATA~\|{2,}/);
+        
+        const narrativeToShow = delimiterIndex !== -1 ? fullResponse.substring(0, delimiterIndex) : fullResponse;
+        
         setNarrative(prev => {
-           const base = prev.substring(0, prev.lastIndexOf("> " + action));
-           return base + `> ${action}\n\n` + finalNarrative;
+          const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+          return base + narrativeToShow;
         });
 
-        if (jsonDataString) {
-          const finalData = JSON.parse(jsonDataString);
-          const combined = (finalData.choices || []).map((choice, index) => ({
-            event_id: choice.event_id,
-            label: (finalData.hints || [])[index] || choice.trigger,
-          }));
-          setChoices(combined);
-          setScene(finalData.scene);
-          if (finalData.stateDelta?.global?.mustacheMood) {
-            setMustacheMood(finalData.stateDelta.global.mustacheMood);
-          }
-          if (finalData.newlyRevealedClues?.length > 0) {
-            setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-            setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-          }
+        if (delimiterIndex !== -1) {
+          break;
+        }
+      }
+
+const jsonDataString = fullResponse.split(/\|{2,}~DATA~\|{2,}/)[1];
+      if (jsonDataString) {
+        const finalData = JSON.parse(jsonDataString);
+        const combined = (finalData.choices || []).map((choice, index) => ({
+          event_id: choice.event_id,
+          label: (finalData.hints || [])[index] || choice.trigger,
+        }));
+        setChoices(combined);
+        setScene(finalData.scene);
+        if (finalData.stateDelta?.global?.mustacheMood) {
+          setMustacheMood(finalData.stateDelta.global.mustacheMood);
+        }
+        if (finalData.newlyRevealedClues?.length > 0) {
+          setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+          setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
         }
       }
 

@@ -1187,19 +1187,24 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
     "────────────────────────────────────────",
-    "## ⚠️ OUTPUT FORMAT – STREAMING (CRITICAL)",
-    "Your response MUST be in two parts, separated by a unique delimiter.",
-    "1. **NARRATIVE TEXT:** First, write the narrative prose directly from Hastings' POV. Use \\n for paragraph breaks.",
-    "2. **DELIMITER:** After the narrative, you MUST output the exact delimiter `|||~DATA~|||` on a new line.",
-    "3. **JSON OBJECT:** After the delimiter, output a single, valid JSON object containing the other fields. Do NOT include the narrative in this JSON.",
+       "## ⚠️ OUTPUT FORMAT – STREAMING (CRITICAL)",
+    "Your entire response MUST strictly follow this two-part format:",
+    "",
+    "[NARRATIVE TEXT]",
+    "|||~DATA~|||",
+    "[VALID JSON OBJECT]",
+    "",
+    "Here is an example of a perfect response:",
+    "The afternoon sun cast long shadows across the lawn as I considered my next move. The family's secrets felt almost tangible in the heavy air.",
+    "|||~DATA~|||",
     `{
-      "hints": ["A complete, capitalized hint.", "Another hint.", "A final hint."],
+      "hints": ["Examine the fireplace.", "Speak with Mary Cavendish again.", "Review your notes."],
       "stateDelta": {
-        "revealedClues": ["clue_id or null"],
+        "revealedClues": ["C26"],
         "global": {
-          "mustacheMood": "neutral",
-          "current_scene": "scene_id",
-          "storyPhase": "<pre-murder|investigation|reveal>"
+          "mustacheMood": "thinking",
+          "current_scene": "scene_18",
+          "storyPhase": "investigation"
         }
       }
     }`,
