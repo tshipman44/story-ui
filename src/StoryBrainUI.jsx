@@ -23,6 +23,7 @@ import scene20Image from './assets/scene_20.png';
 import scene21Image from './assets/scene_21.png';
 import scene22Image from './assets/scene_22.png';
 import notebookIcon from './assets/notebook.png';
+import { useEffect, useState, useRef } from "react";
 
 /**
  * Skeleton StoryBrain front‑end
@@ -183,6 +184,7 @@ export default function StoryBrainUI() {
   const [revealedClues, setRevealedClues] = useState([]);
   const [unreadClueCount, setUnreadClueCount] = useState(0);
   const [isMobileChoicesOpen, setIsMobileChoicesOpen] = useState(false);
+  const narrativeEndRef = useRef(null);
 
 
   const sceneImages = {
@@ -227,28 +229,24 @@ export default function StoryBrainUI() {
     setNarrative(prev => {
       currentNarrative = prev;
       if (action === "begin") return "…loading…";
-      // Show the user's action immediately for better perceived speed
       return prev + `\n\n> ${action}\n\n`;
     });
 
     try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerId: PLAYER_ID,
-          userAction: action,
-          currentNarrative: action === "begin" ? "" : currentNarrative,
-        }),
-      });
-
-      if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+const res = await fetch(API_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    playerId: PLAYER_ID,
+    userAction: action,
+    currentNarrative: action === "begin" ? "" : currentNarrative,
+  }),
+});     
+ if (!res.ok) throw new Error(`Server responded with ${res.status}`);
 
       const contentType = res.headers.get("content-type");
-      const delimiter = "|||~DATA~|||";
-
-      // --- BRANCH 1: Handle the non-streaming 'begin' action ---
       if (contentType && contentType.includes("application/json")) {
+        // Handle the non-streaming 'begin' action
         const data = await res.json();
         setNarrative(data.narrative);
         const combined = (data.choices || []).map((choice, index) => ({
@@ -257,56 +255,54 @@ export default function StoryBrainUI() {
         }));
         setChoices(combined);
         setScene(data.scene);
-        return; // Exit after processing
+        return;
       }
 
-      // --- BRANCH 2: Handle the streaming response for all other actions ---
+      // --- New, Simpler Streaming Logic ---
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = "";
-
-      // Set the narrative to an empty string after the prompt to make way for the stream
-      setNarrative(prev => prev + ""); 
-
+      let fullResponse = "";
+      
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        // Append the raw chunk to the narrative for the typing effect
+        setNarrative(prev => prev + chunk);
+        fullResponse += chunk;
+      }
+      
+      // Now, process the full response AFTER the stream is finished
+      const delimiter = "|||~DATA~|||";
+      if (fullResponse.includes(delimiter)) {
+        const parts = fullResponse.split(delimiter);
+        const finalNarrative = parts[0];
+        const jsonDataString = parts[1];
 
-        buffer += decoder.decode(value, { stream: true });
-        
-        // Check if the delimiter is in our buffer
-        if (buffer.includes(delimiter)) {
-          const parts = buffer.split(delimiter);
-          const narrativeChunk = parts[0];
-          const jsonDataString = parts[1];
+        // Do a final, clean update of the narrative text
+        setNarrative(prev => {
+           const base = prev.substring(0, prev.lastIndexOf("> " + action));
+           return base + `> ${action}\n\n` + finalNarrative;
+        });
 
-          // Append the final part of the narrative before the delimiter
-          setNarrative(prev => prev + narrativeChunk);
-
-          // Parse the final JSON data to update choices, scene, etc.
-          if (jsonDataString) {
-            const finalData = JSON.parse(jsonDataString);
-            const combined = (finalData.choices || []).map((choice, index) => ({
-              event_id: choice.event_id,
-              label: (finalData.hints || [])[index] || choice.trigger,
-            }));
-            setChoices(combined);
-            setScene(finalData.scene);
-            if (finalData.stateDelta?.global?.mustacheMood) {
-              setMustacheMood(finalData.stateDelta.global.mustacheMood);
-            }
-            if (finalData.newlyRevealedClues?.length > 0) {
-              setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-              setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-            }
+        if (jsonDataString) {
+          const finalData = JSON.parse(jsonDataString);
+          const combined = (finalData.choices || []).map((choice, index) => ({
+            event_id: choice.event_id,
+            label: (finalData.hints || [])[index] || choice.trigger,
+          }));
+          setChoices(combined);
+          setScene(finalData.scene);
+          if (finalData.stateDelta?.global?.mustacheMood) {
+            setMustacheMood(finalData.stateDelta.global.mustacheMood);
           }
-          return; // Exit after processing the complete stream
-        } else {
-          // No delimiter yet, so it's all narrative text. Append to state.
-          setNarrative(prev => prev + buffer);
-          buffer = ""; // Clear buffer after appending
+          if (finalData.newlyRevealedClues?.length > 0) {
+            setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+            setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+          }
         }
       }
+
     } catch (err) {
       setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
       console.error(err);
@@ -315,9 +311,13 @@ export default function StoryBrainUI() {
     }
   }
 
+  useEffect(() => { playTurn("begin"); }, []);
+  
+  // ✅ SCROLL FIX: Add a useEffect to scroll to the bottom when narrative changes
   useEffect(() => {
-    playTurn("begin");
-  }, []);
+    narrativeEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [narrative]);
+
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -337,7 +337,9 @@ export default function StoryBrainUI() {
         <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto lg:pb-44 pr-2">
           <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
             {narrative}
+            <div ref={narrativeEndRef} />
           </article>
+
         </div>
 
         {/* Column 2: Buttons */}
