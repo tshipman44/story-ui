@@ -349,8 +349,19 @@ const STORY_DATA = {"characters": [
 "scenes": [
     {
       "scene_id": "scene_01",
-      "entry_narrative": "In November of 1917, I had been invalided home from the Front; and, after spending some months in a rather depressing Convalescent Home, was given a month’s sick leave. Having no near relations or friends, I was trying to make up my mind what to do, when I ran across John Cavendish. I had seen very little of him for some years. Indeed, I had never known him particularly well. He was a good fifteen years my senior, for one thing, though he hardly looked his forty-five years. As a boy, though, I had often stayed at Styles, his mother’s place in Essex. \n\n We had a good yarn about old times, and it ended in his inviting me down to Styles to spend my leave there. Thus it came about that, three days later, I descended from the train at Styles St. Mary, an absurd little station, with no apparent reason for existence, perched up in the midst of green fields and country lanes. John Cavendish was waiting on the platform",
-"events": [
+      "entry_narrative": "In November of 1917, I had been invalided home from the Front; and, after spending some months in a rather depressing Convalescent Home, was given a month’s sick leave. Having no near relations or friends, I was trying to make up my mind what to do, when I ran across John Cavendish. I had seen very little of him for some years. Indeed, I had never known him particularly well. He was a good fifteen years my senior, for one thing, though he hardly looked his forty-five years. As a boy, though, I had often stayed at Styles, his mother’s place in Essex. \n\n We had a good yarn about old times, and it ended in his inviting me down to Styles to spend my leave there. Thus it came about that, three days later, I descended from the train at Styles St. Mary, an absurd little station, with no apparent reason for existence, perched up in the midst of green fields and country lanes. John Cavendish was waiting on the platform.",
+        "suggested_questions": {
+    "serious": [
+      "Make small talk with John",
+      "Admire the beautiful countryside",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Try to hijack the train",
+      "Remember the horrors of war"
+    ]
+  },
+      "events": [
 {
       "event_id": "We drove to Styles",
       "trigger": "Player gets in the car, greets John, or agrees to go to Styles Court.",
@@ -386,6 +397,17 @@ const STORY_DATA = {"characters": [
    {
     "scene_id": "scene_02",
     "entry_narrative": "John leads you into the morning-room. The entire family seems to be present, and the air is dense with unspoken tensions. You are introduced to the matriarch, Emily Inglethorp, and her much younger husband, Alfred, who hovers near her chair. You also meet John's brother Lawrence, John's enchanting wife Mary, and Emily's companion, the formidable Evelyn Howard, whose hostility towards Alfred is almost a physical presence in the room.",
+        "suggested_questions": {
+    "serious": [
+      "Ask about Emily's late husband",
+      "Smell the roses",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Try to tug on Alfred's beard",
+      "Ask Emily about being her third husband"
+    ]
+  },
     "events": [
       {
         "event_id": "I am introduced to the family",
@@ -415,6 +437,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_03",
     "entry_narrative": "The group begins to disperse from the morning-room, the strained pleasantries having run their course. You move out onto the Rose Garden path, where you hear the beginnings of a heated discussion from the drawing-room window.",
+    "suggested_questions": {
+    "serious": [
+      "Eavesdrop on the argument",
+      "Smell the roses",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Question the ethics of eavesdropping",
+      "Attempt to climb the trellis"
+    ]
+  },
     "events": [
       {
         "event_id": "I linger to overhear the quarrel",
@@ -444,6 +477,18 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_04",
     "entry_narrative": "With Evelyn Howard's dramatic departure hanging in the air, the family gathers awkwardly for dinner. Lawrence Cavendish, John's brother, arrives just as you are sitting down, looking slightly dishevelled.",
+    "suggested_questions": {
+    "serious": [
+      "Question Lawrence's appearance",
+      "Ask if Evelyn is often upset",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Announce that Lawrence is the murderer",
+      "Attempt to seduce Mary"
+    ]
+  },
+    
     "events": [
       {
         "event_id": "I talk to Lawrence about his day",
@@ -473,6 +518,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_05",
     "entry_narrative": "Dinner has concluded, and the family has retired to the drawing-room for coffee. The atmosphere is still incredibly strained. Dorcas, the maid, brings in the coffee service.",
+     "suggested_questions": {
+    "serious": [
+      "Ask if you can have decaf",
+      "Notice who prepared each drink",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Request whiskey instead",
+      "Announce that someone will be poisoned"
+    ]
+  },
     "events": [
       {
         "event_id": "I observe the coffee service",
@@ -502,6 +558,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_06",
     "entry_narrative": "The house is quiet, but sleep evades you. You decide to take a brief stroll down the upstairs corridor to clear your head. The gas lamps cast long, flickering shadows.",
+         "suggested_questions": {
+    "serious": [
+      "Follow John to his room",
+      "Investigate the house",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Request whiskey instead",
+      "Strip naked and run downstairs"
+    ]
+  },
     "events": [
       {
         "event_id": "I see the light under Emily's door",
@@ -531,6 +598,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_07",
     "entry_narrative": "You have only just returned to your room when a violent cry shatters the silence of the house, followed by the sound of a crash from Mrs. Inglethorp's room!",
+     "suggested_questions": {
+    "serious": [
+      "Help break down the door",
+      "Cry for help",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Attempt to perform mouth to mouth",
+      "Blame Canada"
+    ]
+  },
     "events": [
       {
         "event_id": "We break down the door",
@@ -561,6 +639,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_08",
     "entry_narrative": "The local physician, Dr. Wilkins, has been summoned and arrives along with Dr. Bauerstein who was staying nearby. They have been with Mrs. Inglethorp for some time. The household waits in a dreadful, anticipatory silence.",
+    "suggested_questions": {
+    "serious": [
+      "Fetch the police immediately",
+      "Ask John what he wants to do",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Suggest Emily is faking it",
+      "Kiss Dr. Bauerstein passionately"
+    ]
+  },
     "events": [
       {
         "event_id": "I hear the doctor's diagnosis",
@@ -590,6 +679,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_09",
     "entry_narrative": "The local police have been called, but you feel a sense of helplessness. The official investigation will be slow and clumsy. You recall the Belgian refugee camp nearby and the rumor that the great Hercule Poirot is among them. The thought takes root: only he can solve this.",
+       "suggested_questions": {
+    "serious": [
+      "Suggest we bring in Poirot",
+      "Ask the Doctors their opinion",
+      "Or type your own question"
+    ],
+    "chaotic": [
+      "Confess to the murder yourself",
+      "Run away screaming"
+    ]
+  },
     "events": [
       {
         "event_id": "I go to fetch Poirot",
@@ -619,6 +719,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_10",
     "entry_narrative": "You and Poirot have returned to Styles Court. The police are present, but Poirot, with an air of quiet authority, begins his own methodical investigation. He asks to speak with the maid, Dorcas, in the boudoir.",
+        "suggested_questions": {
+    "serious": [
+      "Listen to Dorcas",
+      "Ask about the cocoa ",
+      "Or continue your investigation"
+    ],
+    "chaotic": [
+      "Interrupt with a song",
+      "Hide behind the curtains mysteriously"
+    ]
+  },
     "events": [
       {
         "event_id": "I listen as Poirot questions Dorcas",
@@ -648,6 +759,17 @@ const STORY_DATA = {"characters": [
     {
     "scene_id": "scene_11",
     "entry_narrative": "Following the conversation with Dorcas, Poirot leads you to the dispensary at the nearby Red Cross Hospital where Cynthia works. The room is lined with amber bottles and smells faintly of ether.",
+    "suggested_questions": {
+  "serious": [
+    "Ask who else had access",
+    "Search for missing bottles",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Taste random chemicals for clues",
+    "Accuse Cynthia of mass poisoning"
+  ]
+},
     "events": [
       {
         "event_id": "We examine the poison cupboard",
@@ -677,6 +799,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_12",
     "entry_narrative": "Back at Styles Court that evening, the mood is somber. After dinner, Poirot suggests a stroll in the garden. From the shadows of a yew hedge, he motions for you to be silent, pointing towards a garden bench.",
+    "suggested_questions": {
+  "serious": [
+    "Listen to Mary's secret conversation",
+    "Note Dr. Bauerstein's suspicious behavior",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Jump out shouting surprise loudly",
+    "Kiss Dr. Bauerstein passionately again"
+  ]
+},
     "events": [
       {
         "event_id": "I observe the secret meeting",
@@ -706,6 +839,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_13",
     "entry_narrative": "The day of the inquest arrives. You and Poirot take seats in the crowded assembly-room over the village post-office. The air is stuffy and thick with morbid curiosity as the coroner begins the proceedings.",
+    "suggested_questions": {
+  "serious": [
+    "Listen carefully",
+    "Watch Alfred's reaction to accusations",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Stand up and confess dramatically",
+    "Object like a courtroom lawyer"
+  ]
+},
     "events": [
       {
         "event_id": "I listen to the inquest testimony",
@@ -735,6 +879,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_14",
     "entry_narrative": "That evening, Poirot gathers a few of you in Cynthia's room. 'We must reconstruct the events of that night,' he announces. He hands Cynthia her usual bromide sleeping-draft.",
+   "suggested_questions": {
+  "serious": [
+    "Watch Cynthia drink the bromide",
+    "Ask Poirot about his theory",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Drink Cynthia's bromide bottle yourself",
+    "Bolt your own door mysteriously"
+  ]
+},
     "events": [
       {
         "event_id": "I watch the reenactment",
@@ -764,6 +919,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_15",
     "entry_narrative": "The official investigation, led by Inspector Japp, has focused squarely on the most obvious suspect. You are in the drawing-room when Japp enters, looking resolute.",
+    "suggested_questions": {
+  "serious": [
+    "Watch the family's shocked reactions",
+    "Examine Evelyn's convenient alibi letter",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Print shirts that read 'Free Alfred'",
+    "Propose to Evelyn Howard immediately"
+  ]
+},
     "events": [
       {
         "event_id": "I witness Alfred Inglethorp's arrest",
@@ -793,6 +959,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_16",
     "entry_narrative": "Despite the alibi letter from Evelyn, Poirot seems unconvinced. 'Let us take a trip to the village, Hastings,' he says. 'I wish to speak with the landlord of the inn where Monsieur Inglethorp stayed.'",
+    "suggested_questions": {
+  "serious": [
+    "Question the innkeeper about Alfred",
+    "Check the bar clock",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Challenge everyone to drinking contest",
+    "Accuse the innkeeper of anti-semitism"
+  ]
+},
     "events": [
       {
         "event_id": "I go with Poirot to the inn",
@@ -822,6 +999,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_17",
     "entry_narrative": "Back at Styles, Poirot's attention turns to the fireplace in Emily Inglethorp's boudoir. 'A fire in July, Hastings. It is curious, no?' he remarks, kneeling to examine the grate.",
+    "suggested_questions": {
+  "serious": [
+    "Help search the fireplace ashes",
+    "Ask Dorcas about the fire",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Climb up the chimney investigating",
+    "Set another fire for comparison"
+  ]
+},
     "events": [
       {
         "event_id": "I help Poirot search the fireplace",
@@ -851,6 +1039,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_18",
     "entry_narrative": "Poirot is in his element, his 'little grey cells' working at full capacity. He leads you to Alfred Inglethorp's dressing-room, now sealed by the police. With a nod from Inspector Japp, you enter.",
+    "suggested_questions": {
+  "serious": [
+    "Examine the dressing room",
+    "Ask who wore the disguise",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Find the glue and eat it",
+    "Embiggen your own mustache"
+  ]
+},
     "events": [
       {
         "event_id": "We find the beard gum",
@@ -880,6 +1079,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_19",
     "entry_narrative": "'The time has come,' Poirot announces dramatically. 'Assemble everyone in the library. Tonight, we shall expose the truth!'",
+    "suggested_questions": {
+  "serious": [
+    "Listen to Poirot's grand reconstruction",
+    "Watch in confusion",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Interrupt with your own theory",
+    "Dramatically faint from the revelation"
+  ]
+},
     "events": [
       {
         "event_id": "I listen to Poirot's grand reconstruction",
@@ -910,6 +1120,17 @@ const STORY_DATA = {"characters": [
   {
     "scene_id": "scene_20",
     "entry_narrative": "Poirot continues, his voice sharp and clear, holding the room captive. He turns his attention to the true method of the murder, producing the charred will fragment and the chemist's label.",
+    "suggested_questions": {
+  "serious": [
+    "Hear Poirot's final accusation",
+    "Watch Evelyn's tearful confession",
+    "Ask how Poirot knew certainly"
+  ],
+  "chaotic": [
+    "Accuse Poirot of the crime",
+    "Propose to the sobbing Evelyn"
+  ]
+},
     "events": [
       {
         "event_id": "I hear Poirot's final accusation",
@@ -939,6 +1160,17 @@ const STORY_DATA = {"characters": [
     {
       "scene_id": "scene_21",
       "entry_narrative": "In the aftermath of the confession, a quiet order begins to settle over Styles Court. Inspector Japp takes Alfred and Evelyn into custody.",
+      "suggested_questions": {
+  "serious": [
+    "Reflect on the puzzle",
+    "Ask about the family's future",
+    "Or continue your investigation"
+  ],
+  "chaotic": [
+    "Ask if they serve hotdogs in Hell",
+    "Insist Emily is still alive"
+  ]
+},
       "events": [
         {
           "event_id": "E21-1_Epilogue",
@@ -954,6 +1186,17 @@ const STORY_DATA = {"characters": [
     {
   "scene_id": "scene_22",
   "entry_narrative": "The story has reached an unfortunate conclusion. Even in 1917 Essex, there are limits to a gentleman's behavior, and I have found them.",
+  "suggested_questions": {
+  "serious": [
+    "Restart the story ",
+    "Reflect on your terrible choices",
+    "Continue harrassing a computer"
+  ],
+  "chaotic": [
+    "Blame everyone else for failure",
+    "Insist you solved it correctly"
+  ]
+},
   "events": [
     {
       "event_id": "action_restart_game",
@@ -1112,7 +1355,8 @@ async function createPlayerRow(playerId) {
     story_phase: "pre-murder", // Start of the game
     current_scene: "scene_01",
     revealed_clues: [],
-    turns_since_last_progress: 0
+    turns_since_last_progress: 0,
+    player_memory: [],
   };
 
   const { data, error } = await supabase
@@ -1154,7 +1398,7 @@ async function fetchPlayerRow(playerId) {
 
 
 
-async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
+async function updatePlayerRow(playerId, { phase, scene, revealed, turns, memory }) {
   const { error } = await supabase
     .from("PlayerState")
     .update({
@@ -1162,6 +1406,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns }) {
       current_scene: scene,
       revealed_clues: revealed,
       turns_since_last_progress: turns,
+      player_memory: memory,
       updated_at:    new Date().toISOString(),
     })
     .eq("player_id", playerId);
@@ -1185,10 +1430,15 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "7. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
+    "10. **CREATE MEMORIES If the player takes a memorable, non-plot-critical action (a specific social interaction, a unique observation, an odd choice), add a brief, third-person summary of it to a `new_memories` array in your JSON output. Example: `[\"Hastings passionately kissed Mary.\"]`",
+    "11. **REFERENCE MEMORIES:** Review the `playerMemory` array. If a natural opportunity arises, your `narrative` should reference a past event from this memory to make the world feel more alive and responsive.",
     "────────────────────────────────────────",
     "## CONTEXT FOR YOUR TASK",
     `The user just took the action: "${userAction}"`,
     `The story so far: "${currentNarrative}"`,
+    "",
+     "## Player Memory (Past Actions)",
+    `${JSON.stringify(memory || [])}`, // This shows the AI the player's memory
     "",
     "## Current Game State",
     `{ "storyPhase": "${phase}", "currentScene": "${scene}", "revealedCluesGlobal": ${JSON.stringify(revealed)}, "availableScenes": ${JSON.stringify(availableScenes)} }`,
@@ -1201,7 +1451,9 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
         { "event_id": "event_id_from_story_data", "label": "Your generated hint text." },
         { "event_id": "another_event_id", "label": "Your second generated hint." },
          { "event_id": "another_event_id", "label": "Your third generated hint." },
-      ]      "stateDelta": {
+      ],      
+               "new_memories": ["A brief summary of a new memorable action, if any."],
+        "stateDelta": {
         "revealedClues": ["clue_id or null"],
         "global": {
           "mustacheMood": "thinking",
@@ -1247,7 +1499,8 @@ export default async function handler(req, res) {
       story_phase: phase,
       current_scene: scene,
       revealed_clues: revealed,
-      turns_since_last_progress
+      turns_since_last_progress,
+      player_memory
     } = row;
 
 // In api/play.mjs
@@ -1282,6 +1535,7 @@ if (userAction === "begin") {
         turns: turns_since_last_progress,
         availableScenes, availableClues,
         userAction, currentNarrative,
+        memory: player_memory
     });
     
     // Call OpenAI without streaming
@@ -1295,7 +1549,9 @@ if (userAction === "begin") {
     
     const g = assistant.stateDelta.global;
     const mergedRevealed = [...new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])])];
-    
+    const allMemories = [...(player_memory || []), ...(assistant.new_memories || [])];
+
+
     let nextTurnsSinceProgress = turns_since_last_progress + 1;
     if ((assistant.stateDelta.revealedClues || []).length > 0 || phase !== g.storyPhase) {
       nextTurnsSinceProgress = 0;
@@ -1306,13 +1562,16 @@ if (userAction === "begin") {
       scene: g.current_scene,
       revealed: mergedRevealed,
       turns: nextTurnsSinceProgress,
+      memory: allMemories
     });
+const currentSceneObject = STORY_DATA.scenes.find(s => s.scene_id === g.current_scene);
 
     const finalData = {
       narrative: assistant.narrative,
       choices: assistant.hints,
       scene: g.current_scene,
       stateDelta: assistant.stateDelta,
+      suggested_questions: currentSceneObject?.suggested_questions || null,
       newlyRevealedClues: (assistant.stateDelta.revealedClues || [])
         .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
         .filter(Boolean),

@@ -75,12 +75,15 @@ const ChoiceButton = ({ label, onClick }) => (
     {label}
   </button>
 );
+
+
 const Footer = ({
   mood,
   onSubmit,
   loading,
   onNotebookClick,
   unreadClueCount,
+  placeholder,
 }) => (
   <footer className="fixed bottom-0 left-0 right-0 z-40 flex flex-col items-center gap-3 px-4 py-3
                      bg-slate-900/80 shadow-inner backdrop-blur">
@@ -96,7 +99,7 @@ const Footer = ({
           name="free"
           aria-label="Custom action"
           disabled={loading}
-          placeholder="Or type your own action…"
+          placeholder={placeholder}
           className="flex-1 bg-transparent px-4 py-3 text-sm placeholder-slate-400 focus:outline-none"
         />
         <button
@@ -183,6 +186,7 @@ export default function StoryBrainUI() {
   const [revealedClues, setRevealedClues] = useState([]);
   const [unreadClueCount, setUnreadClueCount] = useState(0);
   const [isMobileChoicesOpen, setIsMobileChoicesOpen] = useState(false);
+  const [suggestedQuestions, setSuggestedQuestions] = useState(null); 
   const narrativeEndRef = useRef(null);
 
 
@@ -213,6 +217,15 @@ export default function StoryBrainUI() {
 
 
 // In StoryBrainUI.jsx
+  function getContextualPrompt() {
+    if (!suggestedQuestions) return "Or type your own action…";
+    
+    const useSerious = Math.random() < 0.8;
+    const pool = useSerious ? suggestedQuestions.serious : suggestedQuestions.chaotic;
+    const selected = pool[Math.floor(Math.random() * pool.length)];
+    
+    return `Try: "${selected}"`;
+  }
 
 async function playTurn(action) {
   if (action === 'action_restart_game') {
@@ -255,7 +268,7 @@ async function playTurn(action) {
 setChoices(finalData.choices || []);
 
     setScene(finalData.scene);
-    
+    setSuggestedQuestions(finalData.suggested_questions || null); 
     if (finalData.stateDelta?.global?.mustacheMood) {
       setMustacheMood(finalData.stateDelta.global.mustacheMood);
     }
@@ -339,6 +352,7 @@ setChoices(finalData.choices || []);
         onNotebookClick={() => setNotebookOpen(true)}
         onSubmit={handleSubmit}
         unreadClueCount={unreadClueCount}
+        placeholder={getContextualPrompt()} 
       />
       {isNotebookOpen && <NotebookModal clues={revealedClues} onClose={() => {
         setNotebookOpen(false);
