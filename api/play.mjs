@@ -1175,7 +1175,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "## YOUR TASK",
     "1. **MATCH ACTION:** Look at the `userAction` and the `events` available in the `currentScene`. Determine which `event` is the most logical consequence of the player's action.",
     "2. **SYNTHESIZE NARRATIVE:** Write a new narrative passage of about 225 words. This text must seamlessly blend the `narrative` from the triggered event with the `entry_narrative` of the `moves_to_scene` it points to. It must flow logically from the `currentNarrative`.",
-    "3. **GENERATE HINTS:** Look at the `events` available in the new scene. Based on their `trigger` descriptions, generate 3 new, short, player-friendly action phrases for the `hints` array. Each hint MUST be a complete imperative sentence (e.g., 'Ask John about his day.') and be properly capitalized.",
+    "3. **GENERATE HINTS:** Look at the `events` in the new scene. For each event, generate a player-friendly action phrase. Return these as an array of objects in the `hints` field, where each object has two keys: the original `event_id` and the new `label` you've written. Each label MUST be a complete imperative sentence (e.g., 'Ask John about his day.') and be properly capitalized.",
     "4. **DEFAULT REACTION:** If the player's action does not logically match any event `trigger`, you MUST generate a 'default reaction.' A default reaction has three parts:",
     "   a. The narrative must describe Hastings performing the unexpected action.",
     "   b. Any characters present must react in a believable, in-character way appropriate to the 1920s setting.",
@@ -1197,8 +1197,11 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "Return **one** valid JSON object and nothing else. Use this exact schema:",
     `{
       "narrative": "The new narrative passage you have written.",
-      "hints": ["A complete, capitalized hint.", "Another hint.", "A final hint."],
-      "stateDelta": {
+      "hints": [
+        { "event_id": "event_id_from_story_data", "label": "Your generated hint text." },
+        { "event_id": "another_event_id", "label": "Your second generated hint." },
+         { "event_id": "another_event_id", "label": "Your third generated hint." },
+      ]      "stateDelta": {
         "revealedClues": ["clue_id or null"],
         "global": {
           "mustacheMood": "thinking",
@@ -1297,10 +1300,9 @@ export default async function handler(req, res) {
 
     const finalData = {
       narrative: assistant.narrative,
-      hints: assistant.hints,
+      choices: assistant.hints,
       scene: g.current_scene,
       stateDelta: assistant.stateDelta,
-      choices: STORY_DATA.scenes.find(s => s.scene_id === g.current_scene)?.events || [],
       newlyRevealedClues: (assistant.stateDelta.revealedClues || [])
         .map(clueId => STORY_DATA.clues.find(c => c.clue_id === clueId))
         .filter(Boolean),

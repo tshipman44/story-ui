@@ -252,11 +252,8 @@ async function playTurn(action) {
 
     setNarrative(finalData.narrative);
 
-    const combined = (finalData.choices || []).map((choice, index) => ({
-      event_id: choice.event_id,
-      label: (finalData.hints || [])[index] || choice.trigger,
-    }));
-    setChoices(combined);
+setChoices(finalData.choices || []);
+
     setScene(finalData.scene);
     
     if (finalData.stateDelta?.global?.mustacheMood) {
