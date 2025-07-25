@@ -268,15 +268,19 @@ async function playTurn(action) {
     }
 
     /* ---------- split narrative / JSON ---------- */
-    const delim = /\|{2,3}~DATA~\|{2,3}/;
-    const idx   = fullResponse.lastIndexOf(delim);
+const match = fullResponse.match(/\|{2,3}~DATA~\|{2,3}/);
+if (!match) { console.error("Server response missing delimiter");
+  setLoading(false);
+  return;  }
+const idx   = match.index;
+const delimLen = match[0].length;
     if (idx === -1) {
       console.error("Server response missing delimiter");
       return;          // bail out gracefully
     }
 
     const narrativePart  = fullResponse.slice(0, idx);
-    const jsonDataString = fullResponse.slice(idx + delim.length).trim();
+    const jsonDataString = fullResponse.slice(idx + delimLen).trim();
 
    // 1️⃣ show the narrative
     setNarrative(prev =>

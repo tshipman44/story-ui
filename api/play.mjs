@@ -1307,8 +1307,10 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
     let fullResponse = "";
-    const delimiter = "|||~DATA~|||";
+    const delimRx   = /\|{2,3}~DATA~\|{2,3}/;   // tolerate || or |||
+    let   delimStr  = null;                     // will hold the exact match
     let dataPartFound = false;
+    let   delimPos  = -1;
     let streamingNarr = true;                 
 
     for await (const chunk of stream) {
@@ -1317,16 +1319,17 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
 
       if (!streamingNarr) continue;          // already hit delimiter, swallow chunks
 
- const idx = fullResponse.indexOf(delimiter);
-  if (idx === -1) {
+ const m = fullResponse.match(delimRx);
+  if (!m) {
     res.write(chunkText);                      // still narrative – keep streaming
   } else {
-    res.write(fullResponse.slice(0, idx)); // stream ONLY text *before* delim
-    streamingNarr = false;               // switch off further writes
+    delimStr = m[0];
+     delimPos = m.index;
+     res.write(fullResponse.slice(0, delimPos));  // only narrative
+     streamingNarr = false;                       // stop echoing
   }
     }
-const hasDelimiter = fullResponse.includes(delimiter);
-if (!hasDelimiter) {
+if (delimPos === -1) {
   console.warn("AI omitted delimiter – sending fallback.");
   const safeJson = {
     hints:       ["Take stock of your surroundings."],
@@ -1336,10 +1339,12 @@ if (!hasDelimiter) {
     newlyRevealedClues: []
   };
 
-  return;          // skip the normal JSON.parse/update path
+ res.write("|||~DATA~|||" + JSON.stringify(safeJson));
+ res.end();
+ return;
 }
     // --- 4. PROCESS JSON AND UPDATE DATABASE (after stream ends) ---
-    const jsonDataString = fullResponse.split(delimiter)[1];
+const jsonDataString = fullResponse.slice(delimPos + delimStr.length).trim();
 let assistant;
 try {
   assistant = JSON.parse(jsonDataString.trim());
@@ -1388,7 +1393,7 @@ const mergedRevealed = Array.from(
         .filter(Boolean),
     };
     
-    res.write(fullResponse.slice(idx));  // this is "|||~DATA~|||" + JSON
+    res.write(`${delimStr}${JSON.stringify(finalData)}`);
  res.end();
 
   } catch (err) {
