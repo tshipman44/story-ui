@@ -1287,6 +1287,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
         revealed: revealed,
         turns: turns_since_last_progress,
         availableScenes,
+        availableClues,
         userAction,
         currentNarrative,
     });
@@ -1307,9 +1308,8 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
     let fullResponse = "";
-    const delimRx   = /\|{2,3}~DATA~\|{2,3}/;   // tolerate || or |||
+    const delimRx = /|{2,3}~DATA~|{0,3}/;   // tolerate || or |||
     let   delimStr  = null;                     // will hold the exact match
-    let dataPartFound = false;
     let   delimPos  = -1;
     let streamingNarr = true;                 
 
@@ -1357,13 +1357,13 @@ try {
     choices: STORY_DATA.scenes.find(s => s.scene_id === scene)?.events || [],
     newlyRevealedClues: []
   };
-  res.write(delimiter + JSON.stringify(safeJson));
+  res.write(delimStr + JSON.stringify(safeJson));
   res.end();
  return;            
 }
 
 // Perform state updates using the received JSON data    
-const g = assistant.stateDelta.global;
+const g = assistant.stateDelta.global || {};
 const mergedRevealed = Array.from(
   new Set([...(revealed || []), ...(assistant.stateDelta.revealedClues || [])])
 );    
