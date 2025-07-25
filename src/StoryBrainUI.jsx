@@ -46,6 +46,14 @@ function getOrCreatePlayerId() {
 const API_URL  = "/api/play";        // same-origin
 const PLAYER_ID = getOrCreatePlayerId();   // ← use the helper here
 
+const loadingMessages = [
+  "Poirot strokes his mustache thoughtfully...",
+  "The pieces of the puzzle shift...",
+  "Something stirs in the shadows of Styles Court...",
+  "The little grey cells are working...",
+  "Things are becoming more clear..."
+];
+
 const Container = ({ children, className = "" }) => (
   <div className={`m-1 px-6 sm:px-10 lg:px-24 ${className}`}>
     {children}
@@ -117,7 +125,7 @@ const Footer = ({
     <div className="w-full max-w-sm flex justify-center gap-4 h-28">
       {/* mustache */}
       <div className="flex-1 relative overflow-hidden rounded-lg">
-        <Mustache mood={mood} className="w-full h-full" />
+      <Mustache mood={mood} className={`w-full h-full ${loading ? 'animate-pulse' : ''}`} />
       </div>
 
       {/* notebook */}
@@ -188,6 +196,8 @@ export default function StoryBrainUI() {
   const [isMobileChoicesOpen, setIsMobileChoicesOpen] = useState(false);
   const [suggestedQuestions, setSuggestedQuestions] = useState(null); 
   const narrativeEndRef = useRef(null);
+  const [lastAction, setLastAction] = useState("");
+  const [loadingMessage, setLoadingMessage] = useState("");
 
 
   const sceneImages = {
@@ -237,13 +247,12 @@ async function playTurn(action) {
   setLoading(true);
   setChoices([]);
   setIsMobileChoicesOpen(false);
+    // Set state for the new loading indicator
+    setLastAction(action);
+    const randomMsg = loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+    setLoadingMessage(randomMsg);
+        const currentNarrative = narrative;
 
-  let currentNarrative = "";
-  setNarrative(prev => {
-    currentNarrative = prev;
-    if (action === "begin") return "…loading…";
-    return prev + `\n\n> ${action}`;
-  });
 
   try {
     const res = await fetch(API_URL, {
@@ -289,7 +298,7 @@ setChoices(finalData.choices || []);
   // ✅ SCROLL FIX: Add a useEffect to scroll to the bottom when narrative changes
   useEffect(() => {
     narrativeEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [narrative]);
+  }, [narrative, loading]);
 
 
   function handleSubmit(e) {
@@ -300,19 +309,35 @@ setChoices(finalData.choices || []);
   }
 
   return (
-    <div
+   <div
       className="flex w-screen h-screen flex-col items-center bg-slate-800 text-slate-100 bg-cover bg-center"
       style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages['scene_01']})` }}
     >
       <Header />
       <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-32 lg:pb-0">
+        
         {/* Column 1: Narrative */}
         <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto lg:pb-44 pr-2">
-          <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
-            {narrative}
+          {/* UPDATED: Conditional rendering for loading indicator */}
+          <article className="whitespace-pre-wrap leading-relaxed bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
+            {loading && lastAction !== "begin" ? (
+              <>
+                {/* The new loading indicator at the top */}
+                <div className="border-b border-slate-600 pb-4 mb-4">
+                  <p className="font-semibold text-slate-200">{`> ${lastAction}`}</p>
+                  <p className="text-slate-400 italic animate-pulse mt-2">{loadingMessage}</p>
+                </div>
+                {/* The old narrative, faded out */}
+                <div className="opacity-50">
+                  {narrative}
+                </div>
+              </>
+            ) : (
+              // The normal view when not loading
+              narrative
+            )}
             <div ref={narrativeEndRef} />
           </article>
-
         </div>
 
         {/* Column 2: Buttons */}

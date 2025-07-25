@@ -354,7 +354,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Make small talk with John",
       "Admire the beautiful countryside",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Try to hijack the train",
@@ -401,7 +401,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Ask about Emily's late husband",
       "Smell the roses",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Try to tug on Alfred's beard",
@@ -441,7 +441,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Eavesdrop on the argument",
       "Smell the roses",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Question the ethics of eavesdropping",
@@ -481,7 +481,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Question Lawrence's appearance",
       "Ask if Evelyn is often upset",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Announce that Lawrence is the murderer",
@@ -522,7 +522,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Ask if you can have decaf",
       "Notice who prepared each drink",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Request whiskey instead",
@@ -562,7 +562,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Follow John to his room",
       "Investigate the house",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Request whiskey instead",
@@ -602,7 +602,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Help break down the door",
       "Cry for help",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Attempt to perform mouth to mouth",
@@ -643,7 +643,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Fetch the police immediately",
       "Ask John what he wants to do",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Suggest Emily is faking it",
@@ -683,7 +683,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Suggest we bring in Poirot",
       "Ask the Doctors their opinion",
-      "Or type your own question"
+      "Asking your own question"
     ],
     "chaotic": [
       "Confess to the murder yourself",
@@ -723,7 +723,7 @@ const STORY_DATA = {"characters": [
     "serious": [
       "Listen to Dorcas",
       "Ask about the cocoa ",
-      "Or continue your investigation"
+      "Pursuing your own leads"
     ],
     "chaotic": [
       "Interrupt with a song",
@@ -763,7 +763,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Ask who else had access",
     "Search for missing bottles",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Taste random chemicals for clues",
@@ -803,7 +803,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Listen to Mary's secret conversation",
     "Note Dr. Bauerstein's suspicious behavior",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Jump out shouting surprise loudly",
@@ -843,7 +843,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Listen carefully",
     "Watch Alfred's reaction to accusations",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Stand up and confess dramatically",
@@ -883,7 +883,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Watch Cynthia drink the bromide",
     "Ask Poirot about his theory",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Drink Cynthia's bromide bottle yourself",
@@ -923,7 +923,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Watch the family's shocked reactions",
     "Examine Evelyn's convenient alibi letter",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Print shirts that read 'Free Alfred'",
@@ -963,7 +963,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Question the innkeeper about Alfred",
     "Check the bar clock",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Challenge everyone to drinking contest",
@@ -1003,7 +1003,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Help search the fireplace ashes",
     "Ask Dorcas about the fire",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Climb up the chimney investigating",
@@ -1043,7 +1043,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Examine the dressing room",
     "Ask who wore the disguise",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Find the glue and eat it",
@@ -1083,7 +1083,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Listen to Poirot's grand reconstruction",
     "Watch in confusion",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Interrupt with your own theory",
@@ -1124,7 +1124,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Hear Poirot's final accusation",
     "Watch Evelyn's tearful confession",
-    "Ask how Poirot knew certainly"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Accuse Poirot of the crime",
@@ -1164,7 +1164,7 @@ const STORY_DATA = {"characters": [
   "serious": [
     "Reflect on the puzzle",
     "Ask about the family's future",
-    "Or continue your investigation"
+    "Pursuing your own leads"
   ],
   "chaotic": [
     "Ask if they serve hotdogs in Hell",
