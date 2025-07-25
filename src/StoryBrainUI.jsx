@@ -212,6 +212,7 @@ export default function StoryBrainUI() {
   };
 
 
+// In StoryBrainUI.jsx
 async function playTurn(action) {
   if (action === 'action_restart_game') {
     localStorage.removeItem('playerId');
@@ -256,52 +257,68 @@ async function playTurn(action) {
       return;
     }
 
-    /* ---------- STREAM → fullResponse ---------- */
-    const reader   = res.body.getReader();
-    const decoder  = new TextDecoder();
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
     let fullResponse = "";
+    const delimiter = /\|{2,3}~DATA~\|{0,3}/;
+    let narrativeComplete = false;
 
-    while (true) {                            // accumulate the whole stream
+    // This loop now updates the UI in real-time
+    while (true) {
       const { value, done } = await reader.read();
       if (done) break;
       fullResponse += decoder.decode(value, { stream: true });
+
+      // ✅ This block provides the live "typing" effect
+      if (!narrativeComplete) {
+        const delimiterMatch = fullResponse.match(delimiter);
+        if (delimiterMatch) {
+          narrativeComplete = true; // Stop live updates once the data part is found
+          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
+          setNarrative(prev => {
+            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+            return base + narrativeToShow;
+          });
+        } else {
+          // No delimiter yet, so the whole buffer is narrative
+          setNarrative(prev => {
+            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+            return base + fullResponse;
+          });
+        }
+      }
     }
 
-    /* ---------- split narrative / JSON ---------- */
-const match = fullResponse.match(/\|{2,3}~DATA~\|{0,3}/);
-if (!match) { console.error("Server response missing delimiter");
-  setLoading(false);
-  return;  }
-const idx   = match.index;
-const delimLen = match[0].length;
-    if (idx === -1) {
+    // --- AFTER THE STREAM IS FULLY READ ---
+    const match = fullResponse.match(delimiter);
+    if (!match) {
       console.error("Server response missing delimiter");
-      return;          // bail out gracefully
+      setLoading(false);
+      return;
     }
 
-    const narrativePart  = fullResponse.slice(0, idx);
+    const idx = match.index;
+    const delimLen = match[0].length;
+    const narrativePart = fullResponse.slice(0, idx);
     const jsonDataString = fullResponse.slice(idx + delimLen).trim();
 
-   // 1️⃣ show the narrative
-    setNarrative(prev =>
-      action === "begin"
-       ? narrativePart               // replace the "…loading…" stub
-        : prev + narrativePart        // simply append for normal turns
-    );
+    // Perform a final, clean update of the narrative
+    setNarrative(prev => {
+      const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
+      return base + narrativePart;
+    });
 
-    // 2️⃣ parse the JSON
     let finalData;
     try {
       finalData = JSON.parse(jsonDataString);
     } catch (e) {
-      console.error("Invalid JSON payload", e);
+      console.error("Invalid JSON payload", e, jsonDataString);
       return;
     }
 
-    /* ---------- use finalData ---------- */
     const combined = (finalData.choices || []).map((choice, i) => ({
       event_id: choice.event_id,
-      label:    (finalData.hints || [])[i] || choice.trigger,
+      label: (finalData.hints || [])[i] || choice.trigger,
     }));
     setChoices(combined);
     setScene(finalData.scene);
@@ -313,18 +330,6 @@ const delimLen = match[0].length;
       setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
       setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
     }
-
-    console.log("--- RAW RESPONSE FROM SERVER ---");
-    console.log(fullResponse);
-
-
-    // ✅ DEBUGGING: Log the part we are about to parse as JSON
-    console.log("--- JSON PART TO BE PARSED ---");
-    console.log(jsonDataString);
-
-
-
-
     
   } catch (err) {
     setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
@@ -333,7 +338,6 @@ const delimLen = match[0].length;
     setLoading(false);
   }
 }
-
   useEffect(() => { playTurn("begin"); }, []);
   
   // ✅ SCROLL FIX: Add a useEffect to scroll to the bottom when narrative changes

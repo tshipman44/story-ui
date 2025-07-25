@@ -1185,7 +1185,7 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "7. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
-    "10. AFTER YOU OUTPUT |||~DATA~||| YOU MUST OUTPUT ONE JSON OBJECT AND THEN STOP. DO NOT WRITE ANY MORE PROSE.",
+    "10. ⚠️ You must output the delimiter exactly once (|||~DATA~|||) and never repeat the narrative text after it.”",
     "────────────────────────────────────────",
     "## CONTEXT FOR YOUR TASK",
     `The user just took the action: "${userAction}"`,
@@ -1308,7 +1308,7 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
     let fullResponse = "";
-    const delimRx = /\|{2,3}~DATA~\|{0,3}/;
+    const delimRx = /\|{2,3}~DATA(?=~?\|{0,3})/;   // stops as soon as "~DATA" is seen
    // tolerate || or |||
     let   delimStr  = null;                     // will hold the exact match
     let   delimPos  = -1;
