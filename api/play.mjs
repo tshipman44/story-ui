@@ -1185,7 +1185,6 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "7. **POIROT:** Poirot is absent until `storyPhase` is 'investigation'. After clue C8 is revealed, one suggested hint MUST involve seeking his help.",
     "8. Do not name the murderer until **confidencePoirotKnowsKiller > 0.85** *and* the player explicitly accuses.",
     "9. **PLOT-TERMINATING ACTIONS:** If the `userAction` describes a violent, suicidal, or nonsensical act that would realistically end the investigation (e.g., attacking another character, confessing to the murder, jumping off a roof), you must handle it as a 'game over.' Your response MUST set `stateDelta.global.current_scene` to `'scene_22'`. The `narrative` should describe the immediate, grim consequences of the player's action from Hastings's first-person perspective. Do not reveal clues.",
-    "10. ⚠️ You must output the delimiter exactly once (|||~DATA~|||) and never repeat the narrative text after it.”",
     "────────────────────────────────────────",
     "## CONTEXT FOR YOUR TASK",
     `The user just took the action: "${userAction}"`,
@@ -1194,24 +1193,17 @@ function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, ava
     "## Current Game State",
     `{ "storyPhase": "${phase}", "currentScene": "${scene}", "revealedCluesGlobal": ${JSON.stringify(revealed)}, "availableScenes": ${JSON.stringify(availableScenes)} }`,
     "────────────────────────────────────────",
-    "## ⚠️ OUTPUT FORMAT – STREAMING (CRITICAL)",
-    "Your entire response MUST strictly follow this two-part format:",
-    "",
-    "[NARRATIVE TEXT]",
-    "|||~DATA~|||",
-    "[VALID JSON OBJECT]",
-    "",
-    "Here is an example of a perfect response:",
-    "The afternoon sun cast long shadows across the lawn as I considered my next move. The family's secrets felt almost tangible in the heavy air.",
-    "|||~DATA~|||",
+    "## ⚠️ OUTPUT FORMAT – STRICT",
+    "Return **one** valid JSON object and nothing else. Use this exact schema:",
     `{
-      "hints": ["Examine the fireplace.", "Speak with Mary Cavendish again.", "Review your notes."],
+      "narrative": "The new narrative passage you have written.",
+      "hints": ["A complete, capitalized hint.", "Another hint.", "A final hint."],
       "stateDelta": {
-        "revealedClues": ["C26"],
+        "revealedClues": ["clue_id or null"],
         "global": {
           "mustacheMood": "thinking",
-          "current_scene": "scene_18",
-          "storyPhase": "investigation"
+          "current_scene": "scene_id",
+          "storyPhase": "<pre-murder|investigation|reveal>"
         }
       }
     }`
