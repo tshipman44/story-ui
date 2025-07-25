@@ -213,7 +213,6 @@ export default function StoryBrainUI() {
 
 
 // In StoryBrainUI.jsx
-// Replace the entire playTurn function with this one.
 
 async function playTurn(action) {
   if (action === 'action_restart_game') {
@@ -226,11 +225,11 @@ async function playTurn(action) {
   setChoices([]);
   setIsMobileChoicesOpen(false);
 
-  let baseNarrative = "";
+  let currentNarrative = "";
   setNarrative(prev => {
-    baseNarrative = prev;
+    currentNarrative = prev;
     if (action === "begin") return "…loading…";
-    return prev + `\n\n> ${action}\n\n`;
+    return prev + `\n\n> ${action}`;
   });
 
   try {
@@ -240,73 +239,32 @@ async function playTurn(action) {
       body: JSON.stringify({
         playerId: PLAYER_ID,
         userAction: action,
-        currentNarrative: action === "begin" ? "" : baseNarrative,
+        currentNarrative: action === "begin" ? "" : currentNarrative,
       }),
     });
 
-    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
-
-    const contentType = res.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      const data = await res.json();
-      setNarrative(data.narrative);
-      const combined = (data.choices || []).map((choice, index) => ({
-        event_id: choice.event_id,
-        label: (data.hints || [])[index] || choice.trigger,
-      }));
-      setChoices(combined);
-      setScene(data.scene);
-      return;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || `Server responded with ${res.status}`);
     }
+    
+    const finalData = await res.json();
 
-    // --- Simplified Streaming Logic ---
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let fullResponse = "";
-    const delimiter = /\|{2,}~DATA~\|{2,}/;
-    let narrativeComplete = false;
+    setNarrative(finalData.narrative);
 
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      
-      fullResponse += decoder.decode(value, { stream: true });
-
-      if (!narrativeComplete) {
-        const delimiterMatch = fullResponse.match(delimiter);
-        if (delimiterMatch) {
-          narrativeComplete = true;
-          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
-          setNarrative(baseNarrative + `\n\n> ${action}\n\n` + narrativeToShow);
-        } else {
-          setNarrative(baseNarrative + `\n\n> ${action}\n\n` + fullResponse);
-        }
-      }
+    const combined = (finalData.choices || []).map((choice, index) => ({
+      event_id: choice.event_id,
+      label: (finalData.hints || [])[index] || choice.trigger,
+    }));
+    setChoices(combined);
+    setScene(finalData.scene);
+    
+    if (finalData.stateDelta?.global?.mustacheMood) {
+      setMustacheMood(finalData.stateDelta.global.mustacheMood);
     }
-
-    const parts = fullResponse.split(delimiter);
-    const finalNarrative = parts[0];
-    const jsonDataString = parts[1];
-
-    setNarrative(baseNarrative + `\n\n> ${action}\n\n` + finalNarrative);
-
-    if (jsonDataString) {
-      const finalData = JSON.parse(jsonDataString);
-      const combined = (finalData.choices || []).map((choice, index) => ({
-        event_id: choice.event_id,
-        label: (finalData.hints || [])[index] || choice.trigger,
-      }));
-      setChoices(combined);
-      setScene(finalData.scene);
-      if (finalData.stateDelta?.global?.mustacheMood) {
-        setMustacheMood(finalData.stateDelta.global.mustacheMood);
-      }
-      if (finalData.newlyRevealedClues?.length) {
-        setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-        setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-      }
-    } else {
-      console.error("Stream finished, but no data payload was found.");
+    if (finalData.newlyRevealedClues?.length > 0) {
+      setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+      setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
     }
 
   } catch (err) {

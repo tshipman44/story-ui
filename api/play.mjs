@@ -1230,8 +1230,9 @@ const CORS = {
   headers: "Content-Type",
 };
 
+// In api/play.mjs
 export default async function handler(req, res) {
-  // CORS pre-flight
+  // CORS and method checks
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
     res.setHeader("Access-Control-Allow-Methods", CORS.methods);
@@ -1239,8 +1240,6 @@ export default async function handler(req, res) {
     res.status(200).end();
     return;
   }
-
-  // Reject everything except POST
   if (req.method !== "POST") {
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
     return res.status(405).end("Use POST");
@@ -1279,42 +1278,15 @@ export default async function handler(req, res) {
         availableScenes, availableClues,
         userAction, currentNarrative,
     });
-
-    const stream = await openai.chat.completions.create({
+    
+    // Call OpenAI without streaming
+    const chat = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userAction }],
-      stream: true,
+      response_format: { type: "json_object" }, // Ask for JSON directly
     });
-
-    res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    res.setHeader("Transfer-Encoding", "chunked");
-    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-
-    let fullResponse = "";
-    const delimiter = "|||~DATA~|||";
-    let narrativeSent = false;
-
-    for await (const chunk of stream) {
-      const chunkText = chunk.choices[0]?.delta?.content || "";
-      fullResponse += chunkText;
-
-      if (!narrativeSent) {
-        if (fullResponse.includes(delimiter)) {
-          narrativeSent = true;
-          const lastNarrativeChunk = chunkText.split(delimiter)[0];
-          res.write(lastNarrativeChunk);
-        } else {
-          res.write(chunkText);
-        }
-      }
-    }
     
-    const jsonDataString = fullResponse.split(delimiter)[1];
-    if (!jsonDataString) {
-      throw new Error("AI response did not include a valid data delimiter.");
-    }
-    
-    const assistant = JSON.parse(jsonDataString.trim());
+    const assistant = JSON.parse(chat.choices[0].message.content);
     
     const g = assistant.stateDelta.global;
     const mergedRevealed = [...new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])])];
@@ -1332,6 +1304,7 @@ export default async function handler(req, res) {
     });
 
     const finalData = {
+      narrative: assistant.narrative,
       hints: assistant.hints,
       scene: g.current_scene,
       stateDelta: assistant.stateDelta,
@@ -1341,16 +1314,12 @@ export default async function handler(req, res) {
         .filter(Boolean),
     };
     
-    res.write(delimiter + JSON.stringify(finalData));
-    res.end();
+    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
+    res.status(200).json(finalData);
 
   } catch (err) {
-    console.error("Streaming Handler Error:", err);
-    if (!res.headersSent) {
-      res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-      res.status(500).json({ error: err.message });
-    } else {
-      res.end();
-    }
+    console.error("Handler Error:", err);
+    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
+    res.status(500).json({ error: err.message });
   }
 }
