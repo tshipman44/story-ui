@@ -268,7 +268,7 @@ async function playTurn(action) {
     }
 
     /* ---------- split narrative / JSON ---------- */
-const match = fullResponse.match(/\|{2,3}~DATA~\|{2,3}/);
+const match = fullResponse.match(/\|{2,3}~DATA~\|{0,3}/);
 if (!match) { console.error("Server response missing delimiter");
   setLoading(false);
   return;  }
