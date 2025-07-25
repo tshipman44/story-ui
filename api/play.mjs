@@ -1250,19 +1250,29 @@ export default async function handler(req, res) {
       turns_since_last_progress
     } = row;
 
-    if (userAction === "begin") {
-      const startScene = STORY_DATA.scenes.find(s => s.scene_id === "scene_01");
-      const finalData = {
-          narrative: startScene.entry_narrative,
-          choices: startScene.events,
-          hints: ["Get in the car with John.", "Ask John about the family.", "Take a moment to look around the station."],
-          scene: startScene.scene_id,
-          newlyRevealedClues: [],
-          stateDelta: { global: { mustacheMood: "neutral" } }
-      };
-      res.setHeader("Access-Control-Allow-Origin", CORS.origin);
-      return res.status(200).json(finalData);
-    }
+// In api/play.mjs
+
+if (userAction === "begin") {
+  const startScene = STORY_DATA.scenes.find(s => s.scene_id === "scene_01");
+  const initialHints = ["Get in the car with John.", "Ask John about the family.", "Take a moment to look around the station."];
+
+  // ✅ FIX: Transform the raw events into the { event_id, label } format
+  const initialChoices = startScene.events.map((event, index) => ({
+    event_id: event.event_id,
+    label: initialHints[index] || event.trigger // Use our nice hardcoded hints
+  }));
+
+  const finalData = {
+      narrative: startScene.entry_narrative,
+      choices: initialChoices, // Use the newly formatted array
+      scene: startScene.scene_id,
+      newlyRevealedClues: [],
+      stateDelta: { global: { mustacheMood: "neutral" } }
+  };
+  
+  res.setHeader("Access-Control-Allow-Origin", CORS.origin);
+  return res.status(200).json(finalData);
+}
 
     const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(phase));
     const availableClues = STORY_DATA.clues.filter(c => availableScenes.map(s => s.scene_id.trim()).includes(c.found_in_scene.trim()));

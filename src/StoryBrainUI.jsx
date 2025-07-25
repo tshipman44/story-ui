@@ -292,7 +292,7 @@ setChoices(finalData.choices || []);
       style={{ backgroundImage: `url(${sceneImages[scene] || sceneImages['scene_01']})` }}
     >
       <Header />
-      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-40 lg:pb-0">
+      <main className="w-full flex-1 flex flex-col lg:flex-row gap-8 max-w-5xl p-4 overflow-y-auto lg:overflow-hidden pb-32 lg:pb-0">
         {/* Column 1: Narrative */}
         <div className="flex-1 transition-all duration-1000 lg:overflow-y-auto lg:pb-44 pr-2">
           <article className="whitespace-pre-wrap leading-relaxed space-y-6 bg-slate-900/70 p-6 rounded-lg backdrop-blur-sm">
