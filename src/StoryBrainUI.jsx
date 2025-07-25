@@ -263,26 +263,33 @@ async function playTurn(action) {
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let fullResponse = "";
+    const delimiter = /\|{2,}~DATA~\|{2,}/;
+    let narrativeComplete = false;
 
-    // 1. Live-stream the narrative text by appending chunks directly to the UI
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      setNarrative(prev => prev + chunk);
-      fullResponse += chunk;
+      
+      fullResponse += decoder.decode(value, { stream: true });
+
+      if (!narrativeComplete) {
+        const delimiterMatch = fullResponse.match(delimiter);
+        if (delimiterMatch) {
+          narrativeComplete = true;
+          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
+          setNarrative(baseNarrative + `\n\n> ${action}\n\n` + narrativeToShow);
+        } else {
+          setNarrative(baseNarrative + `\n\n> ${action}\n\n` + fullResponse);
+        }
+      }
     }
 
-    // 2. After the stream is complete, process the full response
-    const delimiter = /\|{2,}~DATA~\|{2,}/;
     const parts = fullResponse.split(delimiter);
     const finalNarrative = parts[0];
     const jsonDataString = parts[1];
 
-    // 3. Perform a final, clean update of the narrative text
     setNarrative(baseNarrative + `\n\n> ${action}\n\n` + finalNarrative);
 
-    // 4. Parse the clean JSON and update the rest of the game state
     if (jsonDataString) {
       const finalData = JSON.parse(jsonDataString);
       const combined = (finalData.choices || []).map((choice, index) => ({

@@ -1233,10 +1233,10 @@ const CORS = {
 export default async function handler(req, res) {
   // CORS pre-flight
   if (req.method === "OPTIONS") {
-    res.setHeader("Access-Control-Allow-Origin",  CORS.origin);
+    res.setHeader("Access-Control-Allow-Origin", CORS.origin);
     res.setHeader("Access-Control-Allow-Methods", CORS.methods);
     res.setHeader("Access-Control-Allow-Headers", CORS.headers);
-    res.status(200).end();        // 200 is fine for pre-flight
+    res.status(200).end();
     return;
   }
 
@@ -1246,21 +1246,16 @@ export default async function handler(req, res) {
     return res.status(405).end("Use POST");
   }
 
-  const { playerId, userAction, currentNarrative } = req.body; 
-  
-    // --- 1. PRE-AI LOGIC ---
+  try {
+    const { playerId, userAction, currentNarrative } = req.body;
+    const row = await fetchPlayerRow(playerId);
+    const {
+      story_phase: phase,
+      current_scene: scene,
+      revealed_clues: revealed,
+      turns_since_last_progress
+    } = row;
 
-try {
-  // -- pull current state
-  const row = await fetchPlayerRow(playerId);   // row is the object you need
-
-  const {
-    story_phase: phase,
-    current_scene: scene,
-    revealed_clues: revealed,            
-    turns_since_last_progress      
-  } = row;
-    // ✅ FIX #2: The 'begin' action handler is restored.
     if (userAction === "begin") {
       const startScene = STORY_DATA.scenes.find(s => s.scene_id === "scene_01");
       const finalData = {
@@ -1275,104 +1270,58 @@ try {
       return res.status(200).json(finalData);
     }
 
-
-// Filter scenes to only include those available in the current phase
-const availableScenes = STORY_DATA.scenes.filter(s => s.status === "eligible" && s.unlocks_when.includes(phase));
-const availableSceneIds = availableScenes.map(s => s.scene_id.trim());
-const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c.found_in_scene.trim()));
+    const availableScenes = STORY_DATA.scenes.filter(s => s.unlocks_when.includes(phase));
+    const availableClues = STORY_DATA.clues.filter(c => availableScenes.map(s => s.scene_id.trim()).includes(c.found_in_scene.trim()));
    
     const systemPrompt = buildSystemPrompt({
-        phase: phase,
-        scene: scene,
-        revealed: revealed,
+        phase, scene, revealed,
         turns: turns_since_last_progress,
-        availableScenes,
-        availableClues,
-        userAction,
-        currentNarrative,
+        availableScenes, availableClues,
+        userAction, currentNarrative,
     });
 
-// --- 2. INITIATE STREAM ---
     const stream = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userAction },
-      ],
+      messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userAction }],
       stream: true,
     });
 
-    // --- 3. PIPE NARRATIVE TO CLIENT ---
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
     res.setHeader("Transfer-Encoding", "chunked");
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
     let fullResponse = "";
-    const delimRx = /\|{2,3}~DATA(?=~?\|{0,3})/;   // stops as soon as "~DATA" is seen
-   // tolerate || or |||
-    let   delimStr  = null;                     // will hold the exact match
-    let   delimPos  = -1;
-    let streamingNarr = true;                 
+    const delimiter = "|||~DATA~|||";
+    let narrativeSent = false;
 
     for await (const chunk of stream) {
       const chunkText = chunk.choices[0]?.delta?.content || "";
       fullResponse += chunkText;
 
-      if (!streamingNarr) continue;          // already hit delimiter, swallow chunks
-
- const m = fullResponse.match(delimRx);
-  if (!m) {
-    res.write(chunkText);                      // still narrative – keep streaming
-  } else {
-    delimStr = m[0];
-     delimPos = m.index;
-     res.write(fullResponse.slice(0, delimPos));  // only narrative
-     streamingNarr = false;                       // stop echoing
-  }
+      if (!narrativeSent) {
+        if (fullResponse.includes(delimiter)) {
+          narrativeSent = true;
+          const lastNarrativeChunk = chunkText.split(delimiter)[0];
+          res.write(lastNarrativeChunk);
+        } else {
+          res.write(chunkText);
+        }
+      }
     }
-if (delimPos === -1) {
-  console.warn("AI omitted delimiter – sending fallback.");
-  const safeJson = {
-    hints:       ["Take stock of your surroundings."],
-    scene:       scene,                 // stay in same scene
-    stateDelta:  { global: {} },
-    choices:     STORY_DATA.scenes.find(s => s.scene_id === scene)?.events || [],
-    newlyRevealedClues: []
-  };
-
- res.write("|||~DATA~|||" + JSON.stringify(safeJson));
- res.end();
- return;
-}
-    // --- 4. PROCESS JSON AND UPDATE DATABASE (after stream ends) ---
-const jsonDataString = fullResponse.slice(delimPos + delimStr.length).trim();
-let assistant;
-try {
-  assistant = JSON.parse(jsonDataString.trim());
-} catch (e) {
-  console.error("AI returned invalid JSON, sending safe fallback", e);
-  const safeJson = {
-    hints: [],
-    scene,
-    stateDelta: { global: {} },
-    choices: STORY_DATA.scenes.find(s => s.scene_id === scene)?.events || [],
-    newlyRevealedClues: []
-  };
-  res.write(delimStr + JSON.stringify(safeJson));
-  res.end();
- return;            
-}
-
-// Perform state updates using the received JSON data    
-const g = assistant.stateDelta.global || {};
-const mergedRevealed = Array.from(
-  new Set([...(revealed || []), ...(assistant.stateDelta.revealedClues || [])])
-);    
-    let nextTurnsSinceProgress = turns_since_last_progress || 0;
+    
+    const jsonDataString = fullResponse.split(delimiter)[1];
+    if (!jsonDataString) {
+      throw new Error("AI response did not include a valid data delimiter.");
+    }
+    
+    const assistant = JSON.parse(jsonDataString.trim());
+    
+    const g = assistant.stateDelta.global;
+    const mergedRevealed = [...new Set([...revealed, ...(assistant.stateDelta.revealedClues || [])])];
+    
+    let nextTurnsSinceProgress = turns_since_last_progress + 1;
     if ((assistant.stateDelta.revealedClues || []).length > 0 || phase !== g.storyPhase) {
       nextTurnsSinceProgress = 0;
-    } else {
-      nextTurnsSinceProgress += 1;
     }
 
     await updatePlayerRow(playerId, {
@@ -1382,8 +1331,6 @@ const mergedRevealed = Array.from(
       turns: nextTurnsSinceProgress,
     });
 
-    // --- 5. SEND FINAL DATA CHUNK & END ---
-    // We need to send the final state data back to the client. We'll append it to the stream.
     const finalData = {
       hints: assistant.hints,
       scene: g.current_scene,
@@ -1394,18 +1341,16 @@ const mergedRevealed = Array.from(
         .filter(Boolean),
     };
     
-    res.write(`${delimStr}${JSON.stringify(finalData)}`);
- res.end();
+    res.write(delimiter + JSON.stringify(finalData));
+    res.end();
 
   } catch (err) {
     console.error("Streaming Handler Error:", err);
-    // If headers haven't been sent, we can send a proper error.
     if (!res.headersSent) {
+      res.setHeader("Access-Control-Allow-Origin", CORS.origin);
       res.status(500).json({ error: err.message });
     } else {
-      // Otherwise, we just have to end the response.
       res.end();
     }
   }
 }
-
