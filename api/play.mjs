@@ -1308,7 +1308,8 @@ const availableClues = STORY_DATA.clues.filter(c => availableSceneIds.includes(c
     res.setHeader("Access-Control-Allow-Origin", CORS.origin);
 
     let fullResponse = "";
-    const delimRx = /|{2,3}~DATA~|{0,3}/;   // tolerate || or |||
+    const delimRx = /\|{2,3}~DATA~\|{0,3}/;
+   // tolerate || or |||
     let   delimStr  = null;                     // will hold the exact match
     let   delimPos  = -1;
     let streamingNarr = true;                 
