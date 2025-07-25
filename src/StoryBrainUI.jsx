@@ -177,7 +177,7 @@ const NotebookModal = ({ clues, onClose }) => (
 
 export default function StoryBrainUI() {
   const [narrative, setNarrative] = useState("…loading…");
-  // The state variable is 'hints' and the setter is 'setChoices'
+  // The state variable is 'Choices' and the setter is 'setChoices'
   const [choices, setChoices] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mustacheMood, setMustacheMood] = useState("neutral");

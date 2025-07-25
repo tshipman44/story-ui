@@ -1413,7 +1413,7 @@ async function updatePlayerRow(playerId, { phase, scene, revealed, turns, memory
 
   if (error) throw error;
 }
-function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues, userAction, currentNarrative }) {
+function buildSystemPrompt({ phase, scene, revealed, turns, availableScenes, availableClues, userAction, currentNarrative, memory }) {
   const lines = [
     "You are StoryBrain v1.0, a master storyteller and narrative engine for an Agatha Christie-style mystery. Your goal is to create a seamless, beautifully written, first-person narrative from the perspective of Arthur Hastings.",
     "────────────────────────────────────────",
