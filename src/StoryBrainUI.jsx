@@ -213,6 +213,8 @@ export default function StoryBrainUI() {
 
 
 // In StoryBrainUI.jsx
+// Replace the entire playTurn function with this one.
+
 async function playTurn(action) {
   if (action === 'action_restart_game') {
     localStorage.removeItem('playerId');
@@ -257,80 +259,49 @@ async function playTurn(action) {
       return;
     }
 
+    // --- Simplified Streaming Logic ---
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let fullResponse = "";
-    const delimiter = /\|{2,3}~DATA~\|{0,3}/;
-    let narrativeComplete = false;
 
-    // This loop now updates the UI in real-time
+    // 1. Live-stream the narrative text by appending chunks directly to the UI
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-      fullResponse += decoder.decode(value, { stream: true });
+      const chunk = decoder.decode(value, { stream: true });
+      setNarrative(prev => prev + chunk);
+      fullResponse += chunk;
+    }
 
-      // ✅ This block provides the live "typing" effect
-      if (!narrativeComplete) {
-        const delimiterMatch = fullResponse.match(delimiter);
-        if (delimiterMatch) {
-          narrativeComplete = true; // Stop live updates once the data part is found
-          const narrativeToShow = fullResponse.substring(0, delimiterMatch.index);
-          setNarrative(prev => {
-            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-            return base + narrativeToShow;
-          });
-        } else {
-          // No delimiter yet, so the whole buffer is narrative
-          setNarrative(prev => {
-            const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-            return base + fullResponse;
-          });
-        }
+    // 2. After the stream is complete, process the full response
+    const delimiter = /\|{2,}~DATA~\|{2,}/;
+    const parts = fullResponse.split(delimiter);
+    const finalNarrative = parts[0];
+    const jsonDataString = parts[1];
+
+    // 3. Perform a final, clean update of the narrative text
+    setNarrative(baseNarrative + `\n\n> ${action}\n\n` + finalNarrative);
+
+    // 4. Parse the clean JSON and update the rest of the game state
+    if (jsonDataString) {
+      const finalData = JSON.parse(jsonDataString);
+      const combined = (finalData.choices || []).map((choice, index) => ({
+        event_id: choice.event_id,
+        label: (finalData.hints || [])[index] || choice.trigger,
+      }));
+      setChoices(combined);
+      setScene(finalData.scene);
+      if (finalData.stateDelta?.global?.mustacheMood) {
+        setMustacheMood(finalData.stateDelta.global.mustacheMood);
       }
+      if (finalData.newlyRevealedClues?.length) {
+        setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
+        setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
+      }
+    } else {
+      console.error("Stream finished, but no data payload was found.");
     }
 
-    // --- AFTER THE STREAM IS FULLY READ ---
-    const match = fullResponse.match(delimiter);
-    if (!match) {
-      console.error("Server response missing delimiter");
-      setLoading(false);
-      return;
-    }
-
-    const idx = match.index;
-    const delimLen = match[0].length;
-    const narrativePart = fullResponse.slice(0, idx);
-    const jsonDataString = fullResponse.slice(idx + delimLen).trim();
-
-    // Perform a final, clean update of the narrative
-    setNarrative(prev => {
-      const base = (action === "begin" ? "" : baseNarrative + `\n\n> ${action}\n\n`);
-      return base + narrativePart;
-    });
-
-    let finalData;
-    try {
-      finalData = JSON.parse(jsonDataString);
-    } catch (e) {
-      console.error("Invalid JSON payload", e, jsonDataString);
-      return;
-    }
-
-    const combined = (finalData.choices || []).map((choice, i) => ({
-      event_id: choice.event_id,
-      label: (finalData.hints || [])[i] || choice.trigger,
-    }));
-    setChoices(combined);
-    setScene(finalData.scene);
-
-    if (finalData.stateDelta?.global?.mustacheMood) {
-      setMustacheMood(finalData.stateDelta.global.mustacheMood);
-    }
-    if (finalData.newlyRevealedClues?.length) {
-      setRevealedClues(prev => [...prev, ...finalData.newlyRevealedClues]);
-      setUnreadClueCount(prev => prev + finalData.newlyRevealedClues.length);
-    }
-    
   } catch (err) {
     setNarrative(`🚨 Error contacting the story engine. Check console.\n(${err.message})`);
     console.error(err);
