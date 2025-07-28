@@ -26,7 +26,3 @@ body {
   min-height: 100vh;
 }
 
-/* Example: make every naked <h1> act like Tailwind’s text-5xl */
-h1 {
-  @apply text-5xl leading-tight;
-}
