@@ -64,7 +64,7 @@ const Header = () => (
   <header className="sticky top-0 z-50 w-full bg-slate-900/80
                      backdrop-blur text-white shadow-md">
     <Container className="w-full">
-      <h1 className="py-3 text-center text-2xl sm:text-3xl font-semibold tracking-wide font-serif">
+      <h1 className="py-3 text-center text-xl sm:text-3xl font-semibold tracking-wide font-serif">
         The Mysterious Affair at Styles
       </h1>
     </Container>
